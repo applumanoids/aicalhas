@@ -115,47 +115,32 @@
     .mx { min-width: 640px; }
     .mx tbody th { position: sticky; left: 0; z-index: 1; box-shadow: 1px 0 0 var(--line); }
   }
-</style>
 
-<style>
-  .device-toolbar, .device-stage { display: none; }
-  body.preview-host { height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
-  .preview-host #presentation-content { display: none; }
-  .preview-host .device-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 20px; background: #fff; border-bottom: 1px solid #d9e2ea; flex: none; }
-  .device-brand { display: flex; flex-direction: column; }
-  .device-brand b { color: #17334c; font-size: 17px; }
-  .device-brand small { color: #526579; font-size: 12px; }
-  .device-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .device-toggle { display: flex; gap: 4px; padding: 4px; border-radius: 10px; background: #edf2f6; }
-  .device-toggle button, .device-home { border: 0; border-radius: 7px; padding: 9px 14px; min-height: 42px; font: inherit; font-weight: 600; color: #29465e; background: transparent; cursor: pointer; }
-  .device-toggle button[aria-pressed="true"] { background: #173b58; color: #fff; }
-  .device-home { border: 1px solid #d9e2ea; background: #fff; }
-  .preview-host .device-stage { display: flex; flex: 1; min-height: 0; justify-content: center; align-items: stretch; background: #e7edf3; }
-  .device-frame { display: block; border: 0; width: 100%; height: 100%; background: #fff; min-width: 0; }
-  .device-stage.is-mobile { padding: 16px 10px; }
-  .is-mobile .device-frame { width: 390px; max-width: 100%; height: 100%; max-height: 844px; border: 6px solid #17334c; border-radius: 26px; box-shadow: 0 10px 30px #17334c26; }
-  .device-stage.is-mobile { align-items: center; }
+  /* Capa compacta no celular; mantém a rolagem natural. */
   @media (max-width: 600px) {
-    .preview-host .device-toolbar { padding: 8px 10px; gap: 6px; }
-    .device-brand small { display: none; }
-    .device-toggle button, .device-home { padding: 8px 10px; }
-    .device-stage.is-mobile { padding: 6px; }
+    .cv-top { gap: 10px; flex-wrap: wrap; padding: 14px 0; }
+    .chip-demo { max-width: 100%; white-space: normal; }
+    .hero h1 { font-size: clamp(42px, 12vw, 58px); margin-bottom: 14px; }
+    .hero .lead { font-size: 14px; line-height: 1.5; margin-bottom: 18px; }
+    .hero .kicker { font-size: 12px; }
+    .cta { gap: 8px; }
+    .cta .btn { font-size: 13px; min-height: 44px; padding: 0 12px; white-space: normal; }
+    .sec { padding-top: 30px; }
+    .sec h2 { font-size: 23px; }
+    .sec > .wrap > p { font-size: 13px; }
+    .sc-card { padding: 18px; }
+    .sc-card h3 { font-size: 20px; }
+    .sc-card p, .sc-card li { font-size: 13px; line-height: 1.5; }
+    .cards4 { gap: 14px; }
+    .legend { gap: 10px; font-size: 12px; flex-wrap: wrap; }
+    .step { padding: 16px; }
+    .step p { font-size: 13px; }
+    .cv-foot { margin-top: 36px; font-size: 12px; }
   }
 </style>
 </head>
 <body class="page-cover">
-<div class="device-toolbar" aria-label="Modo de apresentação">
-  <div class="device-brand"><b>AiCalhas</b><small id="device-description">Visualização desktop</small></div>
-  <div class="device-actions">
-    <div class="device-toggle" role="group" aria-label="Formato da demonstração">
-      <button type="button" id="device-desktop" aria-pressed="true">Desktop</button>
-      <button type="button" id="device-mobile" aria-pressed="false">Mobile</button>
-    </div>
-    <button type="button" class="device-home" id="device-home">Voltar à capa</button>
-  </div>
-</div>
-<div class="device-stage" id="device-stage"><iframe class="device-frame" id="device-frame" title="Demonstração interativa da AiCalhas"></iframe></div>
-<div id="presentation-content">
+
 
 <header class="hero" id="hero">
   <div class="wrap">
@@ -283,7 +268,6 @@
   <div class="wrap"><span class="logo"><b>Ai<span>Calhas</span></b></span><span>Apresentação de modelos de operação.</span><span class="spacer"></span><span>Ambiente demonstrativo — dados fictícios. Nenhuma operação real é realizada.</span></div>
 </footer>
 
-</div>
 <script src="assets/aicalhas-core.js"></script>
 <script>
 (function () {
@@ -361,36 +345,5 @@
 })();
 </script>
 
-<script>
-(function () {
-  // A página interna mantém sua largura real: as regras responsivas também
-  // se aplicam aos quatro cenários enquanto a barra permanece na apresentação.
-  if (window.self !== window.top || new URLSearchParams(location.search).has('preview')) return;
-  var frame = document.getElementById('device-frame');
-  var stage = document.getElementById('device-stage');
-  var desktop = document.getElementById('device-desktop');
-  var mobile = document.getElementById('device-mobile');
-  var description = document.getElementById('device-description');
-  var mode = 'desktop';
-  try { mode = sessionStorage.getItem('aicalhas-preview-mode') || mode; } catch (e) {}
-  function selectMode(value) {
-    mode = value === 'mobile' ? 'mobile' : 'desktop';
-    stage.classList.toggle('is-mobile', mode === 'mobile');
-    desktop.setAttribute('aria-pressed', String(mode === 'desktop'));
-    mobile.setAttribute('aria-pressed', String(mode === 'mobile'));
-    description.textContent = mode === 'mobile' ? 'Prévia de celular • navegue pelos quatro cenários' : 'Visualização desktop';
-    try { sessionStorage.setItem('aicalhas-preview-mode', mode); } catch (e) {}
-  }
-  var home = location.pathname + '?preview=1';
-  document.body.classList.add('preview-host');
-  document.getElementById('presentation-content').hidden = true;
-  frame.src = home + location.hash;
-  desktop.addEventListener('click', function () { selectMode('desktop'); });
-  mobile.addEventListener('click', function () { selectMode('mobile'); });
-  document.getElementById('device-home').addEventListener('click', function () { frame.src = home; });
-  window.addEventListener('hashchange', function () { frame.src = home + location.hash; });
-  selectMode(mode);
-})();
-</script>
 </body>
 </html>
