@@ -25,7 +25,8 @@ Também é possível entrar pelo acesso rápido e trocar de perfil no topo da te
 
 BOM SABER
 - Todos os dados são fictícios. Contatos, mensagens e pagamentos apenas simulam o resultado.
-- As ações ficam guardadas na memória do navegador, apenas na aba aberta.
+- As ações ficam guardadas no sessionStorage do navegador, separadas por cenário e por aba.
+  Elas permanecem ao recarregar a mesma aba; ao encerrar a sessão da aba, podem ser descartadas.
 - "Reiniciar demonstração" (menu lateral ou menu do usuário) restaura os dados iniciais.
 - Cada cenário tem histórico de atividades com data, horário, usuário, perfil e ação.
   O mediador vê o histórico completo e pode exportá-lo em CSV.
