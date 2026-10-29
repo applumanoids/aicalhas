@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AiCalhas · Modelos de operação</title>
+<meta name="description" content="Apresentação interativa da AiCalhas: quatro possibilidades de funcionamento da plataforma. Ambiente demonstrativo com dados fictícios.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z' fill='%233fb0e6'/%3E%3Cpath d='M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z' fill='%23c26d38'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/aicalhas.css">
+<style>
+  /* ---------- Capa ---------- */
+  body.cover { background: var(--bg); }
+  .wrap { width: min(1180px, 100% - 40px); margin: 0 auto; }
+  .hero { position: relative; overflow: hidden; color: #d7e2ec; background: linear-gradient(172deg, #0e1a25 0%, #15283a 55%, #1c3a52 100%); }
+  .hero::before { content: ""; position: absolute; inset: -60px; background: repeating-linear-gradient(100deg, rgba(160, 205, 235, .06) 0 1px, transparent 1px 26px); animation: lgrain 1.6s linear infinite; pointer-events: none; }
+  .cv-top { position: relative; z-index: 2; display: flex; align-items: center; gap: 18px; padding: 18px 0; }
+  .cv-top nav { display: flex; gap: 4px; margin-left: auto; }
+  .cv-top nav a { color: #b9c8d6; text-decoration: none; font-size: 14px; padding: 6px 10px; border-radius: 8px; }
+  .cv-top nav a:hover { color: #fff; background: rgba(255, 255, 255, .07); }
+  .chip-demo { font-size: 12px; color: #9fb3c5; border: 1px solid rgba(255, 255, 255, .18); border-radius: 999px; padding: 4px 11px; white-space: nowrap; }
+  .hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 36px; align-items: center; padding: 26px 0 0; }
+  .hero-txt { padding-bottom: 56px; }
+  .kicker { color: #7fcdf2; font-weight: 600; font-size: 15px; margin: 0 0 12px; }
+  .hero h1 { font-family: var(--font-d); font-weight: 700; color: #fff; font-size: clamp(56px, 8.4vw, 104px); line-height: .95; margin: 0 0 20px; letter-spacing: -.01em; }
+  .hero h1 span { font-weight: 300; }
+  .hero .lead { font-size: 18px; line-height: 1.55; color: #c6d4e0; max-width: 540px; margin: 0 0 26px; }
+  .cta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cta .btn { min-height: 44px; padding: 0 18px; font-size: 15px; }
+  .cta .btn.p { --acc: #1b87c9; --acc-ink: #13679b; }
+  .scene-box { position: relative; align-self: end; }
+  .scene { width: 100%; height: auto; display: block; }
+  .scene-ctl { position: absolute; right: 6px; top: 6px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .2); color: #d7e2ec; border-radius: 8px; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer; }
+  .scene-ctl:hover { background: rgba(255, 255, 255, .16); }
+  .scene-cap { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-size: 12px; color: #9fb3c5; }
+
+  /* Animação */
+  .drop { animation: fall var(--t, 1s) linear var(--dl, 0s) infinite; opacity: 0; }
+  @keyframes fall { 0% { transform: translate(0, 0); opacity: 0; } 8% { opacity: .85; } 90% { opacity: .85; } 100% { transform: translate(-7px, var(--dy)); opacity: 0; } }
+  .splash { transform-box: fill-box; transform-origin: center; animation: splash var(--t, 1s) linear var(--dl, 0s) infinite; opacity: 0; }
+  @keyframes splash { 0%, 86% { opacity: 0; transform: scale(.3); } 92% { opacity: .85; } 100% { opacity: 0; transform: scale(1.7); } }
+  .flow { stroke-dasharray: 7 15; animation: flow 1.1s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -22; } }
+  .pipeflow { stroke-dasharray: 9 11; animation: flow .7s linear infinite; }
+  .wave { animation: wave 2.4s linear infinite; }
+  @keyframes wave { to { transform: translateX(40px); } }
+  .ripple { transform-box: fill-box; transform-origin: center; animation: ripple 1.6s ease-out infinite; }
+  .ripple.r2 { animation-delay: .8s; }
+  @keyframes ripple { 0% { transform: scale(.2); opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
+  .clouds { animation: drift 24s ease-in-out infinite alternate; }
+  @keyframes drift { to { transform: translateX(-26px); } }
+  .tankw { animation: tank 5s ease-in-out infinite alternate; }
+  @keyframes tank { to { transform: translateY(-5px); } }
+  .glow { animation: glow 4s ease-in-out infinite alternate; }
+  @keyframes glow { to { opacity: .75; } }
+  .scene.paused *, .hero.paused::before { animation-play-state: paused !important; }
+
+  /* Seções */
+  .sec { padding: 64px 0 8px; }
+  .sec h2 { font-size: clamp(26px, 3.2vw, 34px); margin: 0 0 8px; }
+  .sec > .wrap > p.sub { color: var(--muted); font-size: 16px; max-width: 720px; margin: 0 0 26px; }
+  .cards4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .sc-card { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--sh); padding: 18px 18px 18px; display: flex; flex-direction: column; gap: 12px; border-top: 4px solid var(--c); }
+  .sc-card .lvl { width: 120px; height: 56px; display: block; }
+  .sc-card .lv-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+  .sc-card .lv-row small { font-size: 12px; color: var(--muted); text-align: right; line-height: 1.3; }
+  .sc-card .lv-row small b { display: block; color: var(--ink); font-size: 13px; }
+  .sc-num { font-family: var(--font-d); color: var(--c); font-weight: 600; font-size: 15px; }
+  .sc-card h3 { font-size: 21px; margin: -6px 0 0; }
+  .sc-card p { margin: 0; color: var(--ink-2); font-size: 14px; }
+  .sc-card dl { margin: 0; display: grid; gap: 8px; font-size: 13px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .sc-card dt { color: var(--muted); font-size: 12px; }
+  .sc-card dd { margin: 0; color: var(--ink); }
+  .sc-card .btn { margin-top: auto; background: var(--c); border-color: var(--c); color: #fff; min-height: 40px; }
+  .sc-card .btn:hover { filter: brightness(.92); background: var(--c); }
+
+  .mx { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--sh); font-size: 14px; }
+  .mx th, .mx td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: left; }
+  .mx thead th { background: var(--surface-2); font-size: 13px; color: var(--ink-2); vertical-align: bottom; }
+  .mx thead th b { display: block; font-family: var(--font-d); font-size: 15px; color: var(--ink); }
+  .mx tr:last-child td, .mx tr:last-child th { border-bottom: 0; }
+  .mx tbody th { font-weight: 600; color: var(--ink); width: 26%; background: #fff; }
+  .mx .cell { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; }
+  .mx .d { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; }
+  .mx .v2 .d { background: var(--rain); color: #fff; }
+  .mx .v1 .d { background: var(--rain-l); color: var(--rain); }
+  .mx .v0 .d { background: var(--neu-bg); color: var(--faint); }
+  .mx .v0 { color: var(--faint); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .cmp td { font-size: 13.5px; color: var(--ink-2); vertical-align: top; }
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
+  .step { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: var(--sh); }
+  .step b { display: flex; align-items: center; gap: 10px; font-family: var(--font-d); font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  .step b::before { counter-increment: s; content: counter(s); width: 30px; height: 30px; border-radius: 50%; background: var(--storm); color: #fff; display: grid; place-items: center; font-size: 14px; }
+  .step p { margin: 0; color: var(--ink-2); }
+  .cv-foot { margin-top: 64px; padding: 26px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  .cv-foot .wrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .tw-mx { overflow-x: auto; border-radius: 14px; }
+
+  @media (max-width: 1100px) { .cards4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 860px) {
+    .hero-in { grid-template-columns: 1fr; gap: 0; padding-top: 6px; }
+    .hero-txt { padding-bottom: 8px; }
+    .scene-box { max-width: 520px; width: 100%; margin: 0 auto; }
+    .cv-top nav { display: none; }
+    .chip-demo { margin-left: auto; }
+    .steps { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .wrap { width: calc(100% - 32px); }
+    .cards4 { grid-template-columns: 1fr; }
+    .hero .lead { font-size: 16px; }
+    .chip-demo { font-size: 11px; padding: 3px 8px; }
+    .sec { padding-top: 44px; }
+    .mx { min-width: 640px; }
+    .mx tbody th { position: sticky; left: 0; z-index: 1; box-shadow: 1px 0 0 var(--line); }
+  }
+</style>
+</head>
+<body class="cover">
+
+<header class="hero" id="hero">
+  <div class="wrap">
+    <div class="cv-top">
+      <span class="logo light"><svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true"><path d="M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z" fill="#3fb0e6"/><path d="M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z" fill="#c26d38"/><path d="M4 24.5h32" stroke="#e8a06a" stroke-width="2.2"/></svg><b>Ai<span>Calhas</span></b></span>
+      <nav aria-label="Seções"><a href="#cenarios">Cenários</a><a href="#participacao">Participação</a><a href="#comparativo">Comparativo</a><a href="#navegar">Como navegar</a></nav>
+      <span class="chip-demo">Ambiente demonstrativo — dados fictícios</span>
+    </div>
+    <div class="hero-in">
+      <div class="hero-txt">
+        <p class="kicker">Apresentação de modelos de operação</p>
+        <h1>Ai<span>Calhas</span></h1>
+        <p class="lead">Quatro formas de conectar quem precisa de calhas a quem instala: da vitrine de profissionais à contratação completa. Navegue por cada cenário como cliente, instalador e mediador e escolha o modelo a desenvolver.</p>
+        <div class="cta"><a class="btn p" href="#cenarios">Ver os quatro cenários</a><a class="btn light" href="#comparativo">Comparar modelos</a></div>
+      </div>
+      <div class="scene-box">
+        <svg class="scene" id="scene" viewBox="0 0 560 470" role="img" aria-label="Animação: a chuva cai no telhado, a água escorre para a calha, desce pelo condutor e é coletada na cisterna.">
+          <defs>
+            <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7dcc8"/><stop offset="1" stop-color="#cdbd9f"/></linearGradient>
+            <pattern id="gTile" width="24" height="13" patternUnits="userSpaceOnUse"><rect width="24" height="13" fill="#9d4a2a"/><path d="M0 13 Q12 1 24 13" fill="none" stroke="#7a3519" stroke-width="2"/><path d="M0 13 Q12 3 24 13" fill="none" stroke="#c0623b" stroke-width="1" opacity=".6"/></pattern>
+            <linearGradient id="gCopper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9a874"/><stop offset=".55" stop-color="#c06a35"/><stop offset="1" stop-color="#8e4720"/></linearGradient>
+            <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fdcff"/><stop offset="1" stop-color="#2b9bd6"/></linearGradient>
+            <linearGradient id="gTank" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a4458"/><stop offset=".5" stop-color="#3b5d77"/><stop offset="1" stop-color="#25394b"/></linearGradient>
+            <linearGradient id="gWin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3a3"/><stop offset="1" stop-color="#f4b860"/></linearGradient>
+            <linearGradient id="gGround" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0d1822" stop-opacity="0"/><stop offset=".15" stop-color="#0d1822"/><stop offset=".85" stop-color="#0d1822"/><stop offset="1" stop-color="#0d1822" stop-opacity="0"/></linearGradient>
+            <linearGradient id="gGrass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2d4a3a" stop-opacity="0"/><stop offset=".15" stop-color="#2d4a3a"/><stop offset=".85" stop-color="#2d4a3a"/><stop offset="1" stop-color="#2d4a3a" stop-opacity="0"/></linearGradient>
+            <clipPath id="cGutter"><rect x="52" y="266" width="456" height="6"/></clipPath>
+            <clipPath id="cTank"><rect x="503" y="383" width="46" height="55" rx="5"/></clipPath>
+          </defs>
+          <g class="clouds" opacity=".9">
+            <ellipse cx="150" cy="40" rx="110" ry="30" fill="#24384b"/><ellipse cx="240" cy="30" rx="90" ry="28" fill="#2a4054"/><ellipse cx="380" cy="44" rx="130" ry="30" fill="#22364a"/><ellipse cx="470" cy="34" rx="80" ry="22" fill="#2b4256"/>
+          </g>
+          <!-- chão -->
+          <rect x="0" y="440" width="560" height="30" fill="url(#gGround)"/>
+          <path d="M20 440 H540" stroke="url(#gGrass)" stroke-width="3"/>
+          <!-- parede -->
+          <rect x="90" y="262" width="380" height="178" fill="url(#gWall)"/>
+          <g class="glow" opacity="1">
+            <rect x="126" y="300" width="84" height="64" rx="3" fill="url(#gWin)"/><rect x="350" y="300" width="84" height="64" rx="3" fill="url(#gWin)"/>
+          </g>
+          <path d="M168 300 V364 M126 332 H210 M392 300 V364 M350 332 H434" stroke="#fff6e2" stroke-width="4" opacity=".9"/>
+          <rect x="122" y="296" width="92" height="72" rx="4" fill="none" stroke="#f3ead8" stroke-width="5"/><rect x="346" y="296" width="92" height="72" rx="4" fill="none" stroke="#f3ead8" stroke-width="5"/>
+          <rect x="250" y="336" width="62" height="104" rx="3" fill="#6d4630"/><rect x="256" y="342" width="50" height="40" rx="2" fill="#7c5239"/><circle cx="300" cy="392" r="3.5" fill="#e3b46a"/>
+          <!-- telhado -->
+          <path d="M60 262 L150 150 H410 L500 262 Z" fill="url(#gTile)"/>
+          <path d="M150 150 H410" stroke="#5e2a14" stroke-width="5" stroke-linecap="round"/>
+          <path d="M60 262 L150 150 M500 262 L410 150" stroke="#6e3118" stroke-width="3" opacity=".7"/>
+          <g fill="none" stroke="#9fe1ff" stroke-width="2.4" opacity=".65" stroke-linecap="round">
+            <path class="flow" d="M176 162 L160 256"/><path class="flow" d="M222 158 L214 256" style="animation-delay:.3s"/><path class="flow" d="M268 158 L266 256" style="animation-delay:.6s"/>
+            <path class="flow" d="M314 158 L316 256" style="animation-delay:.15s"/><path class="flow" d="M360 158 L368 256" style="animation-delay:.45s"/><path class="flow" d="M404 166 L420 256" style="animation-delay:.75s"/>
+          </g>
+          <rect x="56" y="258" width="448" height="10" fill="#4f2a17"/>
+          <!-- calha (abertura com água + face de cobre) -->
+          <rect x="52" y="265" width="456" height="8" fill="#16222d"/>
+          <g clip-path="url(#cGutter)">
+            <rect x="52" y="268" width="456" height="5" fill="url(#gWater)"/>
+            <path class="wave" d="M12 268 q10 -3 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 v6 H12 Z" fill="#bfeeff" opacity=".7"/>
+          </g>
+          <path d="M48 271 H512 V284 Q512 295 501 295 H59 Q48 295 48 284 Z" fill="url(#gCopper)"/>
+          <path d="M48 272.5 H512" stroke="#f6c79c" stroke-width="2"/>
+          <g fill="#6e3a1c"><rect x="96" y="268" width="5" height="10"/><rect x="186" y="268" width="5" height="10"/><rect x="276" y="268" width="5" height="10"/><rect x="366" y="268" width="5" height="10"/><rect x="456" y="268" width="5" height="10"/></g>
+          <g id="rain"></g>
+          <!-- condutor -->
+          <path d="M480 292 V352 Q480 366 494 366 H510 Q522 366 522 378 V386" fill="none" stroke="#8e4720" stroke-width="17" stroke-linejoin="round"/>
+          <path d="M480 292 V352 Q480 366 494 366 H510 Q522 366 522 378 V386" fill="none" stroke="url(#gCopper)" stroke-width="13" stroke-linejoin="round"/>
+          <path class="pipeflow" d="M480 294 V352 Q480 366 494 366 H510 Q522 366 522 378 V392" fill="none" stroke="#a6e8ff" stroke-width="4" stroke-linecap="round"/>
+          <rect x="470" y="318" width="20" height="5" rx="1" fill="#6e3a1c"/><rect x="470" y="344" width="20" height="5" rx="1" fill="#6e3a1c"/>
+          <!-- cisterna -->
+          <rect x="500" y="380" width="52" height="60" rx="7" fill="url(#gTank)" stroke="#6f93ad" stroke-width="2"/>
+          <g clip-path="url(#cTank)">
+            <g class="tankw"><rect x="500" y="404" width="52" height="40" fill="#2b9bd6" opacity=".85"/><path d="M500 404 q6 -3 13 0 t13 0 t13 0 t13 0" fill="none" stroke="#bfeeff" stroke-width="1.5"/></g>
+          </g>
+          <ellipse class="ripple" cx="522" cy="404" rx="9" ry="2.5" fill="none" stroke="#d6f4ff" stroke-width="1.4"/>
+          <ellipse class="ripple r2" cx="522" cy="404" rx="9" ry="2.5" fill="none" stroke="#d6f4ff" stroke-width="1.4"/>
+          <rect x="508" y="376" width="36" height="6" rx="2" fill="#4c6d86"/>
+        </svg>
+        <button type="button" class="scene-ctl" id="sceneCtl" aria-label="Pausar animação" title="Pausar animação"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 5v14M15 5v14"/></svg></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="sec" id="cenarios">
+    <div class="wrap">
+      <h2>Quatro cenários de operação</h2>
+      <p class="sub">Cada cenário é uma demonstração completa, com telas próprias para o cliente, o profissional instalador e o mediador da AiCalhas. A diferença está em até onde a AiCalhas participa da contratação.</p>
+      <div class="cards4" id="cards"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="participacao">
+    <div class="wrap">
+      <h2>Até onde vai a AiCalhas em cada cenário</h2>
+      <p class="sub">Etapas de um atendimento de calhas e o nível de participação da AiCalhas. Quanto mais etapas a AiCalhas conduz, maior o controle sobre a experiência do cliente — e maior a estrutura necessária.</p>
+      <div class="tw-mx"><table class="mx" id="matrix"></table></div>
+      <div class="legend"><span><i class="cell v2"><span class="d" style="width:16px;height:16px;background:var(--rain);border-radius:50%"></span></i>Conduz</span><span><i class="cell v1"><span class="d" style="width:16px;height:16px;background:var(--rain-l);border-radius:50%"></span></i>Acompanha</span><span><i class="cell v0"><span class="d" style="width:16px;height:16px;background:var(--neu-bg);border-radius:50%"></span></i>Fora da AiCalhas (direto entre cliente e profissional)</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="comparativo">
+    <div class="wrap">
+      <h2>Comparativo rápido</h2>
+      <p class="sub">O que muda de um modelo para outro na prática: quem o cliente contrata, por onde passa o dinheiro e o que a gestão precisa controlar.</p>
+      <div class="tw-mx"><table class="mx cmp" id="cmp"></table></div>
+    </div>
+  </section>
+
+  <section class="sec" id="navegar">
+    <div class="wrap">
+      <h2>Como navegar a demonstração</h2>
+      <p class="sub">Tudo funciona neste navegador, sem internet e sem cadastro real. Contatos, mensagens e pagamentos apenas simulam o resultado.</p>
+      <div class="steps">
+        <div class="step"><b>Escolha um cenário</b><p>Cada cenário é um sistema independente, com seus próprios dados fictícios, relatórios e histórico.</p></div>
+        <div class="step"><b>Entre com um perfil</b><p>Use o acesso demonstrativo como Cliente, Profissional / Instalador ou Mediador / Gestão AiCalhas. Troque de perfil a qualquer momento pelo topo da tela.</p></div>
+        <div class="step"><b>Execute ações e veja o reflexo</b><p>Uma ação feita em um perfil aparece nos outros e fica registrada no histórico de atividades, com data, horário, usuário e perfil.</p></div>
+      </div>
+      <div class="mt"></div>
+      <div class="note"><svg class="i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><div>Para voltar aos dados iniciais, use <b>Reiniciar demonstração</b> dentro de cada cenário. As alterações ficam guardadas apenas nesta aba do navegador.</div></div>
+    </div>
+  </section>
+</main>
+
+<footer class="cv-foot">
+  <div class="wrap"><span class="logo"><b>Ai<span>Calhas</span></b></span><span>Apresentação de modelos de operação.</span><span class="spacer"></span><span>Ambiente demonstrativo — dados fictícios. Nenhuma operação real é realizada.</span></div>
+</footer>
+
+<script src="assets/aicalhas-core.js"></script>
+<script>
+(function () {
+  'use strict';
+  var A = window.AiC;
+  var SC = [
+    { n: 1, t: 'Vitrine de profissionais', f: 'cenario-1.html', c: '#1b87c9', lv: 1, nivel: 'Baixa',
+      d: 'O cliente pesquisa por cidade e serviço, compara perfis, portfólios e avaliações e negocia diretamente com o instalador.',
+      m: 'Organiza a vitrine: analisa cadastros, modera fotos e avaliações e apura relatos de clientes.', k: 'O profissional, diretamente' },
+    { n: 2, t: 'Indicação direcionada', f: 'cenario-2.html', c: '#23866f', lv: 2, nivel: 'Média',
+      d: 'O cliente descreve a necessidade e a AiCalhas indica um profissional adequado. A negociação continua direta entre as partes.',
+      m: 'Faz a triagem, seleciona o parceiro por região e especialidade, confirma disponibilidade e verifica o retorno.', k: 'O profissional indicado' },
+    { n: 3, t: 'Atendimento acompanhado', f: 'cenario-3.html', c: '#b8612e', lv: 3, nivel: 'Alta',
+      d: 'A AiCalhas indica o profissional e acompanha visita, orçamento, aprovação, execução e pós-venda.',
+      m: 'Coordena o atendimento, confere propostas, cobra respostas, registra decisões e ajuda a resolver dificuldades.', k: 'O profissional, com acompanhamento' },
+    { n: 4, t: 'Contratação centralizada', f: 'cenario-4.html', c: '#5146c0', lv: 4, nivel: 'Total',
+      d: 'O cliente contrata a AiCalhas, que coordena materiais, instalação, pagamento e pós-venda com sua rede de parceiros.',
+      m: 'Conduz toda a operação: proposta, pagamento, compras, entregas, agenda, execução, repasses e atendimento.', k: 'A AiCalhas' },
+  ];
+  function gutter(n, lv, c) {
+    var top = 8, bot = 52, h = (bot - top) * lv / 4, y = bot - h;
+    return '<svg class="lvl" viewBox="0 0 124 58" aria-hidden="true"><defs><clipPath id="gc' + n + '"><path d="M12 8 H112 V30 A22 22 0 0 1 90 52 H34 A22 22 0 0 1 12 30 Z"/></clipPath></defs>' +
+      '<path d="M12 8 H112 V30 A22 22 0 0 1 90 52 H34 A22 22 0 0 1 12 30 Z" fill="#eef3f7"/>' +
+      '<g clip-path="url(#gc' + n + ')"><rect x="0" y="' + y + '" width="124" height="60" fill="#3fa9e0"/><path d="M0 ' + y + ' q8 -3 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0" fill="none" stroke="#bfeeff" stroke-width="2"/></g>' +
+      '<path d="M12 8 V30 A22 22 0 0 0 34 52 H90 A22 22 0 0 0 112 30 V8" fill="none" stroke="#c26d38" stroke-width="5" stroke-linecap="round"/><path d="M4 8 H20 M104 8 H120" stroke="#c26d38" stroke-width="5" stroke-linecap="round"/></svg>';
+  }
+  document.getElementById('cards').innerHTML = SC.map(function (s) {
+    return '<article class="sc-card" style="--c:' + s.c + '"><div class="lv-row">' + gutter(s.n, s.lv, s.c) + '<small>Participação da AiCalhas<b>' + s.nivel + ' (' + s.lv + ' de 4)</b></small></div>' +
+      '<span class="sc-num">Cenário ' + s.n + '</span><h3>' + s.t + '</h3><p>' + s.d + '</p>' +
+      '<dl><div><dt>Papel do mediador</dt><dd>' + s.m + '</dd></div><div><dt>Quem o cliente contrata</dt><dd>' + s.k + '</dd></div></dl>' +
+      '<a class="btn" href="' + s.f + '">Explorar cenário</a></article>';
+  }).join('');
+
+  var ICO = { 2: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', 1: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', 0: '<path d="M6 12h12"/>' };
+  var LBL = { 2: 'Conduz', 1: 'Acompanha', 0: 'Fora' };
+  var mx = '<thead><tr><th>Etapa do atendimento</th>' + SC.map(function (s) { return '<th><span style="color:' + s.c + '">Cenário ' + s.n + '</span><b>' + s.t + '</b></th>'; }).join('') + '</tr></thead><tbody>' +
+    A.JOURNEY.map(function (j) { return '<tr><th>' + j.l + '</th>' + j.lv.map(function (v) { return '<td><span class="cell v' + v + '"><span class="d"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + ICO[v] + '</svg></span>' + LBL[v] + '</span></td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+  document.getElementById('matrix').innerHTML = mx;
+
+  var CMP = [
+    ['Quem o cliente contrata', 'O profissional', 'O profissional indicado', 'O profissional, com a AiCalhas acompanhando', 'A AiCalhas'],
+    ['Quem negocia preço e prazo', 'Cliente e profissional', 'Cliente e profissional', 'Cliente e profissional, com proposta conferida pela AiCalhas', 'A AiCalhas, com alçadas de desconto'],
+    ['Por onde passa o pagamento', 'Direto ao profissional', 'Direto ao profissional', 'Direto ao profissional', 'AiCalhas, com repasse ao parceiro'],
+    ['Materiais', 'Venda opcional por botão separado', 'Por conta do profissional', 'Listados no orçamento do profissional', 'Comprados e entregues pela AiCalhas'],
+    ['O painel da gestão acompanha', 'Profissionais, perfis, moderação e contatos gerados', 'Pedidos, encaminhamentos, respostas e resultado da indicação', 'Etapas, conversas, visitas, propostas, pendências e pós-venda', 'Vendas, compras, materiais, agenda, pagamentos, repasses e custos'],
+    ['Esforço operacional da AiCalhas', 'Baixo', 'Moderado', 'Alto', 'Muito alto'],
+    ['Ponto de atenção', 'Manter cadastros e regiões atualizados', 'Tempo de resposta dos parceiros', 'Equipe para acompanhar cada etapa e cobrar prazos', 'Definir quem aprova preços, descontos, compras, alterações e reclamações'],
+  ];
+  document.getElementById('cmp').innerHTML = '<thead><tr><th></th>' + SC.map(function (s) { return '<th><span style="color:' + s.c + '">Cenário ' + s.n + '</span><b>' + s.t + '</b></th>'; }).join('') + '</tr></thead><tbody>' + CMP.map(function (r) { return '<tr><th>' + r[0] + '</th>' + r.slice(1).map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+
+  /* Chuva: cada gota termina no telhado ou no chão, com um respingo sincronizado */
+  var rain = document.getElementById('rain'), ns = 'http://www.w3.org/2000/svg';
+  var rnd = A.rng(11), html = '';
+  function landY(x) {
+    if (x >= 150 && x <= 410) return 165 + rnd() * 88;
+    if (x > 60 && x < 150) { var e = 262 - (x - 60) * (112 / 90); return e + 6 + rnd() * (252 - e - 6); }
+    if (x > 410 && x < 500) { var e2 = 150 + (x - 410) * (112 / 90); return e2 + 6 + rnd() * (252 - e2 - 6); }
+    if (x >= 500 && x <= 552) return 376;
+    return 436;
+  }
+  for (var i = 0; i < 64; i++) {
+    var x = 14 + rnd() * 540, y = landY(x), t = (0.75 + rnd() * 0.45).toFixed(2), dl = (-rnd() * 2).toFixed(2);
+    var st = '--dy:' + (y + 10).toFixed(0) + 'px;--t:' + t + 's;--dl:' + dl + 's';
+    html += '<line class="drop" x1="' + x.toFixed(1) + '" y1="-14" x2="' + (x - 2).toFixed(1) + '" y2="0" stroke="#a9d8f2" stroke-width="1.6" stroke-linecap="round" style="' + st + '"/>';
+    html += '<ellipse class="splash" cx="' + (x - 7).toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="4.5" ry="1.6" fill="none" stroke="#cdeeff" stroke-width="1.2" style="' + st + '"/>';
+  }
+  rain.innerHTML = html;
+
+  var ctl = document.getElementById('sceneCtl'), scene = document.getElementById('scene'), hero = document.getElementById('hero');
+  var playIco = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>', pauseIco = ctl.innerHTML;
+  ctl.addEventListener('click', function () {
+    var p = scene.classList.toggle('paused'); hero.classList.toggle('paused', p);
+    ctl.innerHTML = p ? playIco : pauseIco; ctl.setAttribute('aria-label', p ? 'Retomar animação' : 'Pausar animação'); ctl.title = ctl.getAttribute('aria-label');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+AiCalhas — Apresentação interativa dos modelos de operação
+===========================================================
+
+COMO ABRIR
+1. Extraia o ZIP em qualquer pasta.
+2. Abra o arquivo index.html no navegador (Chrome, Edge, Firefox ou Safari atualizados).
+3. Não é preciso internet, instalação nem servidor.
+
+ESTRUTURA DOS ARQUIVOS
+index.html ............ Capa: os quatro cenários, matriz de participação e comparativo
+cenario-1.html ........ Vitrine de profissionais
+cenario-2.html ........ Indicação direcionada
+cenario-3.html ........ Atendimento acompanhado
+cenario-4.html ........ Contratação centralizada
+assets/aicalhas.css ... Estilos compartilhados (paleta, componentes, responsivo)
+assets/aicalhas-core.js  Núcleo comum: login demonstrativo, troca de perfis, menus,
+                         formulários, modais, relatórios, histórico/logs e reinício
+assets/cenario-N.js ... Dados fictícios, telas e ações de cada cenário
+
+ACESSO DEMONSTRATIVO (qualquer senha é aceita)
+Cliente ................ Mariana Costa ........ mariana.costa@email.demo
+Profissional ........... Carlos Mendes ........ carlos@mendescalhas.demo
+Mediador / Gestão ...... Juliana Rocha ........ juliana.rocha@aicalhas.demo
+Também é possível entrar pelo acesso rápido e trocar de perfil no topo da tela.
+
+BOM SABER
+- Todos os dados são fictícios. Contatos, mensagens e pagamentos apenas simulam o resultado.
+- As ações ficam guardadas na memória do navegador, apenas na aba aberta.
+- "Reiniciar demonstração" (menu lateral ou menu do usuário) restaura os dados iniciais.
+- Cada cenário tem histórico de atividades com data, horário, usuário, perfil e ação.
+  O mediador vê o histórico completo e pode exportá-lo em CSV.
+- Datas são relativas ao dia em que a demonstração é aberta, para os prazos fazerem sentido.
+
+ROTEIRO SUGERIDO PARA A REUNIÃO (cerca de 5 minutos por cenário)
+
+Cenário 1 — Vitrine de profissionais
+- Cliente: em "Buscar profissionais", filtre Campinas, abra a Mendes Calhas, veja portfólio
+  e avaliações e clique em "Entrar em contato".
+- Profissional: em "Novo cadastro", envie um cadastro de demonstração.
+- Mediador: aprove o cadastro em "Análise de cadastros" e volte ao Cliente para vê-lo na vitrine.
+- Mediador: abra o relato REL-01 (profissional não atende mais Hortolândia) e atualize as regiões.
+
+Cenário 2 — Indicação direcionada
+- Mediador: em "Triagem", no pedido PED-2041, clique em "Selecionar profissional",
+  consulte a disponibilidade e encaminhe para a Mendes Calhas.
+- Profissional: em "Oportunidades", aceite o pedido (os dados do cliente são liberados).
+- Cliente: em "Minhas solicitações", veja o profissional indicado e confirme o contato.
+- Mediador: em "Encaminhamentos", verifique o retorno e finalize a indicação.
+- Extra: PED-2038 está sem resposta há mais de 12 h — mostre "Cobrar" e "Substituir".
+
+Cenário 3 — Atendimento acompanhado
+- Mediador: abra a "Fila do dia" (pedidos novos, visitas, orçamentos, andamento e problemas).
+- Mediador: ATD-3012 — "Conferir proposta" (falta o prazo; a proposta volta ao profissional).
+- Mediador: ATD-3010 — orçamento atrasado; use "Cobrar orçamento do profissional".
+- Cliente: ATD-3015 — veja a conversa e aprove o orçamento conferido.
+- Profissional: ATD-3015 — inicie o serviço, atualize as etapas e conclua.
+- Cliente: confirme a conclusão e avalie.
+
+Cenário 4 — Contratação centralizada
+- Cliente: VEN-4021 — veja a proposta com materiais, instalação e frete; aprove e simule o Pix.
+- Mediador: gere o pedido de compra, confirme, registre o recebimento e programe entrega e instalação.
+- Profissional: na OS, confira os materiais, inicie a instalação e registre uma ocorrência.
+- Mediador: VEN-4012 — trate a falta de peça (reposição, custo adicional e aviso ao cliente).
+- Mediador: VEN-4020 — desconto de 12% exige aprovação da Gerência ("Alçadas e regras").
+- Mediador: mostre a "Visão financeira" (receita, custos, repasses e margem).
