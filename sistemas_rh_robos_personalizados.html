@@ -3,9 +3,9 @@
 :root{font-family:Inter,Arial,sans-serif;color:#26313d;background:#f4f6f9}*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(115deg,#e76a19,#f59b40);color:white;text-align:center;padding:57px 20px 65px}header h1{font-size:clamp(32px,5vw,52px);margin:0 0 10px}header p{opacity:.95;margin:0;font-size:16px}.wrap{max-width:1160px;margin:-30px auto 60px;padding:0 22px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}.card{background:white;border-radius:20px;box-shadow:0 8px 28px #27344912;padding:25px 17px 22px;text-align:center;display:flex;flex-direction:column;align-items:center;min-height:285px;border:1px solid #e8ebef;transition:transform .2s,box-shadow .2s}.card.active:hover{transform:translateY(-6px);box-shadow:0 15px 34px #27344920}.robot{height:138px;width:138px;margin:0 auto 12px}.card h2{font-size:16px;line-height:1.4;margin:0 0 15px;min-height:45px}.btn{margin-top:auto;background:#eb741f;color:white;text-decoration:none;padding:11px 20px;border-radius:11px;font-size:13px;font-weight:700;width:100%}.pending{opacity:.65}.pending .btn{background:#dce1e7;color:#596574;cursor:default}.tag{font-size:11px;letter-spacing:.09em;color:#a4abb5;font-weight:700;margin-bottom:10px}footer{text-align:center;color:#87919d;padding:10px 20px 30px;font-size:12px}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.grid{grid-template-columns:1fr}.wrap{max-width:370px}}
 </style></head><body><header><h1>Sistemas RH</h1><p>Central de acesso aos sistemas de gestão</p></header><main class="wrap"><div class="grid" id="grid"></div></main><footer>Central de Sistemas RH • Lumanoids</footer><script>
 const systems=[
-{name:"Gestão de Tarefas",url:"https://applumanoids.github.io/Gest-o-de-compliance/"},
-{name:"Gestão CIPA",url:"https://applumanoids.github.io/Gest-o-CIPA/"},
-{name:"Gestão de Saúde Ocupacional",url:"https://applumanoids.github.io/Sistema-3/"},
+{name:"Gestão de Tarefas",url:"https://applumanoids.github.io/Gestao-de-tarefas/"},
+{name:"Gestão CIPA",url:"https://applumanoids.github.io/Gestao-CIPA/"},
+{name:"Gestão de Saúde Ocupacional",url:"https://applumanoids.github.io/Gestao-de-Saude-Ocupacional/"},
 ...Array.from({length:5},()=>({name:"Em construção",url:null}))
 ];
 const accessories=[
