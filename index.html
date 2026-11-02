@@ -227,7 +227,7 @@
   <section class="sec" id="cenarios">
     <div class="wrap">
       <h2>Quatro cenários de operação</h2>
-      <p class="sub">Cada cenário é uma demonstração completa, com telas próprias para o cliente, o profissional instalador e o mediador da AiCalhas. A diferença está em até onde a AiCalhas participa da contratação.</p>
+      <p class="sub">Cada cenário é uma demonstração com telas próprias para cliente, profissional e mediador. A contratação da mão de obra varia; a compra e a entrega dos materiais são sempre conduzidas pela AiCalhas.</p>
       <div class="cards4" id="cards"></div>
     </div>
   </section>
@@ -244,7 +244,7 @@
   <section class="sec" id="comparativo">
     <div class="wrap">
       <h2>Comparativo rápido</h2>
-      <p class="sub">O que muda de um modelo para outro na prática: quem o cliente contrata, por onde passa o dinheiro e o que a gestão precisa controlar.</p>
+      <p class="sub">O que muda de um modelo para outro é a contratação e o acompanhamento da mão de obra. Em todos eles, a AiCalhas conduz a compra e a entrega dos materiais.</p>
       <div class="tw-mx"><table class="mx cmp" id="cmp"></table></div>
     </div>
   </section>
@@ -275,14 +275,14 @@
   var A = window.AiC;
   var SC = [
     { n: 1, t: 'Vitrine de profissionais', f: 'cenario-1.html', c: '#1b87c9', lv: 1, nivel: 'Baixa',
-      d: 'O cliente pesquisa por cidade e serviço, compara perfis, portfólios e avaliações e negocia diretamente com o instalador.',
-      m: 'Organiza a vitrine: analisa cadastros, modera fotos e avaliações e apura relatos de clientes.', k: 'O profissional, diretamente' },
+      d: 'O cliente pesquisa e escolhe o profissional para a mão de obra. A AiCalhas conduz a compra e a entrega dos materiais.',
+      m: 'Organiza a vitrine e conduz toda a operação de materiais: orçamento, pagamento, compra e entrega.', k: 'O profissional, diretamente' },
     { n: 2, t: 'Indicação direcionada', f: 'cenario-2.html', c: '#23866f', lv: 2, nivel: 'Média',
-      d: 'O cliente descreve a necessidade e a AiCalhas indica um profissional adequado. A negociação continua direta entre as partes.',
-      m: 'Faz a triagem, seleciona o parceiro por região e especialidade, confirma disponibilidade e verifica o retorno.', k: 'O profissional indicado' },
+      d: 'A AiCalhas indica o profissional para a mão de obra e conduz integralmente a compra e a entrega dos materiais.',
+      m: 'Faz a triagem e indicação do profissional e conduz orçamento, compra com fornecedores e entrega dos materiais.', k: 'O profissional indicado' },
     { n: 3, t: 'Atendimento acompanhado', f: 'cenario-3.html', c: '#b8612e', lv: 3, nivel: 'Alta',
-      d: 'A AiCalhas indica o profissional e acompanha visita, orçamento, aprovação, execução e pós-venda.',
-      m: 'Coordena o atendimento, confere propostas, cobra respostas, registra decisões e ajuda a resolver dificuldades.', k: 'O profissional, com acompanhamento' },
+      d: 'A AiCalhas acompanha a mão de obra e conduz orçamento, compra, recebimento e entrega dos materiais.',
+      m: 'Coordena o atendimento e conduz o processo de materiais, da cotação à entrega, além do acompanhamento da mão de obra.', k: 'O profissional, com acompanhamento' },
     { n: 4, t: 'Contratação centralizada', f: 'cenario-4.html', c: '#5146c0', lv: 4, nivel: 'Total',
       d: 'O cliente contrata a AiCalhas, que coordena materiais, instalação, pagamento e pós-venda com sua rede de parceiros.',
       m: 'Conduz toda a operação: proposta, pagamento, compras, entregas, agenda, execução, repasses e atendimento.', k: 'A AiCalhas' },
@@ -311,10 +311,10 @@
     ['Quem o cliente contrata', 'O profissional', 'O profissional indicado', 'O profissional, com a AiCalhas acompanhando', 'A AiCalhas'],
     ['Quem negocia preço e prazo', 'Cliente e profissional', 'Cliente e profissional', 'Cliente e profissional, com proposta conferida pela AiCalhas', 'A AiCalhas, com alçadas de desconto'],
     ['Por onde passa o pagamento', 'Direto ao profissional', 'Direto ao profissional', 'Direto ao profissional', 'AiCalhas, com repasse ao parceiro'],
-    ['Materiais', 'Venda opcional por botão separado', 'Por conta do profissional', 'Listados no orçamento do profissional', 'Comprados e entregues pela AiCalhas'],
-    ['O painel da gestão acompanha', 'Profissionais, perfis, moderação e contatos gerados', 'Pedidos, encaminhamentos, respostas e resultado da indicação', 'Etapas, conversas, visitas, propostas, pendências e pós-venda', 'Vendas, compras, materiais, agenda, pagamentos, repasses e custos'],
+    ['Compra e entrega de materiais', 'Conduzida pela AiCalhas', 'Conduzida pela AiCalhas', 'Conduzida pela AiCalhas', 'Conduzida pela AiCalhas'],
+    ['O painel da gestão acompanha', 'Profissionais, perfis, contatos e solicitações, orçamentos, compras e entregas de materiais', 'Pedidos, indicações e todo o fluxo de materiais: orçamento, compra, recebimento e entrega', 'Etapas, visitas, mão de obra e todo o fluxo de materiais, da cotação à entrega', 'Vendas, compras, materiais, agenda, pagamentos, repasses e custos'],
     ['Esforço operacional da AiCalhas', 'Baixo', 'Moderado', 'Alto', 'Muito alto'],
-    ['Ponto de atenção', 'Manter cadastros e regiões atualizados', 'Tempo de resposta dos parceiros', 'Equipe para acompanhar cada etapa e cobrar prazos', 'Definir quem aprova preços, descontos, compras, alterações e reclamações'],
+    ['Ponto de atenção', 'Estruturar catálogo, cotação, pagamento e logística de materiais', 'Controlar prazos de orçamento, compra com fornecedores e entrega', 'Integrar a compra de materiais ao cronograma da mão de obra', 'Definir alçadas de preço, compras, alterações e reclamações'],
   ];
   document.getElementById('cmp').innerHTML = '<thead><tr><th></th>' + SC.map(function (s) { return '<th><span style="color:' + s.c + '">Cenário ' + s.n + '</span><b>' + s.t + '</b></th>'; }).join('') + '</tr></thead><tbody>' + CMP.map(function (r) { return '<tr><th>' + r[0] + '</th>' + r.slice(1).map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
 
