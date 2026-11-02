@@ -210,7 +210,7 @@
       (o.conferencia ? '<div class="mt"></div>' + A.note('Conferido pela AiCalhas em ' + A.fdt(o.conferencia.ts) + ' (' + o.conferencia.checks.length + ' de ' + CONF.length + ' itens). A AiCalhas confere se a proposta está completa; medidas e dimensionamento são de responsabilidade do profissional.') : '') +
       (o.devolucao ? '<div class="mt"></div>' + A.note('<b>Devolvido para ajuste:</b> ' + e(o.devolucao), 'warn') : '') +
       (o.ajusteCliente ? '<div class="mt"></div>' + A.note('<b>Ajuste solicitado pelo cliente:</b> ' + e(o.ajusteCliente), 'warn') : '') +
-      (o.aprovadoEm ? '<div class="mt"></div>' + A.note('Aprovado por ' + e(o.aprovadoPor) + ' em ' + A.fdt(o.aprovadoEm) + '. Pagamento direto ao profissional, conforme as condições acima.', '', 'check') : '');
+      (o.aprovadoEm ? '<div class="mt"></div>' + A.note('Aprovado por ' + e(o.aprovadoPor) + ' em ' + A.fdt(o.aprovadoEm) + '. A mão de obra é tratada com o profissional; materiais são comprados e entregues pela AiCalhas.', '', 'check') : '');
   }
   function vDetalhe() {
     const a = atd(A.sel('atendimento'));
@@ -268,11 +268,11 @@
   }
   function vCliLista() {
     const list = meus().sort((a, b) => (a.ts < b.ts ? 1 : -1));
-    return A.ph('Meus atendimentos', 'A AiCalhas acompanha cada etapa: visita, orçamento, aprovação, execução e pós-venda.', A.nav('Nova solicitação', 'nova', null, 'p', 'plus')) + (list.length ? '<div class="stack">' + list.map(atdCard).join('') + '</div>' : A.card(null, A.empty('Nenhum atendimento ainda.', 'inbox')));
+    return A.ph('Meus atendimentos', 'A AiCalhas acompanha cada etapa: visita, orçamento, aprovação, compra e entrega de materiais, execução e pós-venda.', A.nav('Nova solicitação', 'nova', null, 'p', 'plus')) + (list.length ? '<div class="stack">' + list.map(atdCard).join('') + '</div>' : A.card(null, A.empty('Nenhum atendimento ainda.', 'inbox')));
   }
   function vCliNova() {
     const c = cli(MYCLI);
-    return A.ph('Nova solicitação', 'Descreva a necessidade. A AiCalhas designa o profissional, agenda a visita e acompanha o atendimento até o fim.') +
+    return A.ph('Nova solicitação', 'Descreva a necessidade. A AiCalhas designa o profissional, agenda a visita e acompanha o atendimento até o fim. A compra e a entrega dos materiais são sempre realizadas pela AiCalhas.') +
       '<div class="g21"><div>' + A.card(null, '<form data-form="c3.novaSave" class="fg" autocomplete="off">' +
         '<div class="f"><label>Serviço <i class="req">*</i></label><select class="inp" name="srv" required>' + db().servicos.map((s) => '<option value="' + s.id + '"' + (s.id === 'SRV-05' ? ' selected' : '') + '>' + e(s.nome) + '</option>').join('') + '</select></div>' +
         '<div class="f"><label>Prioridade</label><select class="inp" name="prioridade"><option>Normal</option><option>Alta</option></select></div>' +
@@ -282,7 +282,7 @@
         '<div class="f full"><label>Fotos</label><div class="pf"><label class="pf-up">' + I('camera', 22) + '<span><b>Escolher fotos do dispositivo</b><small>Simulação: as imagens ficam apenas neste navegador.</small></span><input type="file" name="fotos" accept="image/*" multiple data-preview="1"></label><div class="fprev"></div><div class="pf-or">Ou marque imagens ilustrativas:</div><div class="pf-pre" data-multi="fotos__preset">' + ['rufo', 'vazamento', 'calha-frontal', 'condutor'].map((k, i) => '<label class="pf-p"><input type="checkbox" name="fotos__preset" value="' + k + '"' + (i === 0 ? ' checked' : '') + '>' + A.photo(k) + '<small>' + e(A.ILL[k].l) + '</small></label>').join('') + '</div></div></div>' +
         '<div class="f full"><label class="ck single"><input type="checkbox" data-bool="1" name="consent" required checked><span>Autorizo a AiCalhas a compartilhar meus dados com o profissional designado para este atendimento. <i class="req">*</i></span></label></div>' +
         '<div class="f full"><div class="row"><span class="spacer"></span><button class="btn p" type="submit">' + I('send', 16) + ' Enviar solicitação</button></div></div></form>') + '</div>' +
-      '<div>' + A.card('Como a AiCalhas acompanha', '<ol class="ol"><li>Triagem e designação do profissional.</li><li>Agendamento e confirmação da visita.</li><li>Conferência do orçamento antes de chegar a você.</li><li>Registro da sua aprovação e acompanhamento da execução.</li><li>Confirmação da conclusão, avaliação e pós-venda.</li></ol>' + A.note('O pagamento é feito diretamente ao profissional, conforme as condições do orçamento.'), { icon: 'shield' }) + '</div></div>';
+      '<div>' + A.card('Como a AiCalhas acompanha', '<ol class="ol"><li>Triagem e designação do profissional.</li><li>Agendamento e confirmação da visita.</li><li>Conferência do orçamento antes de chegar a você.</li><li>Registro da sua aprovação e acompanhamento da execução.</li><li>Confirmação da conclusão, avaliação e pós-venda.</li></ol>' + A.note('A mão de obra é negociada com o profissional. Todo material previsto no orçamento é comprado do AiCalhas e entregue pela AiCalhas; o profissional não vende materiais ao cliente.'), { icon: 'shield' }) + '</div></div>';
   }
   function vConversas() {
     const list = meus().filter((a) => a.msgs.length).sort((a, b) => (a.msgs[a.msgs.length - 1].ts < b.msgs[b.msgs.length - 1].ts ? 1 : -1));
@@ -325,7 +325,7 @@
   }
   function vProMateriais() {
     const list = meus().filter((a) => a.orc && ['aprovado', 'execucao'].indexOf(a.etapa) >= 0);
-    return A.ph('Lista de materiais', 'Materiais previstos nos orçamentos aprovados. Marque o que já foi separado para a obra.') +
+    return A.ph('Lista de materiais', 'Materiais fornecidos pela AiCalhas e previstos nos orçamentos aprovados. O profissional acompanha a separação, mas a venda e a entrega são responsabilidade da AiCalhas.') +
       (list.length ? '<div class="stack">' + list.map((a) => A.card(a.id + ' — ' + a.titulo, A.table([
         { l: 'Separado', f: (x) => '<input type="checkbox" aria-label="Separado" data-act="c3.matSep" data-id="' + a.id + '" data-i="' + x.i + '"' + (x.sep ? ' checked' : '') + '>' },
         { l: 'Material', f: (x) => e(x.nome) }, { l: 'Quantidade', cls: 'r', f: (x) => A.num(x.qtd, x.qtd % 1 ? 1 : 0) + ' ' + e(x.un) }, { l: 'Valor', cls: 'r', f: (x) => A.money(x.qtd * x.preco) },
@@ -628,15 +628,15 @@
     seed: seed, seedLogs: seedLogs, actions: actions,
     about: {
       level: 3,
-      resumo: 'A AiCalhas indica o profissional e permanece presente no atendimento, da solicitação à conclusão: combina a visita, confere o orçamento, registra a aprovação, acompanha a execução e cuida do pós-venda. O pagamento é feito direto ao profissional.',
-      como: ['O cliente registra a solicitação e a AiCalhas faz a triagem.', 'O mediador designa o profissional e combina a visita com as duas partes.', 'O profissional registra a visita e envia o orçamento.', 'A AiCalhas confere se a proposta tem escopo, materiais, instalação e prazos e libera ao cliente.', 'O cliente aprova e o profissional executa, atualizando as etapas.', 'A AiCalhas confirma a conclusão, solicita avaliação e acompanha garantias e reclamações.'],
+      resumo: 'A AiCalhas indica o profissional e permanece presente no atendimento, da solicitação à conclusão: combina a visita, confere o orçamento, centraliza a venda e a entrega dos materiais, registra a aprovação, acompanha a execução e cuida do pós-venda.',
+      como: ['O cliente registra a solicitação e a AiCalhas faz a triagem.', 'O mediador designa o profissional e combina a visita com as duas partes.', 'O profissional registra a visita e envia o orçamento.', 'A AiCalhas confere se a proposta tem escopo, materiais, instalação e prazos e libera ao cliente.', 'O cliente aprova a proposta e compra os materiais diretamente da AiCalhas, que organiza a entrega.', 'O profissional executa a mão de obra com os materiais fornecidos pela AiCalhas, atualizando as etapas.', 'A AiCalhas confirma a conclusão, solicita avaliação e acompanha garantias e reclamações.'],
       mediador: ['Faz a triagem e seleciona o parceiro', 'Ajuda a combinar a visita', 'Acompanha o envio do orçamento', 'Confere escopo, materiais, instalação e prazos', 'Registra aprovações e alterações', 'Acompanha andamento e atrasos', 'Encaminha problemas para quem precisa resolvê-los', 'Confirma a conclusão e solicita avaliação'],
-      limite: 'a AiCalhas acompanha o processo comercial e operacional, mas não define medidas nem dimensionamento (decisões técnicas do profissional) e não recebe o pagamento, que é feito diretamente ao profissional.',
+      limite: 'a AiCalhas centraliza a venda e a entrega dos materiais e acompanha o processo comercial e operacional. O profissional continua responsável pelas medidas, dimensionamento e execução técnica da mão de obra.',
       exemplo: 'O instalador visitou o condomínio, mas não enviou o orçamento. O mediador cobra o retorno, atualiza o cliente e acompanha até existir uma resposta.',
       painel: 'Cada etapa do atendimento, conversas, visitas, propostas, documentos, pendências, atrasos, reclamações e pós-venda.',
       perfil: {
-        cliente: { t: 'A AiCalhas acompanha você do pedido à conclusão.', d: 'Converse com o profissional e com a AiCalhas, aprove o orçamento conferido e acompanhe cada etapa. O pagamento é direto ao profissional.' },
-        profissional: { t: 'Você executa; a AiCalhas organiza o atendimento.', d: 'Registre a visita, envie o orçamento para conferência e atualize as etapas da execução. Decisões técnicas são suas.' },
+        cliente: { t: 'A AiCalhas acompanha o serviço e fornece os materiais.', d: 'Converse com o profissional e com a AiCalhas, aprove o orçamento conferido e acompanhe cada etapa. A compra e a entrega dos materiais são feitas pela AiCalhas.' },
+        profissional: { t: 'Você executa a mão de obra; a AiCalhas fornece os materiais.', d: 'Registre a visita, envie o orçamento para conferência, utilize os materiais fornecidos pela AiCalhas e atualize as etapas da execução. Decisões técnicas são suas.' },
         mediador: { t: 'Você coordena cada atendimento até o fim.', d: 'Acompanhe a fila do dia, agende visitas, confira propostas, cobre respostas, registre decisões e resolva pendências e reclamações.' },
       },
     },
