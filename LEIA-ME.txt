@@ -24,6 +24,7 @@ Mediador / Gestão ...... Juliana Rocha ........ juliana.rocha@aicalhas.demo
 Também é possível entrar pelo acesso rápido e trocar de perfil no topo da tela.
 
 BOM SABER
+- Em todos os quatro cenários, a compra e a entrega dos materiais são conduzidas pela AiCalhas. O profissional responde pela mão de obra e não vende materiais ao cliente.
 - Todos os dados são fictícios. Contatos, mensagens e pagamentos apenas simulam o resultado.
 - As ações ficam guardadas no sessionStorage do navegador, separadas por cenário e por aba.
   Elas permanecem ao recarregar a mesma aba; ao encerrar a sessão da aba, podem ser descartadas.
@@ -40,6 +41,7 @@ Cenário 1 — Vitrine de profissionais
 - Profissional: em "Novo cadastro", envie um cadastro de demonstração.
 - Mediador: aprove o cadastro em "Análise de cadastros" e volte ao Cliente para vê-lo na vitrine.
 - Mediador: abra o relato REL-01 (profissional não atende mais Hortolândia) e atualize as regiões.
+- Cliente: abra "Compra e entrega de materiais" e solicite itens; mediador conduz orçamento, compra, recebimento e entrega.
 
 Cenário 2 — Indicação direcionada
 - Mediador: em "Triagem", no pedido PED-2041, clique em "Selecionar profissional",
@@ -47,6 +49,7 @@ Cenário 2 — Indicação direcionada
 - Profissional: em "Oportunidades", aceite o pedido (os dados do cliente são liberados).
 - Cliente: em "Minhas solicitações", veja o profissional indicado e confirme o contato.
 - Mediador: em "Encaminhamentos", verifique o retorno e finalize a indicação.
+- Cliente: solicite materiais no menu "Compra e entrega de materiais"; mediador conduz todas as etapas até a entrega.
 - Extra: PED-2038 está sem resposta há mais de 12 h — mostre "Cobrar" e "Substituir".
 
 Cenário 3 — Atendimento acompanhado
@@ -56,6 +59,7 @@ Cenário 3 — Atendimento acompanhado
 - Cliente: ATD-3015 — veja a conversa e aprove o orçamento conferido.
 - Profissional: ATD-3015 — inicie o serviço, atualize as etapas e conclua.
 - Cliente: confirme a conclusão e avalie.
+- Cliente: use "Compra e entrega de materiais" para solicitar os itens; a AiCalhas conduz orçamento, pagamento, compra e entrega.
 
 Cenário 4 — Contratação centralizada
 - Cliente: VEN-4021 — veja a proposta com materiais, instalação e frete; aprove e simule o Pix.
