@@ -178,13 +178,13 @@
       '</div><div class="stack">' +
       A.card('Serviços oferecidos', (p.servDet || []).filter((s) => s.ativo).map((s) => '<div class="li"><div class="lt"><b>' + e(srvName(s.srv)) + '</b><small>Prazo médio: ' + e(s.prazo) + '</small></div><span class="small muted">a partir de</span><b class="num">' + A.money(s.apartir) + '</b></div>').join(''), { icon: 'tool' }) +
       A.card('Regiões atendidas', A.chips(p.regioes, 'acc'), { icon: 'pin' }) +
-      A.card('Sobre', '<p>' + e(p.sobre) + '</p>' + A.note('Preço, prazo, execução e pagamento são combinados diretamente com o profissional. A AiCalhas verifica o cadastro e modera avaliações.'), { icon: 'info' }) +
+      A.card('Sobre', '<p>' + e(p.sobre) + '</p>' + A.note('Mão de obra, prazo de execução e pagamento do serviço são combinados diretamente com o profissional. Materiais são comprados e pagos à AiCalhas, que organiza a entrega.'), { icon: 'info' }) +
       '</div></div>';
   }
   function vCliContatos() {
     const list = db().contatos.filter((c) => c.clienteId === MYCLI).sort((a, b) => (a.ts < b.ts ? 1 : -1));
     return A.ph('Meus contatos', 'Profissionais com quem você entrou em contato pela vitrine.') +
-      A.note('Neste modelo, a conversa e a negociação acontecem diretamente entre você e o profissional. A AiCalhas registra apenas que o contato foi gerado.') + '<div class="mt"></div>' +
+      A.note('Neste modelo, a conversa sobre a mão de obra acontece diretamente entre você e o profissional. A compra e a entrega de todos os materiais continuam centralizadas na AiCalhas.') + '<div class="mt"></div>' +
       A.card(null, A.table([
         { l: 'Data', f: (c) => A.fdtn(c.ts) },
         { l: 'Profissional', f: (c) => '<b>' + e(pro(c.pro).empresa) + '</b><small>' + e(pro(c.pro).nome) + '</small>' },
@@ -793,7 +793,7 @@
     about: {
       level: 1,
       resumo: 'O cliente pesquisa profissionais por cidade e serviço, compara perfis, portfólios e avaliações e combina a execução da mão de obra com o instalador. A compra e a entrega dos materiais são sempre realizadas pela AiCalhas, que também cuida da qualidade da vitrine.',
-      como: ['O profissional se cadastra com dados, serviços, regiões, documentos e fotos.', 'A AiCalhas analisa o cadastro e publica o perfil na vitrine.', 'O cliente busca por cidade e serviço e compara os profissionais.', 'O cliente entra em contato diretamente (WhatsApp, telefone ou mensagem).', 'Preço, prazo, execução e pagamento são combinados entre cliente e profissional.', 'O cliente pode avaliar o profissional ou relatar problemas, que passam pela moderação.'],
+      como: ['O profissional se cadastra com dados, serviços, regiões, documentos e fotos.', 'A AiCalhas analisa o cadastro e publica o perfil na vitrine.', 'O cliente busca por cidade e serviço e compara os profissionais.', 'O cliente entra em contato diretamente (WhatsApp, telefone ou mensagem).', 'Preço e prazo da mão de obra são combinados entre cliente e profissional. Materiais são vendidos e entregues pela AiCalhas.', 'O cliente pode avaliar o profissional ou relatar problemas, que passam pela moderação.'],
       mediador: ['Analisa o cadastro antes de publicar', 'Confere se o portfólio atende às regras', 'Atualiza regiões atendidas e contatos', 'Modera avaliações e apura reclamações recebidas'],
       limite: 'a AiCalhas não participa da negociação da mão de obra nem da execução, mas é sempre responsável pela venda e pela entrega dos materiais. O cliente não compra materiais diretamente do profissional.',
       exemplo: 'Um instalador deixou de atender Hortolândia. Uma padaria relata que o contato não teve resultado; o mediador confirma com o profissional e atualiza as regiões do perfil para evitar novos contatos sem retorno.',
