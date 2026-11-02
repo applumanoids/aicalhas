@@ -276,7 +276,7 @@
     if (!v) return A.empty('Pedido não encontrado.');
     const p = A.profile(), med = p === 'mediador';
     const tab = A.tab('ven', 'resumo');
-    const tabs = [{ id: 'resumo', l: 'Resumo' }, { id: 'proposta', l: 'Proposta' }, { id: 'acomp', l: 'Acompanhamento' }].concat(med ? [{ id: 'fin', l: 'Financeiro' }, { id: 'compra', l: 'Compra e entrega' }, { id: 'hist', l: 'Histórico' }] : [{ id: 'docs', l: 'Documentos' }]);
+    const tabs = [{ id: 'resumo', l: 'Resumo' }, { id: 'proposta', l: 'Proposta' }, { id: 'acomp', l: 'Acompanhamento' }].concat(med ? [{ id: 'fin', l: 'Financeiro' }, { id: 'compra', l: 'Compra e entrega de materiais' }, { id: 'hist', l: 'Histórico' }] : [{ id: 'docs', l: 'Documentos' }]);
     let body = '';
     const pf = proDe(v) ? pro(proDe(v)) : null;
     if (tab === 'resumo') {
@@ -797,7 +797,7 @@
     profiles: {
       cliente: {
         home: 'pedidos',
-        menu: [{ sec: 'Compras' }, { id: 'pedidos', label: 'Meus pedidos', icon: 'box', render: vCliPedidos, badge: () => meus().filter((v) => ['enviada', 'aprovada', 'concluido'].indexOf(v.etapa) >= 0).length }, { id: 'nova', label: 'Solicitar orçamento', icon: 'plus', render: vCliNova }, { id: 'chamados', label: 'Atendimento e garantia', icon: 'chat', render: vCliChamados }, { sec: 'Cadastro' }, { id: 'dados', label: 'Meus dados', icon: 'user', render: vCliDados }],
+        menu: [{ sec: 'Compra e entrega de materiais' }, { id: 'pedidos', label: 'Meus pedidos', icon: 'box', render: vCliPedidos, badge: () => meus().filter((v) => ['enviada', 'aprovada', 'concluido'].indexOf(v.etapa) >= 0).length }, { id: 'nova', label: 'Solicitar orçamento', icon: 'plus', render: vCliNova }, { id: 'chamados', label: 'Atendimento e garantia', icon: 'chat', render: vCliChamados }, { sec: 'Cadastro' }, { id: 'dados', label: 'Meus dados', icon: 'user', render: vCliDados }],
         hidden: { pedido: { title: 'Pedido', parent: 'pedidos', render: vPedido } },
       },
       profissional: {
@@ -807,7 +807,7 @@
       },
       mediador: {
         home: 'painel',
-        menu: [{ sec: 'Operação' }, { id: 'painel', label: 'Painel da operação', icon: 'home', render: vMedPainel }, { id: 'propostas', label: 'Propostas', icon: 'receipt', render: vMedPropostas, badge: () => db().vendas.filter((v) => ['proposta', 'alcada'].indexOf(v.etapa) >= 0 || (v.etapa === 'avaliacao' && !v.aval)).length }, { id: 'vendas', label: 'Vendas e pedidos', icon: 'briefcase', render: vMedVendas }, { id: 'compras', label: 'Compras e materiais', icon: 'cart', render: vMedCompras, badge: () => db().vendas.filter((v) => v.etapa === 'pago').length }, { id: 'agenda', label: 'Agenda e entregas', icon: 'calendar', render: vMedAgenda }, { id: 'atendimento', label: 'Atendimento e pós-venda', icon: 'chat', render: vMedAtend, badge: () => db().vendas.reduce((s, v) => s + v.ocorrencias.filter((o) => o.status === 'Aberta').length + (v.pos ? v.pos.chamados.filter((c) => c.status !== 'Resolvido').length : 0), 0) },
+        menu: [{ sec: 'Operação' }, { id: 'painel', label: 'Painel da operação', icon: 'home', render: vMedPainel }, { id: 'propostas', label: 'Propostas', icon: 'receipt', render: vMedPropostas, badge: () => db().vendas.filter((v) => ['proposta', 'alcada'].indexOf(v.etapa) >= 0 || (v.etapa === 'avaliacao' && !v.aval)).length }, { id: 'vendas', label: 'Vendas e pedidos', icon: 'briefcase', render: vMedVendas }, { id: 'compras', label: 'Compra e entrega de materiais', icon: 'cart', render: vMedCompras, badge: () => db().vendas.filter((v) => v.etapa === 'pago').length }, { id: 'agenda', label: 'Agenda e entregas', icon: 'calendar', render: vMedAgenda }, { id: 'atendimento', label: 'Atendimento e pós-venda', icon: 'chat', render: vMedAtend, badge: () => db().vendas.reduce((s, v) => s + v.ocorrencias.filter((o) => o.status === 'Aberta').length + (v.pos ? v.pos.chamados.filter((c) => c.status !== 'Resolvido').length : 0), 0) },
           { sec: 'Gestão' }, { id: 'financeiro', label: 'Financeiro', icon: 'money', render: vMedFin }, { id: 'alcadas', label: 'Alçadas e regras', icon: 'scale', render: vMedAlcadas }, { id: 'relatorios', label: 'Relatórios', icon: 'chart', render: vMedRel }, { id: 'cadastros', label: 'Cadastros', icon: 'layers', render: vMedCad }],
         hidden: { venda: { title: 'Pedido', parent: 'vendas', render: vPedido } },
       },
