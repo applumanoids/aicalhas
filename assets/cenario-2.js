@@ -124,7 +124,7 @@
      ------------------------------------------------------------------ */
   function vCliLista() {
     const list = db().pedidos.filter((p) => p.clienteId === MYCLI).sort((a, b) => (a.ts < b.ts ? 1 : -1));
-    return A.ph('Minhas solicitações', 'Conte o que precisa e a AiCalhas indica um profissional adequado para a sua região. A compra e a entrega dos materiais são sempre feitas pela AiCalhas.', A.nav('Nova solicitação', 'nova', null, 'p', 'plus')) +
+    return A.ph('Minhas solicitações', 'Conte o que precisa e a AiCalhas indica um profissional adequado para sua região. A compra, o pagamento, a aquisição com fornecedores e a entrega dos materiais são conduzidos pela AiCalhas.', A.nav('Nova solicitação', 'nova', null, 'p', 'plus')) +
       (list.length ? '<div class="stack">' + list.map((p) => {
         const pf = p.pro && ['Aceito', 'Em contato', 'Concluído'].indexOf(p.status) >= 0 ? pro(p.pro) : null;
         return '<section class="card"><div class="card-h">' + I('clipboard', 18) + '<h3>' + e(p.titulo) + '</h3><div class="card-r">' + A.badge(p.status === 'Recusado' ? 'Em análise' : p.status === 'Encaminhado' ? 'Aguardando aceite' : p.status, p.status === 'Recusado' ? 'warn' : null) + '</div></div><div class="card-b">' +
@@ -134,7 +134,7 @@
   }
   function vCliNova() {
     const c = cli(MYCLI);
-    return A.ph('Nova solicitação', 'Descreva o problema, envie fotos e informe o endereço. A AiCalhas analisa e indica um profissional.') +
+    return A.ph('Nova solicitação', 'Descreva o problema, envie fotos e informe o endereço. A AiCalhas analisa e indica o profissional e conduz separadamente todo o processo de compra e entrega dos materiais.') +
       '<div class="g21"><div>' + A.card(null, '<form data-form="c2.novaSave" class="fg" autocomplete="off">' +
         '<div class="f"><label>Serviço necessário <i class="req">*</i></label><select class="inp" name="srv" required>' + db().servicos.filter((s) => s.ativo).map((s) => '<option value="' + s.id + '"' + (s.id === 'SRV-02' ? ' selected' : '') + '>' + e(s.nome) + '</option>').join('') + '</select></div>' +
         '<div class="f"><label>Urgência <i class="req">*</i></label><select class="inp" name="urgencia" required>' + URG.map((u) => '<option' + (u === 'Esta semana' ? ' selected' : '') + '>' + u + '</option>').join('') + '</select></div>' +
@@ -545,15 +545,15 @@
     about: {
       level: 2,
       resumo: 'O cliente descreve a necessidade com fotos e localização. A AiCalhas faz a triagem e indica o profissional adequado. Cliente e profissional combinam a mão de obra; materiais são comprados e pagos diretamente à AiCalhas, que organiza a entrega.',
-      como: ['O cliente registra a solicitação com descrição, fotos e localização.', 'A AiCalhas faz a triagem e classifica serviço, urgência e prioridade.', 'O mediador seleciona parceiros por região, especialidade e disponibilidade.', 'O profissional recebe a oportunidade e aceita ou recusa dentro do prazo.', 'Com o aceite, os contatos são liberados e cliente e profissional combinam a execução da mão de obra. Materiais são comprados e pagos à AiCalhas.', 'A AiCalhas verifica se o cliente recebeu retorno e substitui o profissional quando necessário.'],
+      como: ['O cliente registra a solicitação com descrição, fotos e localização.', 'A AiCalhas faz a triagem e classifica serviço, urgência e prioridade.', 'O mediador seleciona parceiros por região, especialidade e disponibilidade.', 'O profissional recebe a oportunidade e aceita ou recusa dentro do prazo.', 'Com o aceite, os contatos são liberados e cliente e profissional combinam a execução da mão de obra. A AiCalhas conduz o orçamento, a compra e a entrega dos materiais.', 'A AiCalhas verifica se o cliente recebeu retorno e substitui o profissional quando necessário.'],
       mediador: ['Entende o serviço solicitado', 'Identifica profissionais da região e da especialidade', 'Confirma quem está disponível', 'Encaminha o pedido e apresenta as partes', 'Verifica se o cliente recebeu retorno', 'Busca outro parceiro quando o primeiro não atende'],
       limite: 'a AiCalhas indica o profissional para a mão de obra, mas mantém sob sua responsabilidade a venda e a entrega dos materiais. O cliente não compra materiais diretamente do profissional; os pedidos de materiais são feitos à AiCalhas.',
       exemplo: 'O cliente precisa de atendimento nesta semana. O mediador consulta os parceiros disponíveis na cidade e encaminha para quem consegue fazer a visita. Se o parceiro recusar ou não responder no prazo, o pedido vai para outro.',
       painel: 'Pedidos recebidos, triagem, encaminhamentos, respostas e prazos dos parceiros, substituições e o resultado de cada indicação.',
       perfil: {
         cliente: { t: 'A AiCalhas indica quem executa e fornece os materiais.', d: 'Envie a descrição e as fotos. Você combina a mão de obra com o profissional; compra e entrega de materiais são sempre feitas pela AiCalhas.' },
-        profissional: { t: 'Você recebe oportunidades e executa a mão de obra.', d: 'Aceite ou recuse dentro do prazo. Combine a execução com o cliente. Materiais são vendidos e entregues exclusivamente pela AiCalhas.' },
-        mediador: { t: 'Você faz a triagem e coordena o fornecimento de materiais.', d: 'Classifique os pedidos, encaminhe por região e especialidade, acompanhe respostas e direcione toda necessidade de compra e entrega de materiais para a AiCalhas.' },
+        profissional: { t: 'Você recebe oportunidades e executa a mão de obra.', d: 'Aceite ou recuse dentro do prazo. Combine a execução com o cliente. A AiCalhas conduz orçamento, pagamento, compra e entrega dos materiais.' },
+        mediador: { t: 'Você faz a triagem e coordena o fornecimento de materiais.', d: 'Classifique os pedidos, encaminhe por região e especialidade, acompanhe respostas e conduza orçamento, pagamento, compra com fornecedores, recebimento e entrega de todos os materiais.' },
       },
     },
     profiles: {
