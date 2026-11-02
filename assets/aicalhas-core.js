@@ -316,7 +316,7 @@
   function materialStatus(o){ return ['Solicitação recebida','Orçamento enviado','Pagamento confirmado','Compra realizada','Recebido pela AiCalhas','Em rota de entrega','Entregue'][o.step] || 'Solicitação recebida'; }
   function materialClient(){
     const rows=materialOrders().filter(o=>o.clientId===(AiC.me().ref||'CLI-201'));
-    return AiC.ph('Compra e entrega de materiais','A AiCalhas conduz a solicitação, o orçamento, o pagamento, a compra com fornecedor e a entrega.',AiC.b('Solicitar materiais','core.materialNew',{},'p','cart')) + AiC.note('Materiais são vendidos exclusivamente pela AiCalhas. O profissional não vende nem recebe pagamento por materiais.') + '<div class="mt"></div>' + AiC.card(null, rows.length ? AiC.table([{l:'Pedido',f:o=>'<b>'+AiC.esc(o.id)+'</b>'},{l:'Material',f:o=>AiC.esc(o.name)},{l:'Quantidade',f:o=>o.qty+' '+AiC.esc(o.unit)},{l:'Status',f:o=>AiC.badge(materialStatus(o))},{l:'Orçamento',f:o=>o.price?AiC.money(o.price):'A preparar'},{l:'Entrega',f:o=>AiC.esc(o.address)}],rows) : AiC.empty('Nenhuma solicitação de materiais.','box'));
+    return AiC.ph('Compra e entrega de materiais','A AiCalhas conduz a solicitação, o orçamento, o pagamento, a compra com fornecedor e a entrega.',AiC.b('Solicitar materiais','core.materialNew',{},'p','cart')) + AiC.note('Materiais são vendidos exclusivamente pela AiCalhas. O profissional não vende nem recebe pagamento por materiais.') + '<div class="mt"></div>' + AiC.card(null, rows.length ? AiC.table([{l:'Pedido',f:o=>'<b>'+AiC.esc(o.id)+'</b>'},{l:'Material',f:o=>AiC.esc(o.name)},{l:'Quantidade',f:o=>o.qty+' '+AiC.esc(o.unit)},{l:'Status',f:o=>AiC.badge(materialStatus(o))},{l:'Orçamento',f:o=>o.price?AiC.money(o.price):'A preparar'},{l:'Entrega',f:o=>AiC.esc(o.address)},{l:'Ação',f:o=>o.step===1?AiC.b('Aprovar e pagar à AiCalhas','core.materialApprove',{id:o.id},'sm p','check'):''}],rows) : AiC.empty('Nenhuma solicitação de materiais.','box'));
   }
   function materialManager(){
     const rows=materialOrders();
@@ -591,7 +591,7 @@
     { l: 'Visita técnica e orçamento', lv: [0, 0, 1, 2] },
     { l: 'Negociação de preço e prazo', lv: [0, 0, 1, 2] },
     { l: 'Pagamento', lv: [0, 0, 0, 2] },
-    { l: 'Compra e entrega de materiais', lv: [0, 0, 0, 2] },
+    { l: 'Compra e entrega de materiais', lv: [2, 2, 2, 2] },
     { l: 'Execução do serviço', lv: [0, 0, 1, 2] },
     { l: 'Pós-venda, avaliações e reclamações', lv: [1, 1, 2, 2] },
   ];
