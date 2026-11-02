@@ -325,7 +325,7 @@
   }
   function vProMateriais() {
     const list = meus().filter((a) => a.orc && ['aprovado', 'execucao'].indexOf(a.etapa) >= 0);
-    return A.ph('Lista de materiais', 'Materiais fornecidos pela AiCalhas e previstos nos orçamentos aprovados. O profissional acompanha a separação, mas a venda e a entrega são responsabilidade da AiCalhas.') +
+    return A.ph('Lista de materiais', 'Materiais fornecidos pela AiCalhas. O profissional acompanha a disponibilidade para executar a mão de obra; a compra, o recebimento e a entrega são coordenados pela AiCalhas.') +
       (list.length ? '<div class="stack">' + list.map((a) => A.card(a.id + ' — ' + a.titulo, A.table([
         { l: 'Separado', f: (x) => '<input type="checkbox" aria-label="Separado" data-act="c3.matSep" data-id="' + a.id + '" data-i="' + x.i + '"' + (x.sep ? ' checked' : '') + '>' },
         { l: 'Material', f: (x) => e(x.nome) }, { l: 'Quantidade', cls: 'r', f: (x) => A.num(x.qtd, x.qtd % 1 ? 1 : 0) + ' ' + e(x.un) }, { l: 'Valor', cls: 'r', f: (x) => A.money(x.qtd * x.preco) },
@@ -629,13 +629,13 @@
     about: {
       level: 3,
       resumo: 'A AiCalhas indica o profissional e permanece presente no atendimento, da solicitação à conclusão: combina a visita, confere o orçamento, centraliza a venda e a entrega dos materiais, registra a aprovação, acompanha a execução e cuida do pós-venda.',
-      como: ['O cliente registra a solicitação e a AiCalhas faz a triagem.', 'O mediador designa o profissional e combina a visita com as duas partes.', 'O profissional registra a visita e envia o orçamento.', 'A AiCalhas confere se a proposta tem escopo, materiais, instalação e prazos e libera ao cliente.', 'O cliente aprova a proposta e compra os materiais diretamente da AiCalhas, que organiza a entrega.', 'O profissional executa a mão de obra com os materiais fornecidos pela AiCalhas, atualizando as etapas.', 'A AiCalhas confirma a conclusão, solicita avaliação e acompanha garantias e reclamações.'],
+      como: ['O cliente registra a solicitação e a AiCalhas faz a triagem.', 'O mediador designa o profissional e combina a visita com as duas partes.', 'O profissional registra a visita e envia o orçamento.', 'A AiCalhas confere se a proposta tem escopo, materiais, instalação e prazos e libera ao cliente.', 'O cliente aprova a proposta de mão de obra e, na área de materiais, aprova o orçamento da AiCalhas; a AiCalhas recebe o pagamento, compra com fornecedores, confere e entrega.', 'O profissional executa a mão de obra com os materiais fornecidos pela AiCalhas, atualizando as etapas.', 'A AiCalhas confirma a conclusão, solicita avaliação e acompanha garantias e reclamações.'],
       mediador: ['Faz a triagem e seleciona o parceiro', 'Ajuda a combinar a visita', 'Acompanha o envio do orçamento', 'Confere escopo, materiais, instalação e prazos', 'Registra aprovações e alterações', 'Acompanha andamento e atrasos', 'Encaminha problemas para quem precisa resolvê-los', 'Confirma a conclusão e solicita avaliação'],
       limite: 'a AiCalhas centraliza a venda e a entrega dos materiais e acompanha o processo comercial e operacional. O profissional continua responsável pelas medidas, dimensionamento e execução técnica da mão de obra.',
       exemplo: 'O instalador visitou o condomínio, mas não enviou o orçamento. O mediador cobra o retorno, atualiza o cliente e acompanha até existir uma resposta.',
       painel: 'Cada etapa do atendimento, conversas, visitas, propostas, documentos, pendências, atrasos, reclamações e pós-venda.',
       perfil: {
-        cliente: { t: 'A AiCalhas acompanha o serviço e fornece os materiais.', d: 'Converse com o profissional e com a AiCalhas, aprove o orçamento conferido e acompanhe cada etapa. A compra e a entrega dos materiais são feitas pela AiCalhas.' },
+        cliente: { t: 'A AiCalhas acompanha o serviço e fornece os materiais.', d: 'Converse com o profissional e com a AiCalhas, aprove o orçamento conferido e acompanhe cada etapa. A AiCalhas conduz orçamento, pagamento, compra com fornecedores, recebimento e entrega dos materiais.' },
         profissional: { t: 'Você executa a mão de obra; a AiCalhas fornece os materiais.', d: 'Registre a visita, envie o orçamento para conferência, utilize os materiais fornecidos pela AiCalhas e atualize as etapas da execução. Decisões técnicas são suas.' },
         mediador: { t: 'Você coordena cada atendimento até o fim.', d: 'Acompanhe a fila do dia, agende visitas, confira propostas, cobre respostas, registre decisões e resolva pendências e reclamações.' },
       },
