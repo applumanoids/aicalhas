@@ -797,7 +797,7 @@
       mediador: ['Analisa o cadastro antes de publicar', 'Confere se o portfólio atende às regras', 'Atualiza regiões atendidas e contatos', 'Modera avaliações e apura reclamações recebidas'],
       limite: 'a AiCalhas não participa da negociação da mão de obra nem da execução, mas é sempre responsável pela venda e pela entrega dos materiais. O cliente não compra materiais diretamente do profissional.',
       exemplo: 'Um instalador deixou de atender Hortolândia. Uma padaria relata que o contato não teve resultado; o mediador confirma com o profissional e atualiza as regiões do perfil para evitar novos contatos sem retorno.',
-      painel: 'Profissionais, perfis, cadastros em análise, moderação de fotos e avaliações, relatos de clientes e contatos gerados. A venda de materiais pode existir como um botão separado.',
+      painel: 'Profissionais, perfis, cadastros em análise, moderação de fotos e avaliações, relatos de clientes, contatos gerados e solicitações de compra e entrega de materiais centralizadas na AiCalhas.',
       perfil: {
         cliente: { t: 'Você escolhe o profissional; a AiCalhas fornece os materiais.', d: 'Pesquise, compare portfólios e avaliações e fale com o instalador para combinar a execução. A compra e a entrega dos materiais são feitas sempre pela AiCalhas.' },
         profissional: { t: 'Seu perfil é a sua vitrine.', d: 'Mantenha serviços, regiões e fotos atualizados. Cadastro e fotos passam pela análise da AiCalhas antes de aparecer para os clientes.' },
