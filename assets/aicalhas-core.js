@@ -589,9 +589,10 @@
     { l: 'Triagem da necessidade do cliente', lv: [0, 2, 2, 2] },
     { l: 'Seleção e indicação do profissional', lv: [0, 2, 2, 2] },
     { l: 'Visita técnica e orçamento', lv: [0, 0, 1, 2] },
-    { l: 'Negociação de preço e prazo', lv: [0, 0, 1, 2] },
-    { l: 'Pagamento', lv: [0, 0, 0, 2] },
-    { l: 'Compra e entrega de materiais', lv: [2, 2, 2, 2] },
+    { l: 'Negociação de preço e prazo da mão de obra', lv: [0, 0, 1, 2] },
+    { l: 'Pagamento da mão de obra', lv: [0, 0, 0, 2] },
+    { l: 'Pagamento dos materiais à AiCalhas', lv: [2, 2, 2, 2] },
+    { l: 'Compra e entrega de materiais pela AiCalhas', lv: [2, 2, 2, 2] },
     { l: 'Execução do serviço', lv: [0, 0, 1, 2] },
     { l: 'Pós-venda, avaliações e reclamações', lv: [1, 1, 2, 2] },
   ];
