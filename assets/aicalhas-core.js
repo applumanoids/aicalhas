@@ -311,9 +311,39 @@
     S.st.logs.push({ ts: AiC.now(), usuario: u.nome, perfil: u.perfil, acao: acao, ref: ref || '', demo: true });
   };
 
+  /* Centralized materials workflow shared by scenarios 1-3. */
+  function materialOrders(){ const d=AiC.db(); if(!Array.isArray(d.materialOrders)) d.materialOrders=[]; return d.materialOrders; }
+  function materialStatus(o){ return ['Solicitação recebida','Orçamento enviado','Pagamento confirmado','Compra realizada','Recebido pela AiCalhas','Em rota de entrega','Entregue'][o.step] || 'Solicitação recebida'; }
+  function materialClient(){
+    const rows=materialOrders().filter(o=>o.clientId===(AiC.me().ref||'CLI-201'));
+    return AiC.ph('Compra e entrega de materiais','A AiCalhas conduz a solicitação, o orçamento, o pagamento, a compra com fornecedor e a entrega.',AiC.b('Solicitar materiais','core.materialNew',{},'p','cart')) + AiC.note('Materiais são vendidos exclusivamente pela AiCalhas. O profissional não vende nem recebe pagamento por materiais.') + '<div class="mt"></div>' + AiC.card(null, rows.length ? AiC.table([{l:'Pedido',f:o=>'<b>'+AiC.esc(o.id)+'</b>'},{l:'Material',f:o=>AiC.esc(o.name)},{l:'Quantidade',f:o=>o.qty+' '+AiC.esc(o.unit)},{l:'Status',f:o=>AiC.badge(materialStatus(o))},{l:'Orçamento',f:o=>o.price?AiC.money(o.price):'A preparar'},{l:'Entrega',f:o=>AiC.esc(o.address)}],rows) : AiC.empty('Nenhuma solicitação de materiais.','box'));
+  }
+  function materialManager(){
+    const rows=materialOrders();
+    return AiC.ph('Gestão de compra e entrega de materiais','A AiCalhas controla orçamento, recebimento do pagamento, compra, conferência e entrega.') + AiC.note('O profissional não compra nem vende materiais ao cliente.') + AiC.card(null, rows.length ? rows.map(o=>'<div class="li"><div class="lt"><b>'+AiC.esc(o.id)+' — '+AiC.esc(o.name)+'</b><small>'+AiC.esc(o.clientName)+' · '+o.qty+' '+AiC.esc(o.unit)+' · '+AiC.esc(o.address)+'</small><small>'+AiC.badge(materialStatus(o))+'</small><div class="acts-row">'+(o.step===0?AiC.b('Preparar orçamento','core.materialQuote',{id:o.id},'sm p'):'')+(o.step===2?AiC.b('Registrar compra','core.materialBuy',{id:o.id},'sm p'):'')+(o.step===3?AiC.b('Confirmar recebimento','core.materialReceive',{id:o.id},'sm p'):'')+(o.step===4?AiC.b('Enviar para entrega','core.materialShip',{id:o.id},'sm p'):'')+(o.step===5?AiC.b('Confirmar entrega','core.materialDelivered',{id:o.id},'sm ok'):'')+'</div></div></div>').join('') : AiC.empty('Nenhuma solicitação recebida.','inbox'));
+  }
+  function materialProfessional(){
+    return AiC.ph('Materiais dos atendimentos','A compra e a entrega dos materiais são conduzidas pela AiCalhas.') + AiC.note('O profissional executa a mão de obra. Não cobre nem receba valores de materiais do cliente.') + AiC.card(null,AiC.table([{l:'Pedido',f:o=>AiC.esc(o.id)},{l:'Material',f:o=>AiC.esc(o.name)},{l:'Status',f:o=>AiC.badge(materialStatus(o))}],materialOrders()));
+  }
+  const materialActions={
+    'core.materialNew':()=>AiC.form({title:'Solicitar materiais à AiCalhas',submit:'core.materialSave',submitLabel:'Enviar solicitação',fields:[{name:'material',label:'Material',type:'select',options:AiC.db().materiais.map(m=>({v:m.id,l:m.nome+' ('+m.un+')'})),required:true},{name:'qty',label:'Quantidade',type:'number',value:10,required:true},{name:'address',label:'Endereço de entrega',value:'Rua das Flores, 120 — Campinas/SP',required:true,full:true}]}),
+    'core.materialSave':v=>{const d=AiC.db(),m=d.materiais.find(x=>x.id===v.material),id=AiC.nextId('MAT-',materialOrders());materialOrders().push({id,ts:AiC.now(),clientId:AiC.me().ref||'CLI-201',clientName:AiC.me().nome,name:m.nome,unit:m.un,qty:+v.qty,address:v.address,price:0,step:0});AiC.log('Solicitação de materiais recebida pela AiCalhas',id);AiC.done('Solicitação enviada à AiCalhas.','Solicitação de materiais',id);AiC.go('materiais');},
+    'core.materialQuote':d=>{const o=materialOrders().find(x=>x.id===d.id),m=AiC.db().materiais.find(x=>x.nome===o.name);o.price=o.qty*m.preco;o.step=1;AiC.log('Orçamento de materiais enviado pela AiCalhas',o.id);AiC.refresh();},
+    'core.materialApprove':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=2;AiC.log('Pagamento simulado à AiCalhas',o.id);AiC.refresh();},
+    'core.materialBuy':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=3;AiC.log('Compra de materiais realizada pela AiCalhas',o.id);AiC.refresh();},
+    'core.materialReceive':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=4;AiC.log('Materiais recebidos pela AiCalhas',o.id);AiC.refresh();},
+    'core.materialShip':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=5;AiC.log('Entrega programada pela AiCalhas',o.id);AiC.refresh();},
+    'core.materialDelivered':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=6;AiC.log('Entrega confirmada',o.id);AiC.refresh();}
+  };
   AiC.start = function (cfg) {
     S.cfg = cfg;
     cfg.users = cfg.users || AiC.USERS;
+    if (cfg.num < 4) {
+      cfg.actions = Object.assign({}, cfg.actions || {}, materialActions);
+      cfg.profiles.cliente.menu.push({sec:'Compra e entrega de materiais'},{id:'materiais',label:'Compra e entrega de materiais',icon:'truck',render:materialClient});
+      cfg.profiles.profissional.menu.push({sec:'Materiais'},{id:'materiais-pro',label:'Materiais dos atendimentos',icon:'box',render:materialProfessional});
+      cfg.profiles.mediador.menu.push({sec:'Suprimentos'},{id:'materiais-gestao',label:'Compra e entrega de materiais',icon:'truck',render:materialManager,badge:()=>materialOrders().filter(o=>o.step<6).length});
+    }
     S.key = 'aicalhas-demo-v1-' + cfg.id;
     document.body.classList.add('sc-' + cfg.num);
     let saved = null;
