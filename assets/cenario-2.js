@@ -544,7 +544,7 @@
     seed: seed, seedLogs: seedLogs, actions: actions,
     about: {
       level: 2,
-      resumo: 'O cliente descreve a necessidade com fotos e localização. A AiCalhas faz a triagem e indica o profissional adequado. Cliente e profissional combinam a mão de obra; materiais são comprados e pagos diretamente à AiCalhas, que organiza a entrega.',
+      resumo: 'O cliente descreve a necessidade com fotos e localização. A AiCalhas faz a triagem e indica o profissional adequado. Cliente e profissional combinam a mão de obra; a AiCalhas conduz orçamento, pagamento, compra com fornecedores, recebimento e entrega dos materiais.',
       como: ['O cliente registra a solicitação com descrição, fotos e localização.', 'A AiCalhas faz a triagem e classifica serviço, urgência e prioridade.', 'O mediador seleciona parceiros por região, especialidade e disponibilidade.', 'O profissional recebe a oportunidade e aceita ou recusa dentro do prazo.', 'Com o aceite, os contatos são liberados e cliente e profissional combinam a execução da mão de obra. A AiCalhas conduz o orçamento, a compra e a entrega dos materiais.', 'A AiCalhas verifica se o cliente recebeu retorno e substitui o profissional quando necessário.'],
       mediador: ['Entende o serviço solicitado', 'Identifica profissionais da região e da especialidade', 'Confirma quem está disponível', 'Encaminha o pedido e apresenta as partes', 'Verifica se o cliente recebeu retorno', 'Busca outro parceiro quando o primeiro não atende'],
       limite: 'a AiCalhas indica o profissional para a mão de obra, mas mantém sob sua responsabilidade todo o processo de materiais: orçamento, pagamento, compra com fornecedores, recebimento e entrega. O profissional não vende materiais.',
