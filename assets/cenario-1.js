@@ -156,7 +156,7 @@
     if (cid) list = list.filter((p) => p.regioes.indexOf(cid) >= 0);
     if (sv) list = list.filter((p) => activeSrv(p).indexOf(sv) >= 0);
     list.sort((a, b) => (ord === 'nome' ? a.empresa.localeCompare(b.empresa) : ord === 'avals' ? b.avals - a.avals : b.nota - a.nota));
-    return A.ph('Encontre um profissional de calhas', 'Pesquise por cidade e serviço, compare perfis, portfólios e avaliações e fale diretamente com o profissional.', A.b('Comprar materiais', 'c1.loja', {}, '', 'cart')) +
+    return A.ph('Encontre um profissional de calhas', 'Pesquise por cidade e serviço, compare perfis, portfólios e avaliações e fale diretamente com o profissional. A compra e a entrega de materiais são sempre realizadas pela AiCalhas.', A.b('Compra e entrega de materiais', 'c1.loja', {}, '', 'cart')) +
       A.card(null, A.filters('busca', [
         { k: 'cid', l: 'Cidade', o: A.opts(db().cidades, 'Todas as cidades') },
         { k: 'srv', l: 'Serviço', o: A.opts(db().servicos.filter((s) => s.ativo).map((s) => ({ v: s.id, l: s.nome })), 'Todos os serviços') },
@@ -463,11 +463,11 @@
   const actions = {
     'c1.goFila': (ds) => { if (ds.tab) A.setTab('mod', ds.tab); A.go(ds.view); },
     'c1.loja': () => {
-      A.modal({ title: 'Loja de materiais AiCalhas', sub: 'Neste cenário, a venda de materiais pode existir como um botão separado da vitrine.', size: 'lg', body: A.note('A compra de materiais é independente da contratação do profissional. Os itens abaixo são ilustrativos.') + '<div class="mt"></div>' + A.table([
+      A.modal({ title: 'Loja de materiais AiCalhas', sub: 'A compra dos materiais é feita diretamente com a AiCalhas, mesmo quando o cliente contrata o serviço com um profissional da vitrine.', size: 'lg', body: A.note('A AiCalhas é responsável pela venda e pela organização da entrega dos materiais. O profissional indicado fica responsável pela execução do serviço. Os itens abaixo são ilustrativos.') + '<div class="mt"></div>' + A.table([
         { l: 'Material', f: (m) => '<b>' + e(m.nome) + '</b>' }, { l: 'Unidade', k: 'un' }, { l: 'Preço', cls: 'r', f: (m) => A.money(m.preco) }, { l: '', cls: 'r', f: (m) => A.b('Tenho interesse', 'c1.lojaInt', { id: m.id }, 'sm', 'cart') },
       ], db().materiais.slice(0, 8)) });
     },
-    'c1.lojaInt': (ds) => { const m = db().materiais.find((x) => x.id === ds.id); A.log('Interesse em material da loja (simulado)', m.nome); A.toast('Interesse registrado em "' + m.nome + '". Um vendedor entraria em contato (simulação).'); },
+    'c1.lojaInt': (ds) => { const m = db().materiais.find((x) => x.id === ds.id); A.log('Solicitação de compra de material pela AiCalhas (simulada)', m.nome); A.toast('Solicitação de compra de "' + m.nome + '" registrada. A AiCalhas organizará a venda e a entrega (simulação).'); },
     'c1.portfolio': (ds) => {
       const p = pro(ds.id), ph = pubPhotos(p);
       A.modal({ title: 'Portfólio — ' + p.empresa, sub: ph.length + ' foto(s) aprovada(s) pela AiCalhas', size: 'lg', body: ph.length ? '<div class="gal">' + ph.map((f) => '<div class="gal-i">' + A.photo(f.img, f.legenda) + '</div>').join('') + '</div>' : A.empty('Sem fotos publicadas.', 'image'), foot: '<button class="btn" data-act="core.close">Fechar</button>' + A.b('Entrar em contato', 'c1.contato', { id: p.id }, 'p', 'chat') });
@@ -792,16 +792,16 @@
     seed: seed, seedLogs: seedLogs, actions: actions,
     about: {
       level: 1,
-      resumo: 'O cliente pesquisa profissionais por cidade e serviço, compara perfis, portfólios e avaliações e negocia diretamente com o instalador. A AiCalhas cuida da qualidade da vitrine.',
+      resumo: 'O cliente pesquisa profissionais por cidade e serviço, compara perfis, portfólios e avaliações e combina a execução da mão de obra com o instalador. A compra e a entrega dos materiais são sempre realizadas pela AiCalhas, que também cuida da qualidade da vitrine.',
       como: ['O profissional se cadastra com dados, serviços, regiões, documentos e fotos.', 'A AiCalhas analisa o cadastro e publica o perfil na vitrine.', 'O cliente busca por cidade e serviço e compara os profissionais.', 'O cliente entra em contato diretamente (WhatsApp, telefone ou mensagem).', 'Preço, prazo, execução e pagamento são combinados entre cliente e profissional.', 'O cliente pode avaliar o profissional ou relatar problemas, que passam pela moderação.'],
       mediador: ['Analisa o cadastro antes de publicar', 'Confere se o portfólio atende às regras', 'Atualiza regiões atendidas e contatos', 'Modera avaliações e apura reclamações recebidas'],
-      limite: 'a AiCalhas não participa da negociação, do orçamento, do pagamento nem da execução. O papel dela termina quando o contato é gerado; depois disso, atua apenas na moderação de avaliações e na apuração de relatos.',
+      limite: 'a AiCalhas não participa da negociação da mão de obra nem da execução, mas é sempre responsável pela venda e pela entrega dos materiais. O cliente não compra materiais diretamente do profissional.',
       exemplo: 'Um instalador deixou de atender Hortolândia. Uma padaria relata que o contato não teve resultado; o mediador confirma com o profissional e atualiza as regiões do perfil para evitar novos contatos sem retorno.',
       painel: 'Profissionais, perfis, cadastros em análise, moderação de fotos e avaliações, relatos de clientes e contatos gerados. A venda de materiais pode existir como um botão separado.',
       perfil: {
-        cliente: { t: 'Você escolhe e negocia diretamente com o profissional.', d: 'Pesquise, compare portfólios e avaliações e fale com o instalador. Preço, prazo e pagamento são combinados entre vocês.' },
+        cliente: { t: 'Você escolhe o profissional; a AiCalhas fornece os materiais.', d: 'Pesquise, compare portfólios e avaliações e fale com o instalador para combinar a execução. A compra e a entrega dos materiais são feitas sempre pela AiCalhas.' },
         profissional: { t: 'Seu perfil é a sua vitrine.', d: 'Mantenha serviços, regiões e fotos atualizados. Cadastro e fotos passam pela análise da AiCalhas antes de aparecer para os clientes.' },
-        mediador: { t: 'Você cuida da qualidade da vitrine.', d: 'Aprove cadastros, modere fotos e avaliações, apure relatos e acompanhe os contatos gerados. A negociação não passa por você.' },
+        mediador: { t: 'Você cuida da vitrine e direciona a compra de materiais à AiCalhas.', d: 'Aprove cadastros, modere fotos e avaliações, apure relatos e acompanhe os contatos. Toda venda e entrega de materiais é centralizada na AiCalhas.' },
       },
     },
     profiles: {
