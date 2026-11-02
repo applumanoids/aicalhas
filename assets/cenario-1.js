@@ -462,12 +462,8 @@
   const srvOpts = () => db().servicos.filter((s) => s.ativo).map((s) => ({ v: s.id, l: s.nome }));
   const actions = {
     'c1.goFila': (ds) => { if (ds.tab) A.setTab('mod', ds.tab); A.go(ds.view); },
-    'c1.loja': () => {
-      A.modal({ title: 'Loja de materiais AiCalhas', sub: 'A compra dos materiais é feita diretamente com a AiCalhas, mesmo quando o cliente contrata o serviço com um profissional da vitrine.', size: 'lg', body: A.note('A AiCalhas é responsável pela venda e pela organização da entrega dos materiais. O profissional indicado fica responsável pela execução do serviço. Os itens abaixo são ilustrativos.') + '<div class="mt"></div>' + A.table([
-        { l: 'Material', f: (m) => '<b>' + e(m.nome) + '</b>' }, { l: 'Unidade', k: 'un' }, { l: 'Preço', cls: 'r', f: (m) => A.money(m.preco) }, { l: '', cls: 'r', f: (m) => A.b('Tenho interesse', 'c1.lojaInt', { id: m.id }, 'sm', 'cart') },
-      ], db().materiais.slice(0, 8)) });
-    },
-    'c1.lojaInt': (ds) => { const m = db().materiais.find((x) => x.id === ds.id); A.log('Solicitação de compra de material pela AiCalhas (simulada)', m.nome); A.toast('Solicitação de compra de "' + m.nome + '" registrada. A AiCalhas organizará a venda e a entrega (simulação).'); },
+    'c1.loja': () => A.go('materiais'),
+    'c1.lojaInt': () => A.go('materiais'),
     'c1.portfolio': (ds) => {
       const p = pro(ds.id), ph = pubPhotos(p);
       A.modal({ title: 'Portfólio — ' + p.empresa, sub: ph.length + ' foto(s) aprovada(s) pela AiCalhas', size: 'lg', body: ph.length ? '<div class="gal">' + ph.map((f) => '<div class="gal-i">' + A.photo(f.img, f.legenda) + '</div>').join('') + '</div>' : A.empty('Sem fotos publicadas.', 'image'), foot: '<button class="btn" data-act="core.close">Fechar</button>' + A.b('Entrar em contato', 'c1.contato', { id: p.id }, 'p', 'chat') });
