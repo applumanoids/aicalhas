@@ -21,6 +21,6 @@ Arquivos de publicação:
 
 | Página | Conteúdo |
 |---|---|
-| `index.html` | Capa: modelo escolhido, os quatro cenários e o comparativo |
+| `index.html` | Capa: modelo recomendado, os quatro cenários e o comparativo |
 | `cenario-1.html` a `cenario-4.html` | Demonstrações interativas (dados fictícios) |
 | `passo-a-passo.html` | Passo a passo do Cenário 3, com simulação |

@@ -7,11 +7,11 @@ COMO ABRIR
 3. Não é preciso internet, instalação nem servidor.
 
 ESTRUTURA DOS ARQUIVOS
-index.html ............ Capa: modelo escolhido, os quatro cenários, matriz de participação e comparativo
+index.html ............ Capa: modelo recomendado, os quatro cenários, matriz de participação e comparativo
 passo-a-passo.html .... Passo a passo do Cenário 3 (visão geral + 6 fases, com simulação)
 cenario-1.html ........ Vitrine de profissionais
 cenario-2.html ........ Indicação direcionada
-cenario-3.html ........ Atendimento acompanhado + materiais (modelo escolhido)
+cenario-3.html ........ Atendimento acompanhado + materiais (modelo recomendado)
 cenario-4.html ........ Contratação centralizada
 assets/appcalhas.css ... Estilos compartilhados (paleta, componentes, responsivo)
 assets/appcalhas-core.js  Núcleo comum: login demonstrativo, troca de perfis, menus,
@@ -54,7 +54,7 @@ Cenário 2 — Indicação direcionada
 - Cliente: solicite materiais no menu "Compra e entrega de materiais"; mediador conduz todas as etapas até a entrega.
 - Extra: PED-2038 está sem resposta há mais de 12 h — mostre "Cobrar" e "Substituir".
 
-Cenário 3 — Atendimento acompanhado + materiais AppCalhas (modelo escolhido)
+Cenário 3 — Atendimento acompanhado + materiais AppCalhas (modelo recomendado)
 - Botão "Veja o passo a passo" no topo e no menu lateral abre passo-a-passo.html.
 - Cliente (Mariana): ATD-3015 → aba Proposta (materiais AppCalhas + mão de obra) → Aprovar → Pagar materiais (Pix).
 - Mediador (Juliana): Fila do dia e "Materiais e entregas" → ATD-3015: emitir ordem de fabricação,
@@ -62,9 +62,13 @@ Cenário 3 — Atendimento acompanhado + materiais AppCalhas (modelo escolhido)
 - Profissional (Carlos): "Materiais das obras" → conferir o material do ATD-3015 → iniciar o serviço →
   pedir material complementar → atualizar etapas e concluir.
 - Cliente: confirmar a conclusão, avaliar e ver a nota fiscal em "Materiais e pagamentos".
-- Extras do mediador: ATD-3006 (ocorrência: bocal amassado → reposição), ATD-3007 (boleto pendente),
-  ATD-3008 (complemento a precificar), ATD-3012 (proposta sem prazo → devolver), Catálogo e preços,
-  Agenda de entregas e Relatórios → Materiais e entregas.
+- Extras do mediador: ATD-3006 (ocorrência: bocal amassado → reposição → nova conferência), ATD-3007 (boleto pendente),
+  ATD-3008 (complemento a precificar), ATD-3012 (proposta sem prazo → devolver; desconto de 8% só com
+  aprovação da gerência), ATD-3017 (pedido novo → "Encerrar sem atendimento" quando fora da área),
+  Catálogo e preços, Agenda de entregas e Relatórios → Materiais e entregas.
+- Caminhos alternativos do passo a passo: cliente pode "Recusar proposta" (ATD-3015); profissional
+  confere o ATD-3009 com divergência → mediador repõe → profissional confere de novo; na conclusão,
+  mediador registra pendência ("Confirmar conclusão com o cliente") → profissional "Corrigir pendência".
 
 Cenário 4 — Contratação centralizada
 - Cliente: VEN-4021 — veja a proposta com materiais, instalação e frete; aprove e simule o Pix.
