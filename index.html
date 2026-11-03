@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AiCalhas · Modelos de operação</title>
-<meta name="description" content="Apresentação interativa da AiCalhas: quatro possibilidades de funcionamento da plataforma. Ambiente demonstrativo com dados fictícios.">
+<title>AppCalhas · Modelos de operação</title>
+<meta name="description" content="Apresentação interativa do AppCalhas: quatro possibilidades de funcionamento da plataforma. Ambiente demonstrativo com dados fictícios.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z' fill='%233fb0e6'/%3E%3Cpath d='M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z' fill='%23c26d38'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="assets/aicalhas.css">
+<link rel="stylesheet" href="assets/appcalhas.css?v=20261102-3">
 <style>
   /* ---------- Capa ---------- */
   body.page-cover { background: var(--bg); }
@@ -93,6 +93,14 @@
   .step b { display: flex; align-items: center; gap: 10px; font-family: var(--font-d); font-size: 18px; font-weight: 600; margin-bottom: 6px; }
   .step b::before { counter-increment: s; content: counter(s); width: 30px; height: 30px; border-radius: 50%; background: var(--storm); color: #fff; display: grid; place-items: center; font-size: 14px; }
   .step p { margin: 0; color: var(--ink-2); }
+  .pick { display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: #fff; border: 2px solid #b8612e; border-radius: 16px; padding: 22px 24px; box-shadow: 0 10px 30px rgba(184, 97, 46, .14); }
+  .pick > div:first-child { flex: 1 1 520px; }
+  .pick h2 { font-size: clamp(22px, 2.6vw, 28px); margin: 8px 0 6px; }
+  .pick p { margin: 0; color: var(--ink-2); font-size: 15px; max-width: 760px; }
+  .pick-tag { display: inline-block; font-size: 12px; font-weight: 700; color: #fff; background: #b8612e; border-radius: 999px; padding: 3px 11px; }
+  .pick-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pick-cta .btn { min-height: 44px; padding: 0 18px; text-decoration: none; }
+  .pick-cta .btn.p { --acc: #b8612e; --acc-ink: #8e4720; }
   .cv-foot { margin-top: 64px; padding: 26px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
   .cv-foot .wrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
   .tw-mx { overflow-x: auto; border-radius: 14px; }
@@ -145,14 +153,14 @@
 <header class="hero" id="hero">
   <div class="wrap">
     <div class="cv-top">
-      <span class="logo light"><svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true"><path d="M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z" fill="#3fb0e6"/><path d="M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z" fill="#c26d38"/><path d="M4 24.5h32" stroke="#e8a06a" stroke-width="2.2"/></svg><b>Ai<span>Calhas</span></b></span>
-      <nav aria-label="Seções"><a href="#cenarios">Cenários</a><a href="#participacao">Participação</a><a href="#comparativo">Comparativo</a><a href="#navegar">Como navegar</a></nav>
+      <span class="logo light"><svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true"><path d="M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z" fill="#3fb0e6"/><path d="M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z" fill="#c26d38"/><path d="M4 24.5h32" stroke="#e8a06a" stroke-width="2.2"/></svg><b>App<span>Calhas</span></b></span>
+      <nav aria-label="Seções"><a href="#cenarios">Cenários</a><a href="#participacao">Participação</a><a href="#comparativo">Comparativo</a><a href="#navegar">Como navegar</a><a href="passo-a-passo.html">Passo a passo</a></nav>
       <span class="chip-demo">Ambiente demonstrativo — dados fictícios</span>
     </div>
     <div class="hero-in">
       <div class="hero-txt">
         <p class="kicker">Apresentação de modelos de operação</p>
-        <h1>Ai<span>Calhas</span></h1>
+        <h1>App<span>Calhas</span></h1>
         <p class="lead">Quatro formas de conectar quem precisa de calhas a quem instala: da vitrine de profissionais à contratação completa. Navegue por cada cenário como cliente, instalador e mediador e escolha o modelo a desenvolver.</p>
         <div class="cta"><a class="btn p" href="#cenarios">Ver os quatro cenários</a><a class="btn light" href="#comparativo">Comparar modelos</a></div>
       </div>
@@ -224,27 +232,40 @@
 </header>
 
 <main>
+  <section class="sec" id="escolhido" style="padding-top:40px">
+    <div class="wrap">
+      <div class="pick">
+        <div>
+          <span class="pick-tag">Modelo escolhido</span>
+          <h2>Cenário 3 — Atendimento acompanhado, com materiais conduzidos pelo AppCalhas</h2>
+          <p>O profissional envia a lista de materiais; o AppCalhas precifica, recebe o pagamento, manda fabricar, emite a nota e entrega na obra na véspera do serviço. O serviço só começa depois da conferência do material.</p>
+        </div>
+        <div class="pick-cta"><a class="btn p" href="cenario-3.html">Abrir demonstração</a><a class="btn" href="passo-a-passo.html">Veja o passo a passo</a></div>
+      </div>
+    </div>
+  </section>
+
   <section class="sec" id="cenarios">
     <div class="wrap">
       <h2>Quatro cenários de operação</h2>
-      <p class="sub">Cada cenário é uma demonstração com telas próprias para cliente, profissional e mediador. A contratação da mão de obra varia; a compra e a entrega dos materiais são sempre conduzidas pela AiCalhas.</p>
+      <p class="sub">Cada cenário é uma demonstração com telas próprias para cliente, profissional e mediador. A contratação da mão de obra varia; a compra e a entrega dos materiais são sempre conduzidas pelo AppCalhas.</p>
       <div class="cards4" id="cards"></div>
     </div>
   </section>
 
   <section class="sec" id="participacao">
     <div class="wrap">
-      <h2>Até onde vai a AiCalhas em cada cenário</h2>
-      <p class="sub">Etapas de um atendimento de calhas e o nível de participação da AiCalhas. Quanto mais etapas a AiCalhas conduz, maior o controle sobre a experiência do cliente — e maior a estrutura necessária.</p>
+      <h2>Até onde vai o AppCalhas em cada cenário</h2>
+      <p class="sub">Etapas de um atendimento de calhas e o nível de participação do AppCalhas. Quanto mais etapas o AppCalhas conduz, maior o controle sobre a experiência do cliente — e maior a estrutura necessária.</p>
       <div class="tw-mx"><table class="mx" id="matrix"></table></div>
-      <div class="legend"><span><i class="cell v2"><span class="d" style="width:16px;height:16px;background:var(--rain);border-radius:50%"></span></i>Conduz</span><span><i class="cell v1"><span class="d" style="width:16px;height:16px;background:var(--rain-l);border-radius:50%"></span></i>Acompanha</span><span><i class="cell v0"><span class="d" style="width:16px;height:16px;background:var(--neu-bg);border-radius:50%"></span></i>Fora da AiCalhas (direto entre cliente e profissional)</span></div>
+      <div class="legend"><span><i class="cell v2"><span class="d" style="width:16px;height:16px;background:var(--rain);border-radius:50%"></span></i>Conduz</span><span><i class="cell v1"><span class="d" style="width:16px;height:16px;background:var(--rain-l);border-radius:50%"></span></i>Acompanha</span><span><i class="cell v0"><span class="d" style="width:16px;height:16px;background:var(--neu-bg);border-radius:50%"></span></i>Fora do AppCalhas (direto entre cliente e profissional)</span></div>
     </div>
   </section>
 
   <section class="sec" id="comparativo">
     <div class="wrap">
       <h2>Comparativo rápido</h2>
-      <p class="sub">O que muda de um modelo para outro é a contratação e o acompanhamento da mão de obra. Em todos eles, a AiCalhas conduz a compra e a entrega dos materiais.</p>
+      <p class="sub">O que muda de um modelo para outro é a contratação e o acompanhamento da mão de obra. Em todos eles, o AppCalhas conduz a compra e a entrega dos materiais.</p>
       <div class="tw-mx"><table class="mx cmp" id="cmp"></table></div>
     </div>
   </section>
@@ -255,7 +276,7 @@
       <p class="sub">Tudo funciona neste navegador, sem internet e sem cadastro real. Contatos, mensagens e pagamentos apenas simulam o resultado.</p>
       <div class="steps">
         <div class="step"><b>Escolha um cenário</b><p>Cada cenário é um sistema independente, com seus próprios dados fictícios, relatórios e histórico.</p></div>
-        <div class="step"><b>Entre com um perfil</b><p>Use o acesso demonstrativo como Cliente, Profissional / Instalador ou Mediador / Gestão AiCalhas. Troque de perfil a qualquer momento pelo topo da tela.</p></div>
+        <div class="step"><b>Entre com um perfil</b><p>Use o acesso demonstrativo como Cliente, Profissional / Instalador ou Mediador / Gestão AppCalhas. Troque de perfil a qualquer momento pelo topo da tela.</p></div>
         <div class="step"><b>Execute ações e veja o reflexo</b><p>Uma ação feita em um perfil aparece nos outros e fica registrada no histórico de atividades, com data, horário, usuário e perfil.</p></div>
       </div>
       <div class="mt"></div>
@@ -265,27 +286,27 @@
 </main>
 
 <footer class="cv-foot">
-  <div class="wrap"><span class="logo"><b>Ai<span>Calhas</span></b></span><span>Apresentação de modelos de operação.</span><span class="spacer"></span><span>Ambiente demonstrativo — dados fictícios. Nenhuma operação real é realizada.</span></div>
+  <div class="wrap"><span class="logo"><b>App<span>Calhas</span></b></span><span>Apresentação de modelos de operação.</span><span class="spacer"></span><span>Ambiente demonstrativo — dados fictícios. Nenhuma operação real é realizada.</span></div>
 </footer>
 
-<script src="assets/aicalhas-core.js?v=20261102-2"></script>
+<script src="assets/appcalhas-core.js?v=20261102-3"></script>
 <script>
 (function () {
   'use strict';
-  var A = window.AiC;
+  var A = window.AppC;
   var SC = [
     { n: 1, t: 'Vitrine de profissionais', f: 'cenario-1.html', c: '#1b87c9', lv: 1, nivel: 'Baixa',
-      d: 'O cliente pesquisa e escolhe o profissional para a mão de obra. A AiCalhas conduz a compra e a entrega dos materiais.',
+      d: 'O cliente pesquisa e escolhe o profissional para a mão de obra. O AppCalhas conduz a compra e a entrega dos materiais.',
       m: 'Organiza a vitrine e conduz toda a operação de materiais: orçamento, pagamento, compra e entrega.', k: 'O profissional, diretamente' },
     { n: 2, t: 'Indicação direcionada', f: 'cenario-2.html', c: '#23866f', lv: 2, nivel: 'Média',
-      d: 'A AiCalhas indica o profissional para a mão de obra e conduz integralmente a compra e a entrega dos materiais.',
+      d: 'O AppCalhas indica o profissional para a mão de obra e conduz integralmente a compra e a entrega dos materiais.',
       m: 'Faz a triagem e indicação do profissional e conduz orçamento, compra com fornecedores e entrega dos materiais.', k: 'O profissional indicado' },
     { n: 3, t: 'Atendimento acompanhado', f: 'cenario-3.html', c: '#b8612e', lv: 3, nivel: 'Alta',
-      d: 'A AiCalhas acompanha a mão de obra e conduz orçamento, compra, recebimento e entrega dos materiais.',
-      m: 'Coordena o atendimento e conduz o processo de materiais, da cotação à entrega, além do acompanhamento da mão de obra.', k: 'O profissional, com acompanhamento' },
+      d: 'Escolhido. O AppCalhas acompanha a mão de obra e conduz o material junto com o atendimento: preço, pagamento, fabricação, nota fiscal e entrega na véspera.',
+      m: 'Coordena o atendimento, confere e precifica a proposta, manda fabricar, programa a entrega e resolve ocorrências e complementos.', k: 'O profissional, com acompanhamento' },
     { n: 4, t: 'Contratação centralizada', f: 'cenario-4.html', c: '#5146c0', lv: 4, nivel: 'Total',
-      d: 'O cliente contrata a AiCalhas, que coordena materiais, instalação, pagamento e pós-venda com sua rede de parceiros.',
-      m: 'Conduz toda a operação: proposta, pagamento, compras, entregas, agenda, execução, repasses e atendimento.', k: 'A AiCalhas' },
+      d: 'O cliente contrata o AppCalhas, que coordena materiais, instalação, pagamento e pós-venda com sua rede de parceiros.',
+      m: 'Conduz toda a operação: proposta, pagamento, compras, entregas, agenda, execução, repasses e atendimento.', k: 'O AppCalhas' },
   ];
   function gutter(n, lv, c) {
     var top = 8, bot = 52, h = (bot - top) * lv / 4, y = bot - h;
@@ -295,7 +316,7 @@
       '<path d="M12 8 V30 A22 22 0 0 0 34 52 H90 A22 22 0 0 0 112 30 V8" fill="none" stroke="#c26d38" stroke-width="5" stroke-linecap="round"/><path d="M4 8 H20 M104 8 H120" stroke="#c26d38" stroke-width="5" stroke-linecap="round"/></svg>';
   }
   document.getElementById('cards').innerHTML = SC.map(function (s) {
-    return '<article class="sc-card" style="--c:' + s.c + '"><div class="lv-row">' + gutter(s.n, s.lv, s.c) + '<small>Participação da AiCalhas<b>' + s.nivel + ' (' + s.lv + ' de 4)</b></small></div>' +
+    return '<article class="sc-card" style="--c:' + s.c + '"><div class="lv-row">' + gutter(s.n, s.lv, s.c) + '<small>Participação do AppCalhas<b>' + s.nivel + ' (' + s.lv + ' de 4)</b></small></div>' +
       '<span class="sc-num">Cenário ' + s.n + '</span><h3>' + s.t + '</h3><p>' + s.d + '</p>' +
       '<dl><div><dt>Papel do mediador</dt><dd>' + s.m + '</dd></div><div><dt>Quem o cliente contrata</dt><dd>' + s.k + '</dd></div></dl>' +
       '<a class="btn" href="' + s.f + '">Explorar cenário</a></article>';
@@ -308,13 +329,13 @@
   document.getElementById('matrix').innerHTML = mx;
 
   var CMP = [
-    ['Quem o cliente contrata', 'O profissional', 'O profissional indicado', 'O profissional, com a AiCalhas acompanhando', 'A AiCalhas'],
-    ['Quem negocia preço e prazo', 'Cliente e profissional', 'Cliente e profissional', 'Cliente e profissional, com proposta conferida pela AiCalhas', 'A AiCalhas, com alçadas de desconto'],
-    ['Pagamento da mão de obra', 'Direto ao profissional', 'Direto ao profissional', 'Direto ao profissional', 'AiCalhas, com repasse ao parceiro'],
-    ['Pagamento dos materiais', 'Direto à AiCalhas', 'Direto à AiCalhas', 'Direto à AiCalhas', 'Direto à AiCalhas'],
-    ['Compra e entrega de materiais', 'Conduzida pela AiCalhas', 'Conduzida pela AiCalhas', 'Conduzida pela AiCalhas', 'Conduzida pela AiCalhas'],
+    ['Quem o cliente contrata', 'O profissional', 'O profissional indicado', 'O profissional, com o AppCalhas acompanhando', 'O AppCalhas'],
+    ['Quem negocia preço e prazo', 'Cliente e profissional', 'Cliente e profissional', 'Cliente e profissional, com proposta conferida pelo AppCalhas', 'O AppCalhas, com alçadas de desconto'],
+    ['Pagamento da mão de obra', 'Direto ao profissional', 'Direto ao profissional', 'Direto ao profissional', 'AppCalhas, com repasse ao parceiro'],
+    ['Pagamento dos materiais', 'Direto ao AppCalhas', 'Direto ao AppCalhas', 'Direto ao AppCalhas', 'Direto ao AppCalhas'],
+    ['Compra e entrega de materiais', 'Conduzida pelo AppCalhas', 'Conduzida pelo AppCalhas', 'Conduzida pelo AppCalhas', 'Conduzida pelo AppCalhas'],
     ['O painel da gestão acompanha', 'Profissionais, perfis, contatos e solicitações, orçamentos, compras e entregas de materiais', 'Pedidos, indicações e todo o fluxo de materiais: orçamento, compra, recebimento e entrega', 'Etapas, visitas, mão de obra e todo o fluxo de materiais, da cotação à entrega', 'Vendas, compras, materiais, agenda, pagamentos, repasses e custos'],
-    ['Esforço operacional da AiCalhas', 'Baixo', 'Moderado', 'Alto', 'Muito alto'],
+    ['Esforço operacional do AppCalhas', 'Baixo', 'Moderado', 'Alto', 'Muito alto'],
     ['Ponto de atenção', 'Estruturar catálogo, cotação, pagamento e logística de materiais', 'Controlar prazos de orçamento, compra com fornecedores e entrega', 'Integrar a compra de materiais ao cronograma da mão de obra', 'Definir alçadas de preço, compras, alterações e reclamações'],
   ];
   document.getElementById('cmp').innerHTML = '<thead><tr><th></th>' + SC.map(function (s) { return '<th><span style="color:' + s.c + '">Cenário ' + s.n + '</span><b>' + s.t + '</b></th>'; }).join('') + '</tr></thead><tbody>' + CMP.map(function (r) { return '<tr><th>' + r[0] + '</th>' + r.slice(1).map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';

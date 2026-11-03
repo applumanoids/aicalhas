@@ -1,5 +1,5 @@
 /* =====================================================================
-   AiCalhas — núcleo da demonstração interativa
+   AppCalhas — núcleo da demonstração interativa
    ---------------------------------------------------------------------
    JavaScript puro, sem frameworks, sem backend e sem internet.
    Responsável por: login demonstrativo, troca de perfis, menus,
@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  const AiC = (window.AiC = {});
+  const AppC = (window.AppC = {});
   const S = { cfg: null, st: null, ui: null, key: '', formExtra: {}, formCalc: null, pendingOk: null, catalogs: {} };
 
   /* ------------------------------------------------------------------
@@ -21,13 +21,13 @@
   const clone = (o) => JSON.parse(JSON.stringify(o));
   const pad = (n) => String(n).padStart(2, '0');
   const D = (v) => (v instanceof Date ? v : new Date(v));
-  AiC.esc = esc;
-  AiC.clone = clone;
+  AppC.esc = esc;
+  AppC.clone = clone;
 
   /** Data relativa a hoje (deslocamento em dias e horário "HH:MM"), em ISO.
       Para o dia de hoje, o horário é ancorado ao momento atual (referência 13:30),
       para que prazos e sequências façam sentido em qualquer horário da apresentação. */
-  AiC.d = function (offsetDays, hm) {
+  AppC.d = function (offsetDays, hm) {
     if (!offsetDays && hm) {
       const p0 = String(hm).split(':');
       const delta = (+p0[0] * 60 + (+p0[1] || 0)) - 810;
@@ -46,28 +46,28 @@
     t.setHours(+p[0] || 0, +p[1] || 0, 0, 0);
     return t.toISOString();
   };
-  AiC.now = () => new Date().toISOString();
-  AiC.fd = (v) => (v ? pad(D(v).getDate()) + '/' + pad(D(v).getMonth() + 1) + '/' + D(v).getFullYear() : '—');
-  AiC.fds = (v) => (v ? pad(D(v).getDate()) + '/' + pad(D(v).getMonth() + 1) : '—');
-  AiC.ft = (v) => (v ? pad(D(v).getHours()) + ':' + pad(D(v).getMinutes()) : '');
-  AiC.fdt = (v) => (v ? AiC.fd(v) + ' ' + AiC.ft(v) : '—');
-  AiC.fdtn = (v) => '<span class="nowrap">' + AiC.fdt(v) + '</span>';
+  AppC.now = () => new Date().toISOString();
+  AppC.fd = (v) => (v ? pad(D(v).getDate()) + '/' + pad(D(v).getMonth() + 1) + '/' + D(v).getFullYear() : '—');
+  AppC.fds = (v) => (v ? pad(D(v).getDate()) + '/' + pad(D(v).getMonth() + 1) : '—');
+  AppC.ft = (v) => (v ? pad(D(v).getHours()) + ':' + pad(D(v).getMinutes()) : '');
+  AppC.fdt = (v) => (v ? AppC.fd(v) + ' ' + AppC.ft(v) : '—');
+  AppC.fdtn = (v) => '<span class="nowrap">' + AppC.fdt(v) + '</span>';
   const WD = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
-  AiC.dayDiff = (v) => {
+  AppC.dayDiff = (v) => {
     const a = new Date(); a.setHours(0, 0, 0, 0);
     const b = new Date(D(v).getTime()); b.setHours(0, 0, 0, 0);
     return Math.round((b - a) / 864e5);
   };
-  AiC.when = (v, withTime) => {
+  AppC.when = (v, withTime) => {
     if (!v) return '—';
-    const dd = AiC.dayDiff(v);
-    const t = withTime === false ? '' : ' ' + AiC.ft(v);
+    const dd = AppC.dayDiff(v);
+    const t = withTime === false ? '' : ' ' + AppC.ft(v);
     if (dd === 0) return 'Hoje' + t;
     if (dd === 1) return 'Amanhã' + t;
     if (dd === -1) return 'Ontem' + t;
-    return WD[D(v).getDay()] + ', ' + AiC.fds(v) + t;
+    return WD[D(v).getDay()] + ', ' + AppC.fds(v) + t;
   };
-  AiC.ago = (v) => {
+  AppC.ago = (v) => {
     const m = Math.round((Date.now() - D(v)) / 6e4);
     if (m < 1) return 'agora';
     if (m < 60) return 'há ' + m + ' min';
@@ -76,23 +76,23 @@
     const d = Math.round(h / 24);
     return 'há ' + d + (d === 1 ? ' dia' : ' dias');
   };
-  AiC.hoursSince = (v) => (Date.now() - D(v)) / 36e5;
-  AiC.money = (n) => (Number(n) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  AiC.kmoney = (n) => (Math.abs(n) >= 1000 ? 'R$ ' + (n / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : AiC.money(n));
-  AiC.num = (n, dec) => (Number(n) || 0).toLocaleString('pt-BR', { minimumFractionDigits: dec || 0, maximumFractionDigits: dec || 0 });
-  AiC.pct = (a, b) => (b ? Math.round((a / b) * 100) : 0) + '%';
-  AiC.sum = (arr, f) => arr.reduce((s, x) => s + (Number(typeof f === 'function' ? f(x) : x[f]) || 0), 0);
-  AiC.avg = (arr, f) => (arr.length ? AiC.sum(arr, f) / arr.length : 0);
-  AiC.nextId = (prefix, list) => {
+  AppC.hoursSince = (v) => (Date.now() - D(v)) / 36e5;
+  AppC.money = (n) => (Number(n) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  AppC.kmoney = (n) => (Math.abs(n) >= 1000 ? 'R$ ' + (n / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : AppC.money(n));
+  AppC.num = (n, dec) => (Number(n) || 0).toLocaleString('pt-BR', { minimumFractionDigits: dec || 0, maximumFractionDigits: dec || 0 });
+  AppC.pct = (a, b) => (b ? Math.round((a / b) * 100) : 0) + '%';
+  AppC.sum = (arr, f) => arr.reduce((s, x) => s + (Number(typeof f === 'function' ? f(x) : x[f]) || 0), 0);
+  AppC.avg = (arr, f) => (arr.length ? AppC.sum(arr, f) / arr.length : 0);
+  AppC.nextId = (prefix, list) => {
     let max = 0;
     list.forEach((x) => { const id = String(x.id || ''); const m = id.match(/(\d+)$/); if (id.indexOf(prefix) === 0 && m) max = Math.max(max, +m[1]); });
     return prefix + (max + 1);
   };
-  AiC.initials = (name) => String(name || '?').replace(/^(Cond\.|Condomínio|Escola|Padaria|Clínica)\s+/i, '').split(/\s+/).filter((p) => /^[A-ZÀ-Ý0-9]/.test(p)).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || '?';
-  AiC.count = (arr, fn) => { const m = {}; arr.forEach((x) => { const k = fn(x); m[k] = (m[k] || 0) + 1; }); return m; };
-  AiC.toBars = (obj, money) => Object.keys(obj).map((k) => ({ l: k, v: obj[k] })).sort((a, b) => b.v - a.v);
-  AiC.rng = function (seed) { let s = seed || 7; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; };
-  AiC.first = (name) => String(name || '').split(' ')[0];
+  AppC.initials = (name) => String(name || '?').replace(/^(Cond\.|Condomínio|Escola|Padaria|Clínica)\s+/i, '').split(/\s+/).filter((p) => /^[A-ZÀ-Ý0-9]/.test(p)).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || '?';
+  AppC.count = (arr, fn) => { const m = {}; arr.forEach((x) => { const k = fn(x); m[k] = (m[k] || 0) + 1; }); return m; };
+  AppC.toBars = (obj, money) => Object.keys(obj).map((k) => ({ l: k, v: obj[k] })).sort((a, b) => b.v - a.v);
+  AppC.rng = function (seed) { let s = seed || 7; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; };
+  AppC.first = (name) => String(name || '').split(' ')[0];
 
   /* ------------------------------------------------------------------
      Ícones (traço, 24x24)
@@ -158,10 +158,10 @@
     thumb: '<path d="M7 11v9H4v-9z"/><path d="M7 11l4-8a2 2 0 0 1 2.5 2.6L12.5 10H19a2 2 0 0 1 2 2.3l-1.3 6A2 2 0 0 1 17.7 20H7"/>',
     swap: '<path d="M7 4L3 8l4 4"/><path d="M3 8h14"/><path d="M17 20l4-4-4-4"/><path d="M21 16H7"/>',
   };
-  AiC.icon = (n, s) => '<svg class="i" width="' + (s || 18) + '" height="' + (s || 18) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || IC.info) + '</svg>';
-  const icon = AiC.icon;
+  AppC.icon = (n, s) => '<svg class="i" width="' + (s || 18) + '" height="' + (s || 18) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || IC.info) + '</svg>';
+  const icon = AppC.icon;
 
-  AiC.logo = (light) => '<span class="logo' + (light ? ' light' : '') + '"><svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true"><path d="M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z" fill="#3fb0e6"/><path d="M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z" fill="#c26d38"/><path d="M4 24.5h32" stroke="#e8a06a" stroke-width="2.2"/></svg><b>Ai<span>Calhas</span></b></span>';
+  AppC.logo = (light) => '<span class="logo' + (light ? ' light' : '') + '"><svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true"><path d="M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z" fill="#3fb0e6"/><path d="M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z" fill="#c26d38"/><path d="M4 24.5h32" stroke="#e8a06a" stroke-width="2.2"/></svg><b>App<span>Calhas</span></b></span>';
 
   /* ------------------------------------------------------------------
      Ilustrações (fotos fictícias de obras de calhas)
@@ -176,7 +176,7 @@
     limpeza: { l: 'Calha com folhas', sky: ['#a9d4b8', '#eef8f1'], wall: '#efe7da', roof: '#8d4b2e', g: 'galv', leaves: 1 },
     obra: { l: 'Foto com marca de terceiros', sky: ['#c9d6e2', '#f3f6f9'], wall: '#d9d4cc', roof: '#7b8794', g: 'galv', mark: 1, pipe: 1 },
   };
-  AiC.ILL = ILL;
+  AppC.ILL = ILL;
   function illus(key) {
     const o = ILL[key] || ILL['calha-frontal'];
     const k = 'il' + Object.keys(ILL).indexOf(key in ILL ? key : 'calha-frontal');
@@ -204,24 +204,24 @@
     s += '</svg>';
     return s;
   }
-  AiC.illus = illus;
+  AppC.illus = illus;
   /** Foto: aceita uma chave de ilustração ou uma imagem enviada (data URL). */
-  AiC.photo = (p, cap, tag, cls) => {
+  AppC.photo = (p, cap, tag, cls) => {
     const inner = String(p || '').indexOf('data:') === 0 ? '<img src="' + p + '" alt="' + esc(cap || 'Foto enviada') + '">' : illus(p);
     return '<span class="pimg ' + (cls || '') + '">' + inner + (tag ? '<span class="tag">' + tag + '</span>' : '') + (cap ? '<span class="cap">' + esc(cap) + '</span>' : '') + '</span>';
   };
-  AiC.zoomable = (p, cap, tag) => '<button type="button" class="zoom" style="border:0;padding:0;background:none;display:block;width:100%" data-act="core.zoom" data-cap="' + esc(cap || '') + '">' + AiC.photo(p, cap, tag) + '</button>';
+  AppC.zoomable = (p, cap, tag) => '<button type="button" class="zoom" style="border:0;padding:0;background:none;display:block;width:100%" data-act="core.zoom" data-cap="' + esc(cap || '') + '">' + AppC.photo(p, cap, tag) + '</button>';
 
   /* ------------------------------------------------------------------
      Base de dados fictícia comum aos cenários
      ------------------------------------------------------------------ */
-  AiC.USERS = {
+  AppC.USERS = {
     cliente: { nome: 'Mariana Costa', sub: 'Proprietária de residência em Campinas/SP', email: 'mariana.costa@email.demo', ref: 'CLI-201', cor: '#a8326e' },
     profissional: { nome: 'Carlos Mendes', sub: 'Mendes Calhas & Coberturas', email: 'carlos@mendescalhas.demo', ref: 'PRF-101', cor: '#0f6f86' },
-    mediador: { nome: 'Juliana Rocha', sub: 'Mediadora de operações AiCalhas', email: 'juliana.rocha@aicalhas.demo', ref: 'MED-01', cor: '#b8612e' },
+    mediador: { nome: 'Juliana Rocha', sub: 'Mediadora de operações AppCalhas', email: 'juliana.rocha@appcalhas.demo', ref: 'MED-01', cor: '#b8612e' },
   };
-  AiC.base = function () {
-    const d = AiC.d;
+  AppC.base = function () {
+    const d = AppC.d;
     return {
       cidades: ['Campinas', 'Valinhos', 'Vinhedo', 'Sumaré', 'Hortolândia', 'Paulínia', 'Indaiatuba', 'Jundiaí', 'Americana'],
       servicos: [
@@ -275,8 +275,8 @@
     };
   };
   /** Converte linhas compactas em registros de log. */
-  AiC.L = (rows) => rows.map((r) => ({ ts: AiC.d(r[0], r[1]), usuario: r[2], perfil: r[3], acao: r[4], ref: r[5] || '', demo: false }));
-  AiC.findBy = (list, id) => list.find((x) => x.id === id);
+  AppC.L = (rows) => rows.map((r) => ({ ts: AppC.d(r[0], r[1]), usuario: r[2], perfil: r[3], acao: r[4], ref: r[5] || '', demo: false }));
+  AppC.findBy = (list, id) => list.find((x) => x.id === id);
 
   /* ------------------------------------------------------------------
      Estado da demonstração
@@ -284,67 +284,67 @@
   const PROF = {
     cliente: { label: 'Cliente', short: 'Cliente', icon: 'user' },
     profissional: { label: 'Profissional / Instalador', short: 'Profissional', icon: 'tool' },
-    mediador: { label: 'Mediador / Gestão AiCalhas', short: 'Mediador', icon: 'shield' },
+    mediador: { label: 'Mediador / Gestão AppCalhas', short: 'Mediador', icon: 'shield' },
   };
-  AiC.PROF = PROF;
+  AppC.PROF = PROF;
   const LV = { 1: 'baixa', 2: 'média', 3: 'alta', 4: 'total' };
-  AiC.LV = LV;
+  AppC.LV = LV;
 
   function freshState() {
     const data = S.cfg.seed();
     const logs = S.cfg.seedLogs ? S.cfg.seedLogs(data) : [];
-    return { data: data, logs: logs, started: AiC.now() };
+    return { data: data, logs: logs, started: AppC.now() };
   }
   function freshUI() { return { profile: null, view: null, sel: {}, tab: {}, f: {}, about: true }; }
   function save() { try { sessionStorage.setItem(S.key, JSON.stringify({ st: S.st, ui: S.ui })); } catch (e) { /* memória apenas */ } }
 
-  AiC.db = () => S.st.data;
-  AiC.profile = () => S.ui.profile;
-  AiC.me = () => S.cfg.users[S.ui.profile];
-  AiC.users = () => S.cfg.users;
-  AiC.sel = (view) => S.ui.sel[view];
-  AiC.setSel = (view, v) => { S.ui.sel[view] = v; };
+  AppC.db = () => S.st.data;
+  AppC.profile = () => S.ui.profile;
+  AppC.me = () => S.cfg.users[S.ui.profile];
+  AppC.users = () => S.cfg.users;
+  AppC.sel = (view) => S.ui.sel[view];
+  AppC.setSel = (view, v) => { S.ui.sel[view] = v; };
 
   /** Registra uma ação no histórico (trilha de auditoria simulada). */
-  AiC.log = function (acao, ref, who) {
-    const u = who || { nome: AiC.me() ? AiC.me().nome : 'Sistema', perfil: S.ui.profile || 'sistema' };
-    S.st.logs.push({ ts: AiC.now(), usuario: u.nome, perfil: u.perfil, acao: acao, ref: ref || '', demo: true });
+  AppC.log = function (acao, ref, who) {
+    const u = who || { nome: AppC.me() ? AppC.me().nome : 'Sistema', perfil: S.ui.profile || 'sistema' };
+    S.st.logs.push({ ts: AppC.now(), usuario: u.nome, perfil: u.perfil, acao: acao, ref: ref || '', demo: true });
   };
 
   /* Centralized materials workflow shared by scenarios 1-3. */
-  function materialOrders(){ const d=AiC.db(); if(!Array.isArray(d.materialOrders)) d.materialOrders=[]; return d.materialOrders; }
-  function materialStatus(o){ return ['Solicitação recebida','Orçamento enviado','Pagamento confirmado','Compra realizada','Recebido pela AiCalhas','Em rota de entrega','Entregue'][o.step] || 'Solicitação recebida'; }
+  function materialOrders(){ const d=AppC.db(); if(!Array.isArray(d.materialOrders)) d.materialOrders=[]; return d.materialOrders; }
+  function materialStatus(o){ return ['Solicitação recebida','Orçamento enviado','Pagamento confirmado','Compra realizada','Recebido pelo AppCalhas','Em rota de entrega','Entregue'][o.step] || 'Solicitação recebida'; }
   function materialClient(){
-    const rows=materialOrders().filter(o=>o.clientId===(AiC.me().ref||'CLI-201'));
-    return AiC.ph('Compra e entrega de materiais','A AiCalhas conduz a solicitação, o orçamento, o pagamento, a compra com fornecedor e a entrega.',AiC.b('Solicitar materiais','core.materialNew',{},'p','cart')) + AiC.note('Materiais são vendidos exclusivamente pela AiCalhas. O profissional não vende nem recebe pagamento por materiais.') + '<div class="mt"></div>' + AiC.card(null, rows.length ? AiC.table([{l:'Pedido',f:o=>'<b>'+AiC.esc(o.id)+'</b>'},{l:'Material',f:o=>AiC.esc(o.name)},{l:'Quantidade',f:o=>o.qty+' '+AiC.esc(o.unit)},{l:'Status',f:o=>AiC.badge(materialStatus(o))},{l:'Orçamento',f:o=>o.price?AiC.money(o.price):'A preparar'},{l:'Entrega',f:o=>AiC.esc(o.address)},{l:'Ação',f:o=>o.step===1?AiC.b('Aprovar e pagar à AiCalhas','core.materialApprove',{id:o.id},'sm p','check'):''}],rows) : AiC.empty('Nenhuma solicitação de materiais.','box'));
+    const rows=materialOrders().filter(o=>o.clientId===(AppC.me().ref||'CLI-201'));
+    return AppC.ph('Compra e entrega de materiais','O AppCalhas conduz a solicitação, o orçamento, o pagamento, a compra com fornecedor e a entrega.',AppC.b('Solicitar materiais','core.materialNew',{},'p','cart')) + AppC.note('Materiais são vendidos exclusivamente pelo AppCalhas. O profissional não vende nem recebe pagamento por materiais.') + '<div class="mt"></div>' + AppC.card(null, rows.length ? AppC.table([{l:'Pedido',f:o=>'<b>'+AppC.esc(o.id)+'</b>'},{l:'Material',f:o=>AppC.esc(o.name)},{l:'Quantidade',f:o=>o.qty+' '+AppC.esc(o.unit)},{l:'Status',f:o=>AppC.badge(materialStatus(o))},{l:'Orçamento',f:o=>o.price?AppC.money(o.price):'A preparar'},{l:'Entrega',f:o=>AppC.esc(o.address)},{l:'Ação',f:o=>o.step===1?AppC.b('Aprovar e pagar ao AppCalhas','core.materialApprove',{id:o.id},'sm p','check'):''}],rows) : AppC.empty('Nenhuma solicitação de materiais.','box'));
   }
   function materialManager(){
     const rows=materialOrders();
-    return AiC.ph('Gestão de compra e entrega de materiais','A AiCalhas controla orçamento, recebimento do pagamento, compra, conferência e entrega.') + AiC.note('O profissional não compra nem vende materiais ao cliente.') + AiC.card(null, rows.length ? rows.map(o=>'<div class="li"><div class="lt"><b>'+AiC.esc(o.id)+' — '+AiC.esc(o.name)+'</b><small>'+AiC.esc(o.clientName)+' · '+o.qty+' '+AiC.esc(o.unit)+' · '+AiC.esc(o.address)+'</small><small>'+AiC.badge(materialStatus(o))+'</small><div class="acts-row">'+(o.step===0?AiC.b('Preparar orçamento','core.materialQuote',{id:o.id},'sm p'):'')+(o.step===2?AiC.b('Registrar compra','core.materialBuy',{id:o.id},'sm p'):'')+(o.step===3?AiC.b('Confirmar recebimento','core.materialReceive',{id:o.id},'sm p'):'')+(o.step===4?AiC.b('Enviar para entrega','core.materialShip',{id:o.id},'sm p'):'')+(o.step===5?AiC.b('Confirmar entrega','core.materialDelivered',{id:o.id},'sm ok'):'')+'</div></div></div>').join('') : AiC.empty('Nenhuma solicitação recebida.','inbox'));
+    return AppC.ph('Gestão de compra e entrega de materiais','O AppCalhas controla orçamento, recebimento do pagamento, compra, conferência e entrega.') + AppC.note('O profissional não compra nem vende materiais ao cliente.') + AppC.card(null, rows.length ? rows.map(o=>'<div class="li"><div class="lt"><b>'+AppC.esc(o.id)+' — '+AppC.esc(o.name)+'</b><small>'+AppC.esc(o.clientName)+' · '+o.qty+' '+AppC.esc(o.unit)+' · '+AppC.esc(o.address)+'</small><small>'+AppC.badge(materialStatus(o))+'</small><div class="acts-row">'+(o.step===0?AppC.b('Preparar orçamento','core.materialQuote',{id:o.id},'sm p'):'')+(o.step===2?AppC.b('Registrar compra','core.materialBuy',{id:o.id},'sm p'):'')+(o.step===3?AppC.b('Confirmar recebimento','core.materialReceive',{id:o.id},'sm p'):'')+(o.step===4?AppC.b('Enviar para entrega','core.materialShip',{id:o.id},'sm p'):'')+(o.step===5?AppC.b('Confirmar entrega','core.materialDelivered',{id:o.id},'sm ok'):'')+'</div></div></div>').join('') : AppC.empty('Nenhuma solicitação recebida.','inbox'));
   }
   function materialProfessional(){
-    return AiC.ph('Materiais dos atendimentos','A compra e a entrega dos materiais são conduzidas pela AiCalhas.') + AiC.note('O profissional executa a mão de obra. Não cobre nem receba valores de materiais do cliente.') + AiC.card(null,AiC.table([{l:'Pedido',f:o=>AiC.esc(o.id)},{l:'Material',f:o=>AiC.esc(o.name)},{l:'Status',f:o=>AiC.badge(materialStatus(o))}],materialOrders()));
+    return AppC.ph('Materiais dos atendimentos','A compra e a entrega dos materiais são conduzidas pelo AppCalhas.') + AppC.note('O profissional executa a mão de obra. Não cobre nem receba valores de materiais do cliente.') + AppC.card(null,AppC.table([{l:'Pedido',f:o=>AppC.esc(o.id)},{l:'Material',f:o=>AppC.esc(o.name)},{l:'Status',f:o=>AppC.badge(materialStatus(o))}],materialOrders()));
   }
   const materialActions={
-    'core.materialNew':()=>AiC.form({title:'Solicitar materiais à AiCalhas',submit:'core.materialSave',submitLabel:'Enviar solicitação',fields:[{name:'material',label:'Material',type:'select',options:AiC.db().materiais.map(m=>({v:m.id,l:m.nome+' ('+m.un+')'})),required:true},{name:'qty',label:'Quantidade',type:'number',value:10,required:true},{name:'address',label:'Endereço de entrega',value:'Rua das Flores, 120 — Campinas/SP',required:true,full:true}]}),
-    'core.materialSave':v=>{const d=AiC.db(),m=d.materiais.find(x=>x.id===v.material),id=AiC.nextId('MAT-',materialOrders());materialOrders().push({id,ts:AiC.now(),clientId:AiC.me().ref||'CLI-201',clientName:AiC.me().nome,name:m.nome,unit:m.un,qty:+v.qty,address:v.address,price:0,step:0});AiC.log('Solicitação de materiais recebida pela AiCalhas',id);AiC.done('Solicitação enviada à AiCalhas.','Solicitação de materiais',id);AiC.go('materiais');},
-    'core.materialQuote':d=>{const o=materialOrders().find(x=>x.id===d.id),m=AiC.db().materiais.find(x=>x.nome===o.name);o.price=o.qty*m.preco;o.step=1;AiC.log('Orçamento de materiais enviado pela AiCalhas',o.id);AiC.refresh();},
-    'core.materialApprove':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=2;AiC.log('Pagamento simulado à AiCalhas',o.id);AiC.refresh();},
-    'core.materialBuy':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=3;AiC.log('Compra de materiais realizada pela AiCalhas',o.id);AiC.refresh();},
-    'core.materialReceive':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=4;AiC.log('Materiais recebidos pela AiCalhas',o.id);AiC.refresh();},
-    'core.materialShip':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=5;AiC.log('Entrega programada pela AiCalhas',o.id);AiC.refresh();},
-    'core.materialDelivered':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=6;AiC.log('Entrega confirmada',o.id);AiC.refresh();}
+    'core.materialNew':()=>AppC.form({title:'Solicitar materiais ao AppCalhas',submit:'core.materialSave',submitLabel:'Enviar solicitação',fields:[{name:'material',label:'Material',type:'select',options:AppC.db().materiais.map(m=>({v:m.id,l:m.nome+' ('+m.un+')'})),required:true},{name:'qty',label:'Quantidade',type:'number',value:10,required:true},{name:'address',label:'Endereço de entrega',value:'Rua das Flores, 120 — Campinas/SP',required:true,full:true}]}),
+    'core.materialSave':v=>{const d=AppC.db(),m=d.materiais.find(x=>x.id===v.material),id=AppC.nextId('MAT-',materialOrders());materialOrders().push({id,ts:AppC.now(),clientId:AppC.me().ref||'CLI-201',clientName:AppC.me().nome,name:m.nome,unit:m.un,qty:+v.qty,address:v.address,price:0,step:0});AppC.log('Solicitação de materiais recebida pelo AppCalhas',id);AppC.done('Solicitação enviada ao AppCalhas.','Solicitação de materiais',id);AppC.go('materiais');},
+    'core.materialQuote':d=>{const o=materialOrders().find(x=>x.id===d.id),m=AppC.db().materiais.find(x=>x.nome===o.name);o.price=o.qty*m.preco;o.step=1;AppC.log('Orçamento de materiais enviado pelo AppCalhas',o.id);AppC.refresh();},
+    'core.materialApprove':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=2;AppC.log('Pagamento simulado ao AppCalhas',o.id);AppC.refresh();},
+    'core.materialBuy':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=3;AppC.log('Compra de materiais realizada pelo AppCalhas',o.id);AppC.refresh();},
+    'core.materialReceive':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=4;AppC.log('Materiais recebidos pelo AppCalhas',o.id);AppC.refresh();},
+    'core.materialShip':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=5;AppC.log('Entrega programada pelo AppCalhas',o.id);AppC.refresh();},
+    'core.materialDelivered':d=>{const o=materialOrders().find(x=>x.id===d.id);o.step=6;AppC.log('Entrega confirmada',o.id);AppC.refresh();}
   };
-  AiC.start = function (cfg) {
+  AppC.start = function (cfg) {
     S.cfg = cfg;
-    cfg.users = cfg.users || AiC.USERS;
-    if (cfg.num < 4) {
+    cfg.users = cfg.users || AppC.USERS;
+    if (cfg.num < 4 && !cfg.ownMaterials) {
       cfg.actions = Object.assign({}, cfg.actions || {}, materialActions);
       cfg.profiles.cliente.menu.push({sec:'Compra e entrega de materiais'},{id:'materiais',label:'Compra e entrega de materiais',icon:'truck',render:materialClient});
       cfg.profiles.profissional.menu.push({sec:'Materiais'},{id:'materiais-pro',label:'Materiais dos atendimentos',icon:'box',render:materialProfessional});
       cfg.profiles.mediador.menu.push({sec:'Suprimentos'},{id:'materiais-gestao',label:'Compra e entrega de materiais',icon:'truck',render:materialManager,badge:()=>materialOrders().filter(o=>o.step<6).length});
     }
-    S.key = 'aicalhas-demo-v1-' + cfg.id;
+    S.key = 'appcalhas-demo-v1-' + cfg.id;
     document.body.classList.add('sc-' + cfg.num);
     let saved = null;
     try { saved = JSON.parse(sessionStorage.getItem(S.key) || 'null'); } catch (e) { saved = null; }
@@ -373,7 +373,7 @@
   }
   function render() {
     const root = document.getElementById('app');
-    if (!S.ui.profile) { root.innerHTML = loginHTML(); document.title = 'AiCalhas · Cenário ' + S.cfg.num + ' — ' + S.cfg.title; save(); return; }
+    if (!S.ui.profile) { root.innerHTML = loginHTML(); document.title = 'AppCalhas · Cenário ' + S.cfg.num + ' — ' + S.cfg.title; save(); return; }
     if (!S.ui.view || !findView(S.ui.view)) S.ui.view = S.cfg.profiles[S.ui.profile].home;
     root.innerHTML = shellHTML();
     renderContent();
@@ -383,16 +383,16 @@
     const el = document.getElementById('content');
     if (!el || !v) return;
     let html;
-    try { html = v.render(); } catch (e) { console.error(e); html = AiC.empty('Não foi possível montar esta tela: ' + e.message, 'alert'); }
+    try { html = v.render(); } catch (e) { console.error(e); html = AppC.empty('Não foi possível montar esta tela: ' + e.message, 'alert'); }
     el.innerHTML = html;
     updateNav();
     const t = document.getElementById('top-title');
     if (t) t.textContent = v.title || v.label;
-    document.title = (v.title || v.label) + ' · AiCalhas — Cenário ' + S.cfg.num;
+    document.title = (v.title || v.label) + ' · AppCalhas — Cenário ' + S.cfg.num;
     save();
   }
   /** Atualiza a tela atual mantendo rolagem e foco em filtros de busca. */
-  AiC.refresh = function () {
+  AppC.refresh = function () {
     if (!S.ui.profile) { render(); return; }
     const ae = document.activeElement;
     let fk = null, pos = null;
@@ -405,7 +405,7 @@
       if (n) { n.focus(); try { if (pos != null) n.setSelectionRange(pos, pos); } catch (e) { /* select */ } }
     }
   };
-  AiC.go = function (view, sel) {
+  AppC.go = function (view, sel) {
     if (sel !== undefined) S.ui.sel[view] = sel;
     S.ui.view = view;
     closeMenu();
@@ -426,13 +426,14 @@
   }
 
   function shellHTML() {
-    const c = S.cfg, p = S.ui.profile, u = AiC.me();
+    const c = S.cfg, p = S.ui.profile, u = AppC.me();
     return '<div class="app" id="shell">' +
       '<aside class="side" id="side" aria-label="Menu principal">' +
-      '<div class="side-head"><a href="index.html" style="text-decoration:none" title="Voltar à capa">' + AiC.logo(true) + '</a></div>' +
+      '<div class="side-head"><a href="index.html" style="text-decoration:none" title="Voltar à capa">' + AppC.logo(true) + '</a></div>' +
       '<div class="side-sc">Cenário ' + c.num + '<b>' + esc(c.title) + '</b></div>' +
       '<nav class="nav" id="nav"></nav>' +
       '<div class="side-foot">' +
+      (c.guide ? '<a class="sbtn guide-s" href="' + esc(c.guide.href) + '">' + icon('layers', 16) + ' ' + esc(c.guide.label) + '</a>' : '') +
       '<button class="sbtn" data-act="core.explain">' + icon('info', 16) + ' Como funciona este cenário</button>' +
       '<button class="sbtn" data-act="core.reset">' + icon('refresh', 16) + ' Reiniciar demonstração</button>' +
       '<a class="sbtn" href="index.html">' + icon('arrowL', 16) + ' Voltar à capa</a>' +
@@ -443,8 +444,9 @@
       '<header class="top">' +
       '<button class="ibtn hamb" data-act="core.menu" aria-label="Abrir menu">' + icon('menu') + '</button>' +
       '<div class="top-t"><span>Cenário ' + c.num + ' — ' + esc(c.title) + '</span><b id="top-title"></b></div>' +
+      (c.guide ? '<a class="btn sm p guide" href="' + esc(c.guide.href) + '" title="' + esc(c.guide.label) + '">' + icon('layers', 16) + '<span>' + esc(c.guide.label) + '</span></a>' : '') +
       '<div class="psw" role="group" aria-label="Trocar perfil">' + ['cliente', 'profissional', 'mediador'].map((k) => '<button type="button" class="' + (k === p ? 'on' : '') + '" data-act="core.switch" data-p="' + k + '" title="Entrar como ' + PROF[k].label + '" aria-pressed="' + (k === p) + '">' + icon(PROF[k].icon, 16) + '<span>' + PROF[k].short + '</span></button>').join('') + '</div>' +
-      '<div class="um"><button type="button" class="um-btn" data-act="core.umenu" aria-label="Menu do usuário">' + AiC.av(u.nome, u.cor) + '<span class="um-n"><b>' + esc(u.nome) + '</b><small>' + esc(PROF[p].label) + '</small></span></button>' +
+      '<div class="um"><button type="button" class="um-btn" data-act="core.umenu" aria-label="Menu do usuário">' + AppC.av(u.nome, u.cor) + '<span class="um-n"><b>' + esc(u.nome) + '</b><small>' + esc(PROF[p].label) + '</small></span></button>' +
       '<div class="um-dd" id="umdd" hidden><div class="um-h"><b>' + esc(u.nome) + '</b><small>' + esc(u.email) + '</small><small>' + esc(PROF[p].label) + '</small></div>' +
       '<button data-act="core.explain">' + icon('info', 16) + ' Como funciona</button>' +
       '<button data-act="core.reset">' + icon('refresh', 16) + ' Reiniciar demonstração</button>' +
@@ -453,16 +455,16 @@
       '</header>' +
       aboutHTML() +
       '<main class="content" id="content"></main>' +
-      '<footer class="foot">AiCalhas — Cenário ' + c.num + ': ' + esc(c.title) + '. Ambiente demonstrativo — dados fictícios. Contatos, mensagens e pagamentos são apenas simulados.</footer>' +
+      '<footer class="foot">AppCalhas — Cenário ' + c.num + ': ' + esc(c.title) + '. Ambiente demonstrativo — dados fictícios. Contatos, mensagens e pagamentos são apenas simulados.</footer>' +
       '</div></div>';
   }
   function aboutHTML() {
     const a = S.cfg.about, p = S.ui.profile;
     if (!S.ui.about) return '<div class="about mini"><button class="lnk" data-act="core.about">' + icon('info', 16) + ' Mostrar o papel deste perfil no cenário</button></div>';
     return '<div class="about" id="about">' +
-      '<div class="ab-lv">' + AiC.meter(a.level) + '<small>Participação da AiCalhas: ' + LV[a.level] + '</small></div>' +
+      '<div class="ab-lv">' + AppC.meter(a.level) + '<small>Participação do AppCalhas: ' + LV[a.level] + '</small></div>' +
       '<div class="ab-t"><b>' + esc(a.perfil[p].t) + '</b><span>' + esc(a.perfil[p].d) + '</span></div>' +
-      '<div class="ab-a"><button class="btn sm" data-act="core.explain">Como funciona</button><button class="ibtn" data-act="core.about" title="Recolher resumo" aria-label="Recolher resumo">' + icon('x', 16) + '</button></div>' +
+      '<div class="ab-a">' + (S.cfg.guide ? '<a class="btn sm p" href="' + esc(S.cfg.guide.href) + '">' + esc(S.cfg.guide.label) + '</a>' : '') + '<button class="btn sm" data-act="core.explain">Como funciona</button><button class="ibtn" data-act="core.about" title="Recolher resumo" aria-label="Recolher resumo">' + icon('x', 16) + '</button></div>' +
       '</div>';
   }
   function loginHTML() {
@@ -470,15 +472,15 @@
     return '<div class="login">' +
       '<section class="lg-brand"><div class="lg-rain" aria-hidden="true"></div>' +
       '<a class="lg-back" href="index.html">' + icon('arrowL', 16) + ' Voltar à capa</a>' +
-      AiC.logo(true) +
+      AppC.logo(true) +
       '<div class="lg-sc"><span class="eyebrow">Cenário ' + c.num + ' de 4</span><h1>' + esc(c.title) + '</h1><p>' + esc(a.resumo) + '</p></div>' +
-      '<div class="lg-lv">' + AiC.meter(a.level, true) + '<span>Participação da AiCalhas: <b>' + LV[a.level] + '</b></span></div>' +
+      '<div class="lg-lv">' + AppC.meter(a.level, true) + '<span>Participação do AppCalhas: <b>' + LV[a.level] + '</b></span></div>' +
       '<ul class="lg-pts">' + a.mediador.slice(0, 4).map((x) => '<li>' + icon('check', 16) + '<span>' + esc(x) + '</span></li>').join('') + '</ul>' +
-      '<button class="btn light" data-act="core.explain">' + icon('info', 16) + ' Como este modelo funciona</button>' +
+      '<div class="lg-cta">' + (c.guide ? '<a class="btn p" href="' + esc(c.guide.href) + '">' + icon('layers', 16) + ' ' + esc(c.guide.label) + '</a>' : '') + '<button class="btn light" data-act="core.explain">' + icon('info', 16) + ' Como este modelo funciona</button></div>' +
       '</section>' +
       '<section class="lg-main"><div class="lg-card">' +
       '<h2>Acesso demonstrativo</h2><p class="muted">Escolha um perfil para navegar. Nenhum cadastro real é necessário.</p>' +
-      '<div class="lg-quick">' + ['cliente', 'profissional', 'mediador'].map((k) => '<button type="button" class="lg-p" data-act="core.quick" data-p="' + k + '">' + AiC.av(us[k].nome, us[k].cor) + '<span class="lg-t"><b>Entrar como ' + esc(PROF[k].label) + '</b><small>' + esc(us[k].nome) + ' — ' + esc(us[k].sub) + '</small></span>' + icon('arrowR', 16) + '</button>').join('') + '</div>' +
+      '<div class="lg-quick">' + ['cliente', 'profissional', 'mediador'].map((k) => '<button type="button" class="lg-p" data-act="core.quick" data-p="' + k + '">' + AppC.av(us[k].nome, us[k].cor) + '<span class="lg-t"><b>Entrar como ' + esc(PROF[k].label) + '</b><small>' + esc(us[k].nome) + ' — ' + esc(us[k].sub) + '</small></span>' + icon('arrowR', 16) + '</button>').join('') + '</div>' +
       '<div class="or">ou use as credenciais de demonstração</div>' +
       '<form data-form="core.login" class="lg-form" autocomplete="off">' +
       '<div class="f"><label for="lg-email">E-mail</label><input id="lg-email" class="inp" type="email" name="email" value="' + esc(us.cliente.email) + '" required></div>' +
@@ -494,11 +496,11 @@
      Componentes de interface
      ------------------------------------------------------------------ */
   const PAL = ['#0f6f86', '#6d4bb3', '#9a5b13', '#a8326e', '#2e7d4f', '#1f56c4', '#b03a48', '#4a6b2a', '#7a3b8f', '#b8612e'];
-  AiC.colorFor = (name) => { let h = 0; String(name).split('').forEach((ch) => { h = (h * 31 + ch.charCodeAt(0)) % 997; }); return PAL[h % PAL.length]; };
-  AiC.av = (name, color, cls) => '<span class="av ' + (cls || '') + '" style="background:' + (color || AiC.colorFor(name)) + '" aria-hidden="true">' + esc(AiC.initials(name)) + '</span>';
-  AiC.stars = (n) => '<span class="stars" title="' + AiC.num(n, 1) + ' de 5"><i style="width:' + Math.max(0, Math.min(100, (n / 5) * 100)) + '%"></i></span>';
-  AiC.rating = (n, count) => n ? '<span class="rt">' + AiC.stars(n) + '<b>' + AiC.num(n, 1) + '</b>' + (count != null ? '<span class="muted">(' + count + ')</span>' : '') + '</span>' : '<span class="muted small">Sem avaliações</span>';
-  AiC.meter = (lv, big) => '<span class="meter' + (big ? ' big' : '') + '" role="img" aria-label="Participação da AiCalhas: ' + LV[lv] + '">' + [1, 2, 3, 4].map((i) => '<i class="' + (i <= lv ? 'on' : '') + '"></i>').join('') + '</span>';
+  AppC.colorFor = (name) => { let h = 0; String(name).split('').forEach((ch) => { h = (h * 31 + ch.charCodeAt(0)) % 997; }); return PAL[h % PAL.length]; };
+  AppC.av = (name, color, cls) => '<span class="av ' + (cls || '') + '" style="background:' + (color || AppC.colorFor(name)) + '" aria-hidden="true">' + esc(AppC.initials(name)) + '</span>';
+  AppC.stars = (n) => '<span class="stars" title="' + AppC.num(n, 1) + ' de 5"><i style="width:' + Math.max(0, Math.min(100, (n / 5) * 100)) + '%"></i></span>';
+  AppC.rating = (n, count) => n ? '<span class="rt">' + AppC.stars(n) + '<b>' + AppC.num(n, 1) + '</b>' + (count != null ? '<span class="muted">(' + count + ')</span>' : '') + '</span>' : '<span class="muted small">Sem avaliações</span>';
+  AppC.meter = (lv, big) => '<span class="meter' + (big ? ' big' : '') + '" role="img" aria-label="Participação do AppCalhas: ' + LV[lv] + '">' + [1, 2, 3, 4].map((i) => '<i class="' + (i <= lv ? 'on' : '') + '"></i>').join('') + '</span>';
 
   const TONES = {
     ok: ['Publicado', 'Publicada', 'Aprovado', 'Aprovada', 'Concluído', 'Concluída', 'Pago', 'Aceito', 'Ativo', 'Disponível', 'Respondido', 'Recebida', 'Recebido pelo cliente', 'Entregue', 'Conferido', 'Conferida', 'Liberado ao cliente', 'Serviço contratado', 'Avaliado', 'Resolvido', 'Resolvida', 'Encerrado', 'Encerrada', 'Confirmada', 'Confirmado', 'Em dia', 'Realizada', 'Liberado', 'Separado'],
@@ -507,71 +509,71 @@
     info: ['Recebido', 'Novo', 'Nova', 'Em contato', 'Em execução', 'Em andamento', 'Enviado', 'Enviada', 'Em rota', 'Em compra', 'Agendado'],
   };
   const toneOf = (t) => { for (const k in TONES) if (TONES[k].indexOf(t) >= 0) return k; return 'neutral'; };
-  AiC.badge = (txt, tone) => '<span class="bdg t-' + (tone || toneOf(txt)) + '">' + esc(txt) + '</span>';
-  AiC.kpi = (o) => '<div class="card kpi' + (o.tone ? ' k-' + o.tone : '') + '">' + (o.icon ? '<span class="ic">' + icon(o.icon, 19) + '</span>' : '') + '<div><div class="l">' + esc(o.l) + '</div><div class="v">' + o.v + '</div>' + (o.s ? '<div class="s">' + o.s + '</div>' : '') + '</div></div>';
-  AiC.ph = (title, sub, acts, back) => (back ? '<button class="back" data-act="core.nav" data-view="' + back[0] + '">' + icon('arrowL', 15) + ' ' + esc(back[1]) + '</button>' : '') + '<div class="ph"><div><h1>' + esc(title) + '</h1>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + (acts ? '<div class="acts">' + acts + '</div>' : '') + '</div>';
-  AiC.card = (title, body, o) => { o = o || {}; return '<section class="card ' + (o.cls || '') + '">' + (title != null ? '<div class="card-h">' + (o.icon ? icon(o.icon, 18) : '') + '<h3>' + esc(title) + '</h3>' + (o.right ? '<div class="card-r">' + o.right + '</div>' : '') + '</div>' : '') + '<div class="card-b' + (o.flush ? ' flush' : '') + '">' + body + '</div></section>'; };
+  AppC.badge = (txt, tone) => '<span class="bdg t-' + (tone || toneOf(txt)) + '">' + esc(txt) + '</span>';
+  AppC.kpi = (o) => '<div class="card kpi' + (o.tone ? ' k-' + o.tone : '') + '">' + (o.icon ? '<span class="ic">' + icon(o.icon, 19) + '</span>' : '') + '<div><div class="l">' + esc(o.l) + '</div><div class="v">' + o.v + '</div>' + (o.s ? '<div class="s">' + o.s + '</div>' : '') + '</div></div>';
+  AppC.ph = (title, sub, acts, back) => (back ? '<button class="back" data-act="core.nav" data-view="' + back[0] + '">' + icon('arrowL', 15) + ' ' + esc(back[1]) + '</button>' : '') + '<div class="ph"><div><h1>' + esc(title) + '</h1>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + (acts ? '<div class="acts">' + acts + '</div>' : '') + '</div>';
+  AppC.card = (title, body, o) => { o = o || {}; return '<section class="card ' + (o.cls || '') + '">' + (title != null ? '<div class="card-h">' + (o.icon ? icon(o.icon, 18) : '') + '<h3>' + esc(title) + '</h3>' + (o.right ? '<div class="card-r">' + o.right + '</div>' : '') + '</div>' : '') + '<div class="card-b' + (o.flush ? ' flush' : '') + '">' + body + '</div></section>'; };
   /** Botão: rótulo, ação, dados (data-*), classes, ícone. */
-  AiC.b = (label, act, data, cls, ic, extra) => '<button type="button" class="btn ' + (cls || '') + '" data-act="' + act + '"' + Object.keys(data || {}).map((k) => ' data-' + k + '="' + esc(data[k]) + '"').join('') + (extra || '') + '>' + (ic ? icon(ic, 16) : '') + (label ? '<span>' + esc(label) + '</span>' : '') + '</button>';
-  AiC.nav = (label, view, sel, cls, ic) => AiC.b(label, 'core.nav', sel != null ? { view: view, id: sel } : { view: view }, cls, ic);
-  AiC.empty = (msg, ic, action) => '<div class="empty">' + icon(ic || 'inbox', 28) + '<p>' + esc(msg) + '</p>' + (action || '') + '</div>';
-  AiC.table = (cols, rows, o) => {
+  AppC.b = (label, act, data, cls, ic, extra) => '<button type="button" class="btn ' + (cls || '') + '" data-act="' + act + '"' + Object.keys(data || {}).map((k) => ' data-' + k + '="' + esc(data[k]) + '"').join('') + (extra || '') + '>' + (ic ? icon(ic, 16) : '') + (label ? '<span>' + esc(label) + '</span>' : '') + '</button>';
+  AppC.nav = (label, view, sel, cls, ic) => AppC.b(label, 'core.nav', sel != null ? { view: view, id: sel } : { view: view }, cls, ic);
+  AppC.empty = (msg, ic, action) => '<div class="empty">' + icon(ic || 'inbox', 28) + '<p>' + esc(msg) + '</p>' + (action || '') + '</div>';
+  AppC.table = (cols, rows, o) => {
     o = o || {};
-    if (!rows.length) return AiC.empty(o.empty || 'Nenhum registro encontrado para os filtros selecionados.', 'search');
+    if (!rows.length) return AppC.empty(o.empty || 'Nenhum registro encontrado para os filtros selecionados.', 'search');
     return '<div class="tw"><table class="tbl ' + (o.cls || '') + '"><thead><tr>' + cols.map((c) => '<th class="' + (c.cls || '') + '">' + esc(c.l) + '</th>').join('') + '</tr></thead><tbody>' +
       rows.map((r) => '<tr' + (o.rowAct ? ' class="clk" data-act="' + o.rowAct + '" data-id="' + esc(r.id) + '"' + (o.rowView ? ' data-view="' + o.rowView + '"' : '') : '') + '>' + cols.map((c) => '<td class="' + (c.cls || '') + '">' + (c.f ? c.f(r) : esc(r[c.k])) + '</td>').join('') + '</tr>').join('') +
       '</tbody>' + (o.foot ? '<tfoot><tr>' + o.foot.map((x, i) => '<td class="' + ((cols[i] && cols[i].cls) || '') + '">' + x + '</td>').join('') + '</tr></tfoot>' : '') + '</table></div>';
   };
-  AiC.dl = (pairs, cls) => '<dl class="dl ' + (cls || '') + '">' + pairs.filter(Boolean).map((p) => '<div><dt>' + esc(p[0]) + '</dt><dd>' + (p[1] == null || p[1] === '' ? '—' : p[1]) + '</dd></div>').join('') + '</dl>';
-  AiC.note = (html, tone, ic) => '<div class="note ' + (tone || '') + '">' + icon(ic || (tone === 'warn' || tone === 'bad' ? 'alert' : 'info'), 17) + '<div>' + html + '</div></div>';
-  AiC.chips = (arr, cls) => '<div class="chips">' + arr.map((x) => '<span class="chip ' + (cls || '') + '">' + esc(x) + '</span>').join('') + '</div>';
-  AiC.tab = (scope, def) => S.ui.tab[scope] || def;
-  AiC.setTab = (scope, id) => { S.ui.tab[scope] = id; };
-  AiC.tabs = (scope, items, def) => {
-    const cur = AiC.tab(scope, def || items[0].id);
+  AppC.dl = (pairs, cls) => '<dl class="dl ' + (cls || '') + '">' + pairs.filter(Boolean).map((p) => '<div><dt>' + esc(p[0]) + '</dt><dd>' + (p[1] == null || p[1] === '' ? '—' : p[1]) + '</dd></div>').join('') + '</dl>';
+  AppC.note = (html, tone, ic) => '<div class="note ' + (tone || '') + '">' + icon(ic || (tone === 'warn' || tone === 'bad' ? 'alert' : 'info'), 17) + '<div>' + html + '</div></div>';
+  AppC.chips = (arr, cls) => '<div class="chips">' + arr.map((x) => '<span class="chip ' + (cls || '') + '">' + esc(x) + '</span>').join('') + '</div>';
+  AppC.tab = (scope, def) => S.ui.tab[scope] || def;
+  AppC.setTab = (scope, id) => { S.ui.tab[scope] = id; };
+  AppC.tabs = (scope, items, def) => {
+    const cur = AppC.tab(scope, def || items[0].id);
     return '<div class="tabs" role="tablist">' + items.map((t) => '<button type="button" role="tab" aria-selected="' + (t.id === cur) + '" class="tab ' + (t.id === cur ? 'on' : '') + '" data-act="core.tab" data-scope="' + scope + '" data-id="' + t.id + '">' + esc(t.l) + (t.n != null ? '<span class="n">' + t.n + '</span>' : '') + '</button>').join('') + '</div>';
   };
   const opt = (o) => (o !== null && typeof o === 'object' ? o : { v: o, l: o });
-  AiC.PERIODS = [{ v: 'all', l: 'Todo o período' }, { v: '0', l: 'Hoje' }, { v: '7', l: 'Últimos 7 dias' }, { v: '30', l: 'Últimos 30 dias' }, { v: '90', l: 'Últimos 90 dias' }];
-  AiC.inPeriod = (v, per) => { if (!per || per === 'all') return true; const dd = AiC.dayDiff(v); return dd > 0 ? true : -dd <= +per; };
-  AiC.fv = (scope, key, def) => { const v = S.ui.f[scope + '.' + key]; return v == null ? (def == null ? '' : def) : v; };
-  AiC.filters = (scope, defs, extra) => '<div class="filters">' + icon('filter', 16) + defs.map((d) => {
+  AppC.PERIODS = [{ v: 'all', l: 'Todo o período' }, { v: '0', l: 'Hoje' }, { v: '7', l: 'Últimos 7 dias' }, { v: '30', l: 'Últimos 30 dias' }, { v: '90', l: 'Últimos 90 dias' }];
+  AppC.inPeriod = (v, per) => { if (!per || per === 'all') return true; const dd = AppC.dayDiff(v); return dd > 0 ? true : -dd <= +per; };
+  AppC.fv = (scope, key, def) => { const v = S.ui.f[scope + '.' + key]; return v == null ? (def == null ? '' : def) : v; };
+  AppC.filters = (scope, defs, extra) => '<div class="filters">' + icon('filter', 16) + defs.map((d) => {
     const key = scope + '.' + d.k;
-    const val = AiC.fv(scope, d.k, d.def != null ? d.def : '');
+    const val = AppC.fv(scope, d.k, d.def != null ? d.def : '');
     if (d.type === 'search') return '<input class="inp fsearch" type="search" placeholder="' + esc(d.l) + '" aria-label="' + esc(d.l) + '" data-filter="' + key + '" value="' + esc(val) + '">';
     return '<label class="fsel"><span>' + esc(d.l) + '</span><select class="inp" data-filter="' + key + '">' + d.o.map((o) => { o = opt(o); return '<option value="' + esc(o.v) + '"' + (String(o.v) === String(val) ? ' selected' : '') + '>' + esc(o.l) + '</option>'; }).join('') + '</select></label>';
   }).join('') + (extra || '') + '<button type="button" class="btn sm gh" data-act="core.clearf" data-scope="' + scope + '">Limpar filtros</button></div>';
-  AiC.opts = (arr, all) => (all ? [{ v: '', l: all }] : []).concat(arr.map(opt));
-  AiC.bars = (data, o) => {
+  AppC.opts = (arr, all) => (all ? [{ v: '', l: all }] : []).concat(arr.map(opt));
+  AppC.bars = (data, o) => {
     o = o || {};
-    if (!data.length) return AiC.empty('Sem dados para os filtros selecionados.', 'chart');
+    if (!data.length) return AppC.empty('Sem dados para os filtros selecionados.', 'chart');
     const max = Math.max.apply(null, data.map((d) => d.v).concat([1]));
-    return '<div class="bars">' + data.map((d) => '<div class="bar"><span class="bl" title="' + esc(d.l) + '">' + esc(d.l) + '</span><span class="tr"><span class="fl" style="width:' + Math.max(2, (d.v / max) * 100) + '%' + (d.c ? ';background:' + d.c : '') + '"></span></span><b>' + (o.money ? AiC.kmoney(d.v) : AiC.num(d.v, o.dec || 0)) + (o.suffix || '') + '</b></div>').join('') + '</div>';
+    return '<div class="bars">' + data.map((d) => '<div class="bar"><span class="bl" title="' + esc(d.l) + '">' + esc(d.l) + '</span><span class="tr"><span class="fl" style="width:' + Math.max(2, (d.v / max) * 100) + '%' + (d.c ? ';background:' + d.c : '') + '"></span></span><b>' + (o.money ? AppC.kmoney(d.v) : AppC.num(d.v, o.dec || 0)) + (o.suffix || '') + '</b></div>').join('') + '</div>';
   };
-  AiC.cols = (labels, series, o) => {
+  AppC.cols = (labels, series, o) => {
     o = o || {};
     const max = Math.max.apply(null, [1].concat(...series.map((s) => s.v)));
-    return '<div class="cc"><div class="cc-plot">' + labels.map((lb, i) => '<div class="cc-g">' + series.map((s) => '<div class="cc-b" style="height:' + Math.max(1, (s.v[i] / max) * 86) + '%;background:' + s.c + '" title="' + esc(s.n) + ': ' + (o.money ? AiC.money(s.v[i]) : s.v[i]) + '"><span>' + (o.money ? AiC.kmoney(s.v[i]) : AiC.num(s.v[i])) + '</span></div>').join('') + '<small>' + esc(lb) + '</small></div>').join('') + '</div>' +
+    return '<div class="cc"><div class="cc-plot">' + labels.map((lb, i) => '<div class="cc-g">' + series.map((s) => '<div class="cc-b" style="height:' + Math.max(1, (s.v[i] / max) * 86) + '%;background:' + s.c + '" title="' + esc(s.n) + ': ' + (o.money ? AppC.money(s.v[i]) : s.v[i]) + '"><span>' + (o.money ? AppC.kmoney(s.v[i]) : AppC.num(s.v[i])) + '</span></div>').join('') + '<small>' + esc(lb) + '</small></div>').join('') + '</div>' +
       (series.length > 1 || o.legend ? '<div class="cc-leg">' + series.map((s) => '<span><i style="background:' + s.c + '"></i>' + esc(s.n) + '</span>').join('') + '</div>' : '') + '</div>';
   };
-  AiC.funnel = (steps) => {
+  AppC.funnel = (steps) => {
     const top = Math.max(1, steps[0].v);
-    return '<div class="fun">' + steps.map((s, i) => '<div class="fun-i"><span>' + esc(s.l) + '</span><div><div class="fun-b" style="width:' + Math.max(6, (s.v / top) * 100) + '%;opacity:' + (1 - i * 0.1) + '">' + s.v + '</div></div><small>' + (i ? AiC.pct(s.v, top) : '100%') + '</small></div>').join('') + '</div>';
+    return '<div class="fun">' + steps.map((s, i) => '<div class="fun-i"><span>' + esc(s.l) + '</span><div><div class="fun-b" style="width:' + Math.max(6, (s.v / top) * 100) + '%;opacity:' + (1 - i * 0.1) + '">' + s.v + '</div></div><small>' + (i ? AppC.pct(s.v, top) : '100%') + '</small></div>').join('') + '</div>';
   };
-  AiC.stepper = (steps, cur) => '<ol class="stp">' + steps.map((s, i) => '<li class="' + (i < cur ? 'done' : i === cur ? 'cur' : '') + '"><span class="dot">' + (i < cur ? icon('check', 13) : i + 1) + '</span><span class="sl">' + esc(s) + '</span></li>').join('') + '</ol>';
-  AiC.timeline = (evs) => evs.length ? '<div class="tl">' + evs.map((e) => '<div class="tl-i ' + (e.tone ? 't-' + e.tone : '') + '"><div class="tl-t">' + esc(e.txt) + '</div><small>' + AiC.fdt(e.ts) + (e.by ? ' — ' + esc(e.by) : '') + '</small></div>').join('') + '</div>' : AiC.empty('Sem eventos registrados.', 'history');
-  const ROLE = { cliente: 'Cliente', profissional: 'Profissional', mediador: 'AiCalhas' };
-  AiC.chat = (msgs, formAct, ref) => {
+  AppC.stepper = (steps, cur) => '<ol class="stp">' + steps.map((s, i) => '<li class="' + (i < cur ? 'done' : i === cur ? 'cur' : '') + '"><span class="dot">' + (i < cur ? icon('check', 13) : i + 1) + '</span><span class="sl">' + esc(s) + '</span></li>').join('') + '</ol>';
+  AppC.timeline = (evs) => evs.length ? '<div class="tl">' + evs.map((e) => '<div class="tl-i ' + (e.tone ? 't-' + e.tone : '') + '"><div class="tl-t">' + esc(e.txt) + '</div><small>' + AppC.fdt(e.ts) + (e.by ? ' — ' + esc(e.by) : '') + '</small></div>').join('') + '</div>' : AppC.empty('Sem eventos registrados.', 'history');
+  const ROLE = { cliente: 'Cliente', profissional: 'Profissional', mediador: 'AppCalhas' };
+  AppC.chat = (msgs, formAct, ref) => {
     const me = S.ui.profile;
-    return '<div class="chat">' + (msgs.length ? msgs.map((m) => m.de === 'sistema' ? '<div class="msg sys">' + esc(m.txt) + ' — ' + AiC.when(m.ts) + '</div>' : '<div class="msg r-' + m.de + (m.de === me ? ' me' : '') + '"><div class="who">' + esc(m.nome) + ' <span>' + ROLE[m.de] + '</span></div><div>' + esc(m.txt) + '</div><time>' + AiC.when(m.ts) + '</time></div>').join('') : AiC.empty('Nenhuma mensagem ainda.', 'chat')) + '</div>' +
+    return '<div class="chat">' + (msgs.length ? msgs.map((m) => m.de === 'sistema' ? '<div class="msg sys">' + esc(m.txt) + ' — ' + AppC.when(m.ts) + '</div>' : '<div class="msg r-' + m.de + (m.de === me ? ' me' : '') + '"><div class="who">' + esc(m.nome) + ' <span>' + ROLE[m.de] + '</span></div><div>' + esc(m.txt) + '</div><time>' + AppC.when(m.ts) + '</time></div>').join('') : AppC.empty('Nenhuma mensagem ainda.', 'chat')) + '</div>' +
       (formAct ? '<form class="chat-f" data-form="' + formAct + '" autocomplete="off"><input type="hidden" name="ref" value="' + esc(ref) + '"><input class="inp" name="txt" placeholder="Escreva uma mensagem (simulação)" aria-label="Mensagem" required><button class="btn p" type="submit">' + icon('send', 16) + '<span>Enviar</span></button></form>' : '');
   };
-  AiC.doc = (title, sub, body) => '<div class="doc"><div class="doc-h"><div>' + AiC.logo(false) + '</div><div style="text-align:right"><h2>' + esc(title) + '</h2><span class="muted">' + sub + '</span></div></div>' + body + '<div class="wm">Documento demonstrativo gerado em ambiente de simulação — dados fictícios, sem validade jurídica ou fiscal.</div></div>';
-  AiC.qr = (seed) => { const r = AiC.rng(seed || 3); let s = '<svg class="qr" viewBox="0 0 29 29" shape-rendering="crispEdges" role="img" aria-label="QR Code demonstrativo"><rect width="29" height="29" fill="#fff"/>'; const fin = (x, y) => '<rect x="' + x + '" y="' + y + '" width="7" height="7" fill="#142230"/><rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="5" height="5" fill="#fff"/><rect x="' + (x + 2) + '" y="' + (y + 2) + '" width="3" height="3" fill="#142230"/>'; for (let y = 0; y < 29; y++) for (let x = 0; x < 29; x++) { if ((x < 8 && y < 8) || (x > 20 && y < 8) || (x < 8 && y > 20)) continue; if (r() > 0.52) s += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="#142230"/>'; } return s + fin(0, 0) + fin(22, 0) + fin(0, 22) + '</svg>'; };
+  AppC.doc = (title, sub, body) => '<div class="doc"><div class="doc-h"><div>' + AppC.logo(false) + '</div><div style="text-align:right"><h2>' + esc(title) + '</h2><span class="muted">' + sub + '</span></div></div>' + body + '<div class="wm">Documento demonstrativo gerado em ambiente de simulação — dados fictícios, sem validade jurídica ou fiscal.</div></div>';
+  AppC.qr = (seed) => { const r = AppC.rng(seed || 3); let s = '<svg class="qr" viewBox="0 0 29 29" shape-rendering="crispEdges" role="img" aria-label="QR Code demonstrativo"><rect width="29" height="29" fill="#fff"/>'; const fin = (x, y) => '<rect x="' + x + '" y="' + y + '" width="7" height="7" fill="#142230"/><rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="5" height="5" fill="#fff"/><rect x="' + (x + 2) + '" y="' + (y + 2) + '" width="3" height="3" fill="#142230"/>'; for (let y = 0; y < 29; y++) for (let x = 0; x < 29; x++) { if ((x < 8 && y < 8) || (x > 20 && y < 8) || (x < 8 && y > 20)) continue; if (r() > 0.52) s += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="#142230"/>'; } return s + fin(0, 0) + fin(22, 0) + fin(0, 22) + '</svg>'; };
 
   /* Mapa esquemático das cidades atendidas (sem escala) */
   const MAPXY = { Americana: [74, 70], Paulínia: [176, 62], Sumaré: [118, 118], Hortolândia: [128, 168], Campinas: [210, 150], Valinhos: [236, 206], Indaiatuba: [92, 236], Vinhedo: [228, 256], Jundiaí: [262, 304] };
-  AiC.regionMap = (selected, label) => {
+  AppC.regionMap = (selected, label) => {
     let s = '<svg viewBox="0 0 340 340" role="img" aria-label="' + esc(label || 'Mapa esquemático das cidades atendidas') + '" style="width:100%;max-width:380px;display:block;margin:auto">';
     s += '<path d="M40 40 C120 10 260 20 310 90 C340 160 320 300 250 330 C170 345 60 320 30 240 C10 170 10 80 40 40Z" fill="#eef3f7" stroke="#d6e0e8" stroke-dasharray="4 4"/>';
     s += '<path d="M60 70 L176 62 L210 150 L262 304 M118 118 L210 150 L92 236 M128 168 L210 150 L236 206 L228 256" fill="none" stroke="#d3dde6" stroke-width="2"/>';
@@ -591,25 +593,25 @@
     { l: 'Visita técnica e orçamento', lv: [0, 0, 1, 2] },
     { l: 'Negociação de preço e prazo da mão de obra', lv: [0, 0, 1, 2] },
     { l: 'Pagamento da mão de obra', lv: [0, 0, 0, 2] },
-    { l: 'Pagamento dos materiais à AiCalhas', lv: [2, 2, 2, 2] },
-    { l: 'Compra e entrega de materiais pela AiCalhas', lv: [2, 2, 2, 2] },
+    { l: 'Pagamento dos materiais ao AppCalhas', lv: [2, 2, 2, 2] },
+    { l: 'Compra e entrega de materiais pelo AppCalhas', lv: [2, 2, 2, 2] },
     { l: 'Execução do serviço', lv: [0, 0, 1, 2] },
     { l: 'Pós-venda, avaliações e reclamações', lv: [1, 1, 2, 2] },
   ];
-  AiC.JOURNEY = JOURNEY;
-  AiC.journey = (num) => '<div class="jr">' + JOURNEY.map((j) => { const v = j.lv[num - 1]; return '<div class="jr-i v' + v + '"><span class="jr-d">' + icon(v === 2 ? 'check' : v === 1 ? 'eye' : 'x', 13) + '</span><span>' + esc(j.l) + '</span><small>' + ['Fora da AiCalhas', 'Acompanha', 'Conduz'][v] + '</small></div>'; }).join('') + '</div>';
+  AppC.JOURNEY = JOURNEY;
+  AppC.journey = (num) => '<div class="jr">' + JOURNEY.map((j) => { const v = j.lv[num - 1]; return '<div class="jr-i v' + v + '"><span class="jr-d">' + icon(v === 2 ? 'check' : v === 1 ? 'eye' : 'x', 13) + '</span><span>' + esc(j.l) + '</span><small>' + ['Fora do AppCalhas', 'Acompanha', 'Conduz'][v] + '</small></div>'; }).join('') + '</div>';
   const SCN = [
     { n: 1, t: 'Vitrine de profissionais', f: 'cenario-1.html', lv: 1 },
     { n: 2, t: 'Indicação direcionada', f: 'cenario-2.html', lv: 2 },
     { n: 3, t: 'Atendimento acompanhado', f: 'cenario-3.html', lv: 3 },
     { n: 4, t: 'Contratação centralizada', f: 'cenario-4.html', lv: 4 },
   ];
-  AiC.SCN = SCN;
+  AppC.SCN = SCN;
 
   /* ------------------------------------------------------------------
      Modais, formulários, confirmações e avisos
      ------------------------------------------------------------------ */
-  AiC.modal = function (o) {
+  AppC.modal = function (o) {
     const root = document.getElementById('modal-root');
     const foot = o.foot === '' ? '' : '<div class="md-f">' + (o.foot || '<button type="button" class="btn" data-act="core.close">Fechar</button>') + '</div>';
     root.innerHTML = '<div class="mb" data-backdrop="1"><div class="md ' + (o.size || '') + '" role="dialog" aria-modal="true" aria-labelledby="md-title"><div class="md-h"><div><h3 id="md-title">' + esc(o.title) + '</h3>' + (o.sub ? '<p>' + o.sub + '</p>' : '') + '</div><button type="button" class="ibtn" data-act="core.close" aria-label="Fechar">' + icon('x') + '</button></div><div class="md-b">' + o.body + '</div>' + foot + '</div></div>';
@@ -619,7 +621,7 @@
       if (first && window.innerWidth > 760) first.focus(); else { const c = root.querySelector('.md-h .ibtn'); if (c) c.focus(); }
     }, 30);
   };
-  AiC.close = function () {
+  AppC.close = function () {
     const r = document.getElementById('modal-root');
     if (r) r.innerHTML = '';
     S.formCalc = null; S.formExtra = {};
@@ -642,7 +644,7 @@
       case 'radios': inner = '<div class="checks">' + f.options.map((o) => { o = opt(o); return '<label class="ck"><input type="radio" name="' + f.name + '" value="' + esc(o.v) + '"' + (String(o.v) === String(val) ? ' checked' : '') + req + '><span>' + esc(o.l) + '</span></label>'; }).join('') + '</div>'; break;
       case 'check': return '<div class="f ' + (f.half ? '' : 'full') + '"><label class="ck single"><input type="checkbox" data-bool="1" name="' + f.name + '"' + (val ? ' checked' : '') + req + '><span>' + esc(f.text || f.label) + (f.required ? ' <i class="req">*</i>' : '') + '</span></label>' + help + '</div>';
       case 'photos': inner = photoField(f); break;
-      case 'items': inner = AiC.itemsEditor(f.name, f.catalog, f.value || []); break;
+      case 'items': inner = AppC.itemsEditor(f.name, f.catalog, f.value || []); break;
       default: inner = '<input class="inp" id="' + id + '" type="' + (f.type || 'text') + '" name="' + f.name + '" value="' + esc(val) + '" placeholder="' + esc(f.placeholder || '') + '"' + (f.min != null ? ' min="' + f.min + '"' : '') + (f.max != null ? ' max="' + f.max + '"' : '') + (f.step != null ? ' step="' + f.step + '"' : '') + req + '>';
     }
     return '<div class="f ' + (f.full ? 'full' : '') + '">' + lab + inner + help + '</div>';
@@ -650,16 +652,16 @@
   function photoField(f) {
     const presets = f.presets || ['calha-frontal', 'vazamento', 'condutor', 'rufo', 'limpeza', 'aluminio'];
     return '<div class="pf"><label class="pf-up">' + icon('camera', 22) + '<span><b>Escolher fotos do dispositivo</b><small>Simulação: as imagens ficam apenas neste navegador.</small></span><input type="file" name="' + f.name + '" accept="image/*" multiple data-preview="1"></label><div class="fprev"></div>' +
-      '<div class="pf-or">Ou marque imagens ilustrativas para a demonstração:</div><div class="pf-pre" data-multi="' + f.name + '__preset">' + presets.map((k) => '<label class="pf-p"><input type="checkbox" name="' + f.name + '__preset" value="' + k + '"' + ((f.preselect || []).indexOf(k) >= 0 ? ' checked' : '') + '>' + AiC.photo(k) + '<small>' + esc(ILL[k].l) + '</small></label>').join('') + '</div></div>';
+      '<div class="pf-or">Ou marque imagens ilustrativas para a demonstração:</div><div class="pf-pre" data-multi="' + f.name + '__preset">' + presets.map((k) => '<label class="pf-p"><input type="checkbox" name="' + f.name + '__preset" value="' + k + '"' + ((f.preselect || []).indexOf(k) >= 0 ? ' checked' : '') + '>' + AppC.photo(k) + '<small>' + esc(ILL[k].l) + '</small></label>').join('') + '</div></div>';
   }
   /** Editor de itens (materiais) com subtotal e total automáticos. */
-  AiC.itemsEditor = function (name, catalog, items) {
+  AppC.itemsEditor = function (name, catalog, items) {
     S.catalogs[name] = catalog;
     const rows = (items.length ? items : [{}]).map((it) => itemRow(catalog, it)).join('');
-    return '<div class="ied" data-name="' + name + '"><div class="tw"><table class="tbl ied-t"><thead><tr><th>Material</th><th class="r">Qtd.</th><th class="r">Preço unit.</th><th class="r">Subtotal</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div><div class="ied-f"><button type="button" class="btn sm" data-act="core.addLine" data-name="' + name + '">' + icon('plus', 15) + ' Adicionar item</button><span class="ied-tot">Total dos itens: <b>' + AiC.money(AiC.sum(items, (x) => x.qtd * x.preco)) + '</b></span></div></div>';
+    return '<div class="ied" data-name="' + name + '"><div class="tw"><table class="tbl ied-t"><thead><tr><th>Material</th><th class="r">Qtd.</th><th class="r">Preço unit.</th><th class="r">Subtotal</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div><div class="ied-f"><button type="button" class="btn sm" data-act="core.addLine" data-name="' + name + '">' + icon('plus', 15) + ' Adicionar item</button><span class="ied-tot">Total dos itens: <b>' + AppC.money(AppC.sum(items, (x) => x.qtd * x.preco)) + '</b></span></div></div>';
   };
   function itemRow(cat, it) {
-    return '<tr><td><select class="inp ied-m" aria-label="Material"><option value="">Selecione…</option>' + cat.map((m) => '<option value="' + m.id + '" data-price="' + m.preco + '"' + (m.id === it.id ? ' selected' : '') + '>' + esc(m.nome) + ' (' + esc(m.un) + ')</option>').join('') + '</select></td><td class="r"><input class="inp ied-q" type="number" min="0" step="0.5" aria-label="Quantidade" value="' + (it.qtd != null ? it.qtd : 1) + '"></td><td class="r"><input class="inp ied-p" type="number" min="0" step="0.01" aria-label="Preço unitário" value="' + (it.preco != null ? it.preco : '') + '"></td><td class="r ied-s num">' + AiC.money((it.qtd || 0) * (it.preco || 0)) + '</td><td><button type="button" class="ibtn" data-act="core.delLine" title="Remover item" aria-label="Remover item">' + icon('trash', 15) + '</button></td></tr>';
+    return '<tr><td><select class="inp ied-m" aria-label="Material"><option value="">Selecione…</option>' + cat.map((m) => '<option value="' + m.id + '" data-price="' + m.preco + '"' + (m.id === it.id ? ' selected' : '') + '>' + esc(m.nome) + ' (' + esc(m.un) + ')</option>').join('') + '</select></td><td class="r"><input class="inp ied-q" type="number" min="0" step="0.5" aria-label="Quantidade" value="' + (it.qtd != null ? it.qtd : 1) + '"></td><td class="r"><input class="inp ied-p" type="number" min="0" step="0.01" aria-label="Preço unitário" value="' + (it.preco != null ? it.preco : '') + '"></td><td class="r ied-s num">' + AppC.money((it.qtd || 0) * (it.preco || 0)) + '</td><td><button type="button" class="ibtn" data-act="core.delLine" title="Remover item" aria-label="Remover item">' + icon('trash', 15) + '</button></td></tr>';
   }
   function readItems(ed) {
     const cat = S.catalogs[ed.dataset.name] || [];
@@ -670,26 +672,26 @@
       return { id: id, nome: m.nome, un: m.un, qtd: +tr.querySelector('.ied-q').value || 0, preco: +tr.querySelector('.ied-p').value || 0, custo: m.custo || 0 };
     }).filter((x) => x && x.qtd > 0);
   }
-  AiC.readItems = readItems;
+  AppC.readItems = readItems;
   function recalcItems(ed) {
     let tot = 0;
-    ed.querySelectorAll('tbody tr').forEach((tr) => { const q = +tr.querySelector('.ied-q').value || 0, p = +tr.querySelector('.ied-p').value || 0; tr.querySelector('.ied-s').textContent = AiC.money(q * p); tot += q * p; });
-    ed.querySelector('.ied-tot b').textContent = AiC.money(tot);
+    ed.querySelectorAll('tbody tr').forEach((tr) => { const q = +tr.querySelector('.ied-q').value || 0, p = +tr.querySelector('.ied-p').value || 0; tr.querySelector('.ied-s').textContent = AppC.money(q * p); tot += q * p; });
+    ed.querySelector('.ied-tot b').textContent = AppC.money(tot);
   }
-  AiC.itemsTotal = (items) => AiC.sum(items || [], (x) => x.qtd * x.preco);
+  AppC.itemsTotal = (items) => AppC.sum(items || [], (x) => x.qtd * x.preco);
 
-  AiC.form = function (o) {
+  AppC.form = function (o) {
     S.formExtra = o.extra || {};
-    const body = (o.intro ? AiC.note(o.intro) + '<div style="height:14px"></div>' : '') + '<form data-form="' + o.submit + '" id="mform" class="fg' + (o.one ? ' one' : '') + '" autocomplete="off">' + o.fields.map(fieldHTML).join('') + '</form>' + (o.after || '');
-    AiC.modal({ title: o.title, sub: o.sub, size: o.size, body: body, foot: '<button type="button" class="btn" data-act="core.close">Cancelar</button><button class="btn ' + (o.btnCls || 'p') + '" type="submit" form="mform">' + icon(o.icon || 'check', 16) + ' ' + esc(o.submitLabel || 'Salvar') + '</button>' });
+    const body = (o.intro ? AppC.note(o.intro) + '<div style="height:14px"></div>' : '') + '<form data-form="' + o.submit + '" id="mform" class="fg' + (o.one ? ' one' : '') + '" autocomplete="off">' + o.fields.map(fieldHTML).join('') + '</form>' + (o.after || '');
+    AppC.modal({ title: o.title, sub: o.sub, size: o.size, body: body, foot: '<button type="button" class="btn" data-act="core.close">Cancelar</button><button class="btn ' + (o.btnCls || 'p') + '" type="submit" form="mform">' + icon(o.icon || 'check', 16) + ' ' + esc(o.submitLabel || 'Salvar') + '</button>' });
     S.formCalc = o.calc || null;
     if (S.formCalc) setTimeout(() => { const f = document.getElementById('mform'); if (f && S.formCalc) S.formCalc(f); }, 0);
   };
-  AiC.confirm = function (o) {
+  AppC.confirm = function (o) {
     S.pendingOk = o.onOk;
-    AiC.modal({ title: o.title, size: 'sm', body: '<p class="cf">' + o.msg + '</p>' + (o.note ? AiC.note(o.note, o.noteTone) : ''), foot: '<button type="button" class="btn" data-act="core.close">Cancelar</button><button type="button" class="btn ' + (o.danger ? 'dgs' : 'p') + '" data-act="core.ok">' + esc(o.ok || 'Confirmar') + '</button>' });
+    AppC.modal({ title: o.title, size: 'sm', body: '<p class="cf">' + o.msg + '</p>' + (o.note ? AppC.note(o.note, o.noteTone) : ''), foot: '<button type="button" class="btn" data-act="core.close">Cancelar</button><button type="button" class="btn ' + (o.danger ? 'dgs' : 'p') + '" data-act="core.ok">' + esc(o.ok || 'Confirmar') + '</button>' });
   };
-  AiC.toast = function (msg, tone) {
+  AppC.toast = function (msg, tone) {
     const w = document.getElementById('toasts');
     if (!w) return;
     const t = document.createElement('div');
@@ -700,13 +702,13 @@
     setTimeout(() => t.remove(), 3800);
   };
   /** Conclui uma ação: registra no histórico, fecha o modal, atualiza a tela e avisa. */
-  AiC.done = function (msg, acao, ref, tone) {
-    if (acao) AiC.log(acao, ref);
-    AiC.close();
-    AiC.refresh();
-    if (msg) AiC.toast(msg, tone);
+  AppC.done = function (msg, acao, ref, tone) {
+    if (acao) AppC.log(acao, ref);
+    AppC.close();
+    AppC.refresh();
+    if (msg) AppC.toast(msg, tone);
   };
-  AiC.readImage = (file) => new Promise((res, rej) => {
+  AppC.readImage = (file) => new Promise((res, rej) => {
     if (!/^image\//.test(file.type)) { rej(new Error('Arquivo não é imagem')); return; }
     const fr = new FileReader();
     fr.onload = () => {
@@ -732,13 +734,13 @@
     return { id: 'historico', label: p === 'mediador' ? 'Histórico e logs' : 'Minhas atividades', icon: 'history', title: p === 'mediador' ? 'Histórico de atividades e logs' : 'Minhas atividades', render: () => renderLog(p) };
   }
   function logRows(p) {
-    const me = AiC.me();
+    const me = AppC.me();
     let rows = S.st.logs.slice().sort((a, b) => (a.ts < b.ts ? 1 : a.ts > b.ts ? -1 : 0));
     const own = p !== 'mediador';
     if (own) rows = rows.filter((l) => l.usuario === me.nome);
-    const pf = AiC.fv('log', 'perfil'), per = AiC.fv('log', 'per', 'all'), org = AiC.fv('log', 'org'), q = AiC.fv('log', 'q').toLowerCase();
+    const pf = AppC.fv('log', 'perfil'), per = AppC.fv('log', 'per', 'all'), org = AppC.fv('log', 'org'), q = AppC.fv('log', 'q').toLowerCase();
     if (pf) rows = rows.filter((l) => l.perfil === pf);
-    rows = rows.filter((l) => AiC.inPeriod(l.ts, per));
+    rows = rows.filter((l) => AppC.inPeriod(l.ts, per));
     if (org === 'demo') rows = rows.filter((l) => l.demo);
     if (org === 'hist') rows = rows.filter((l) => !l.demo);
     if (q) rows = rows.filter((l) => (l.acao + ' ' + l.ref + ' ' + l.usuario).toLowerCase().indexOf(q) >= 0);
@@ -748,26 +750,26 @@
   function renderLog(p) {
     const own = p !== 'mediador';
     const rows = logRows(p);
-    const all = own ? S.st.logs.filter((l) => l.usuario === AiC.me().nome) : S.st.logs;
+    const all = own ? S.st.logs.filter((l) => l.usuario === AppC.me().nome) : S.st.logs;
     const demoN = all.filter((l) => l.demo).length;
-    const users = Object.keys(AiC.count(all, (l) => l.usuario)).length;
+    const users = Object.keys(AppC.count(all, (l) => l.usuario)).length;
     const last = all.slice().sort((a, b) => (a.ts < b.ts ? 1 : -1))[0];
-    const defs = (own ? [] : [{ k: 'perfil', l: 'Perfil', o: AiC.opts([{ v: 'cliente', l: 'Cliente' }, { v: 'profissional', l: 'Profissional' }, { v: 'mediador', l: 'Mediador' }], 'Todos') }])
-      .concat([{ k: 'per', l: 'Período', def: 'all', o: AiC.PERIODS }, { k: 'org', l: 'Origem', o: AiC.opts([{ v: 'demo', l: 'Nesta demonstração' }, { v: 'hist', l: 'Histórico fictício' }], 'Todas') }, { k: 'q', type: 'search', l: 'Buscar ação, registro ou usuário' }]);
-    return AiC.ph(own ? 'Minhas atividades' : 'Histórico de atividades e logs',
-      own ? 'Registro das suas ações neste cenário. A gestão AiCalhas visualiza o histórico completo de todos os perfis.' : 'Trilha de auditoria simulada: data, horário, usuário, perfil e ação realizada. As ações feitas durante a demonstração aparecem destacadas.',
-      AiC.b('Exportar CSV', 'core.csv', {}, '', 'download')) +
+    const defs = (own ? [] : [{ k: 'perfil', l: 'Perfil', o: AppC.opts([{ v: 'cliente', l: 'Cliente' }, { v: 'profissional', l: 'Profissional' }, { v: 'mediador', l: 'Mediador' }], 'Todos') }])
+      .concat([{ k: 'per', l: 'Período', def: 'all', o: AppC.PERIODS }, { k: 'org', l: 'Origem', o: AppC.opts([{ v: 'demo', l: 'Nesta demonstração' }, { v: 'hist', l: 'Histórico fictício' }], 'Todas') }, { k: 'q', type: 'search', l: 'Buscar ação, registro ou usuário' }]);
+    return AppC.ph(own ? 'Minhas atividades' : 'Histórico de atividades e logs',
+      own ? 'Registro das suas ações neste cenário. A gestão AppCalhas visualiza o histórico completo de todos os perfis.' : 'Trilha de auditoria simulada: data, horário, usuário, perfil e ação realizada. As ações feitas durante a demonstração aparecem destacadas.',
+      AppC.b('Exportar CSV', 'core.csv', {}, '', 'download')) +
       '<div class="g4 mb16">' +
-      AiC.kpi({ l: 'Registros no histórico', v: AiC.num(all.length), icon: 'history' }) +
-      AiC.kpi({ l: 'Ações nesta demonstração', v: AiC.num(demoN), icon: 'flag', s: 'Desde o último reinício' }) +
-      AiC.kpi({ l: own ? 'Perfil' : 'Usuários envolvidos', v: own ? esc(PROF[p].short) : users, icon: 'users' }) +
-      AiC.kpi({ l: 'Último registro', v: last ? AiC.ft(last.ts) : '—', s: last ? AiC.fd(last.ts) : '', icon: 'clock' }) +
+      AppC.kpi({ l: 'Registros no histórico', v: AppC.num(all.length), icon: 'history' }) +
+      AppC.kpi({ l: 'Ações nesta demonstração', v: AppC.num(demoN), icon: 'flag', s: 'Desde o último reinício' }) +
+      AppC.kpi({ l: own ? 'Perfil' : 'Usuários envolvidos', v: own ? esc(PROF[p].short) : users, icon: 'users' }) +
+      AppC.kpi({ l: 'Último registro', v: last ? AppC.ft(last.ts) : '—', s: last ? AppC.fd(last.ts) : '', icon: 'clock' }) +
       '</div>' +
-      AiC.card(null, AiC.filters('log', defs) + AiC.table([
-        { l: 'Data', f: (r) => '<span class="nowrap">' + AiC.fd(r.ts) + '</span>' },
-        { l: 'Horário', f: (r) => AiC.ft(r.ts) },
+      AppC.card(null, AppC.filters('log', defs) + AppC.table([
+        { l: 'Data', f: (r) => '<span class="nowrap">' + AppC.fd(r.ts) + '</span>' },
+        { l: 'Horário', f: (r) => AppC.ft(r.ts) },
         { l: 'Usuário', f: (r) => '<span class="nowrap">' + esc(r.usuario) + '</span>' },
-        { l: 'Perfil', f: (r) => AiC.badge(pname(r.perfil), 'neutral') },
+        { l: 'Perfil', f: (r) => AppC.badge(pname(r.perfil), 'neutral') },
         { l: 'Ação realizada', f: (r) => esc(r.acao) + (r.demo ? '<span class="new">nesta demonstração</span>' : '') },
         { l: 'Registro', f: (r) => '<span class="muted">' + esc(r.ref) + '</span>' },
       ], rows.slice(0, 400), { empty: 'Nenhuma atividade encontrada para os filtros.' }), { flush: true });
@@ -778,16 +780,16 @@
      ------------------------------------------------------------------ */
   function explain() {
     const c = S.cfg, a = c.about;
-    const body = '<div class="ex-top">' + AiC.meter(a.level, true) + '<span>Participação da AiCalhas: <b>' + LV[a.level] + '</b></span></div>' +
+    const body = '<div class="ex-top">' + AppC.meter(a.level, true) + '<span>Participação do AppCalhas: <b>' + LV[a.level] + '</b></span></div>' +
       '<p class="lead">' + esc(a.resumo) + '</p>' +
       '<div class="g2"><div><h4>Como funciona</h4><ol class="ol">' + a.como.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>' +
       '<div><h4>Papel do mediador</h4><ul class="ul chk">' + a.mediador.map((x) => '<li>' + icon('check', 15) + '<span>' + esc(x) + '</span></li>').join('') + '</ul></div></div>' +
-      '<h4>Até onde vai a participação da AiCalhas</h4>' + AiC.journey(c.num) +
-      '<div style="height:12px"></div>' + AiC.note('<b>Limite deste modelo:</b> ' + esc(a.limite)) +
+      '<h4>Até onde vai a participação do AppCalhas</h4>' + AppC.journey(c.num) +
+      '<div style="height:12px"></div>' + AppC.note('<b>Limite deste modelo:</b> ' + esc(a.limite)) +
       '<h4>Exemplo prático</h4><p>' + esc(a.exemplo) + '</p>' +
       '<h4>O painel da gestão acompanha</h4><p>' + esc(a.painel) + '</p>' +
-      '<h4>Compare com os outros cenários</h4><div class="scx">' + SCN.map((s) => '<a href="' + s.f + '" class="' + (s.n === c.num ? 'on' : '') + '">' + AiC.meter(s.lv) + '<b>Cenário ' + s.n + '</b><span>' + esc(s.t) + '</span></a>').join('') + '</div>';
-    AiC.modal({ title: 'Como funciona — Cenário ' + c.num + ': ' + c.title, body: body, size: 'lg', foot: '<a class="btn" href="index.html">' + icon('arrowL', 16) + ' Voltar à capa</a><button type="button" class="btn p" data-act="core.close">Entendi</button>' });
+      '<h4>Compare com os outros cenários</h4><div class="scx">' + SCN.map((s) => '<a href="' + s.f + '" class="' + (s.n === c.num ? 'on' : '') + '">' + AppC.meter(s.lv) + '<b>Cenário ' + s.n + '</b><span>' + esc(s.t) + '</span></a>').join('') + '</div>';
+    AppC.modal({ title: 'Como funciona — Cenário ' + c.num + ': ' + c.title, body: body, size: 'lg', foot: '<a class="btn" href="index.html">' + icon('arrowL', 16) + ' Voltar à capa</a>' + (c.guide ? '<a class="btn" href="' + esc(c.guide.href) + '">' + icon('layers', 16) + ' ' + esc(c.guide.label) + '</a>' : '') + '<button type="button" class="btn p" data-act="core.close">Entendi</button>' });
   }
 
   /* ------------------------------------------------------------------
@@ -799,15 +801,15 @@
     S.ui.profile = p;
     S.ui.view = S.cfg.profiles[p].home;
     S.ui.sel = {}; S.ui.f = {};
-    AiC.log(how || 'Login demonstrativo', 'Acesso ao perfil ' + PROF[p].label);
+    AppC.log(how || 'Login demonstrativo', 'Acesso ao perfil ' + PROF[p].label);
     render();
     window.scrollTo(0, 0);
-    AiC.toast('Você entrou como ' + AiC.me().nome + ' (' + PROF[p].short + ').');
+    AppC.toast('Você entrou como ' + AppC.me().nome + ' (' + PROF[p].short + ').');
   }
   const CORE = {
-    'core.nav': (ds) => { closeUM(); AiC.go(ds.view, ds.id); },
-    'core.tab': (ds) => { S.ui.tab[ds.scope] = ds.id; AiC.refresh(); },
-    'core.clearf': (ds) => { Object.keys(S.ui.f).forEach((k) => { if (k.indexOf(ds.scope + '.') === 0) delete S.ui.f[k]; }); AiC.refresh(); },
+    'core.nav': (ds) => { closeUM(); AppC.go(ds.view, ds.id); },
+    'core.tab': (ds) => { S.ui.tab[ds.scope] = ds.id; AppC.refresh(); },
+    'core.clearf': (ds) => { Object.keys(S.ui.f).forEach((k) => { if (k.indexOf(ds.scope + '.') === 0) delete S.ui.f[k]; }); AppC.refresh(); },
     'core.menu': () => { const sh = document.getElementById('shell'); if (sh) sh.classList.toggle('menu-open'); },
     'core.umenu': () => { const u = document.getElementById('umdd'); if (u) u.hidden = !u.hidden; },
     'core.quick': (ds) => login(ds.p, 'Login demonstrativo (acesso rápido)'),
@@ -815,60 +817,60 @@
       const em = String(v.email || '').trim().toLowerCase();
       const us = S.cfg.users;
       const p = Object.keys(us).find((k) => us[k].email.toLowerCase() === em);
-      if (!p) { AiC.toast('E-mail não encontrado. Use uma das contas de demonstração indicadas.', 'warn'); return; }
+      if (!p) { AppC.toast('E-mail não encontrado. Use uma das contas de demonstração indicadas.', 'warn'); return; }
       login(p, 'Login demonstrativo (e-mail e senha)');
     },
     'core.switch': (ds) => {
       closeUM();
       if (ds.p === S.ui.profile) return;
-      AiC.log('Saída do sistema (troca de perfil)', 'Encerrou a sessão de ' + PROF[S.ui.profile].label);
+      AppC.log('Saída do sistema (troca de perfil)', 'Encerrou a sessão de ' + PROF[S.ui.profile].label);
       login(ds.p, 'Login demonstrativo (troca rápida de perfil)');
     },
     'core.logout': () => {
       closeUM();
-      AiC.log('Saída do sistema (logout)', 'Sessão encerrada');
+      AppC.log('Saída do sistema (logout)', 'Sessão encerrada');
       S.ui.profile = null;
       render();
       window.scrollTo(0, 0);
-      AiC.toast('Sessão encerrada. Escolha um perfil para entrar novamente.');
+      AppC.toast('Sessão encerrada. Escolha um perfil para entrar novamente.');
     },
     'core.reset': () => {
       closeUM();
-      AiC.confirm({
+      AppC.confirm({
         title: 'Reiniciar demonstração',
         msg: 'Os dados fictícios voltarão ao estado inicial e as ações feitas nesta demonstração serão descartadas. Deseja continuar?',
         ok: 'Reiniciar',
         onOk: () => {
           const p = S.ui.profile, about = S.ui.about;
           S.st = freshState(); S.ui = freshUI(); S.ui.about = about;
-          if (p) { S.ui.profile = p; S.ui.view = S.cfg.profiles[p].home; AiC.log('Demonstração reiniciada', 'Dados fictícios restaurados'); }
+          if (p) { S.ui.profile = p; S.ui.view = S.cfg.profiles[p].home; AppC.log('Demonstração reiniciada', 'Dados fictícios restaurados'); }
           render(); window.scrollTo(0, 0);
-          AiC.toast('Demonstração reiniciada com os dados fictícios iniciais.');
+          AppC.toast('Demonstração reiniciada com os dados fictícios iniciais.');
         },
       });
     },
     'core.explain': () => { closeUM(); explain(); },
     'core.about': () => { S.ui.about = !S.ui.about; const el = document.querySelector('.about'); if (el) el.outerHTML = aboutHTML(); save(); },
-    'core.close': () => AiC.close(),
-    'core.ok': () => { const fn = S.pendingOk; S.pendingOk = null; AiC.close(); if (fn) fn(); },
+    'core.close': () => AppC.close(),
+    'core.ok': () => { const fn = S.pendingOk; S.pendingOk = null; AppC.close(); if (fn) fn(); },
     'core.addLine': (ds) => { const ed = document.querySelector('.ied[data-name="' + ds.name + '"]'); if (!ed) return; ed.querySelector('tbody').insertAdjacentHTML('beforeend', itemRow(S.catalogs[ds.name] || [], {})); },
     'core.delLine': (ds, el) => { const ed = el.closest('.ied'); el.closest('tr').remove(); if (ed) { recalcItems(ed); runCalc(); } },
-    'core.zoom': (ds, el) => { const p = el.querySelector('.pimg'); AiC.modal({ title: ds.cap || 'Foto', size: 'lg', body: '<div style="max-width:100%">' + (p ? p.outerHTML.replace('<span class="cap">', '<span class="cap" hidden>') : '') + '</div>' }); },
+    'core.zoom': (ds, el) => { const p = el.querySelector('.pimg'); AppC.modal({ title: ds.cap || 'Foto', size: 'lg', body: '<div style="max-width:100%">' + (p ? p.outerHTML.replace('<span class="cap">', '<span class="cap" hidden>') : '') + '</div>' }); },
     'core.csv': () => {
       const rows = logRows(S.ui.profile);
       const q = (s) => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
-      const lines = [['Data', 'Horário', 'Usuário', 'Perfil', 'Ação', 'Registro', 'Origem'].map(q).join(';')].concat(rows.map((r) => [AiC.fd(r.ts), AiC.ft(r.ts), r.usuario, pname(r.perfil), r.acao, r.ref, r.demo ? 'Demonstração' : 'Histórico fictício'].map(q).join(';')));
+      const lines = [['Data', 'Horário', 'Usuário', 'Perfil', 'Ação', 'Registro', 'Origem'].map(q).join(';')].concat(rows.map((r) => [AppC.fd(r.ts), AppC.ft(r.ts), r.usuario, pname(r.perfil), r.acao, r.ref, r.demo ? 'Demonstração' : 'Histórico fictício'].map(q).join(';')));
       try {
         const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'aicalhas-cenario-' + S.cfg.num + '-historico.csv';
+        a.download = 'appcalhas-cenario-' + S.cfg.num + '-historico.csv';
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-        AiC.log('Exportação do histórico (CSV)', rows.length + ' registros');
-        AiC.toast('Arquivo CSV gerado com ' + rows.length + ' registros.');
-        AiC.refresh();
-      } catch (e) { AiC.toast('Não foi possível gerar o arquivo neste navegador.', 'bad'); }
+        AppC.log('Exportação do histórico (CSV)', rows.length + ' registros');
+        AppC.toast('Arquivo CSV gerado com ' + rows.length + ' registros.');
+        AppC.refresh();
+      } catch (e) { AppC.toast('Não foi possível gerar o arquivo neste navegador.', 'bad'); }
     },
   };
   function runCalc() { const f = document.getElementById('mform'); if (f && S.formCalc) { try { S.formCalc(f); } catch (e) { console.error(e); } } }
@@ -887,7 +889,7 @@
     for (let i = 0; i < files.length; i++) {
       const inp = files[i], arr = [];
       const list = Array.prototype.slice.call(inp.files || [], 0, 6);
-      for (let j = 0; j < list.length; j++) { try { arr.push(await AiC.readImage(list[j])); } catch (e) { /* ignora */ } }
+      for (let j = 0; j < list.length; j++) { try { arr.push(await AppC.readImage(list[j])); } catch (e) { /* ignora */ } }
       o[inp.name] = arr;
     }
     Object.keys(o).forEach((k) => {
@@ -901,14 +903,14 @@
     document.addEventListener('click', (e) => {
       const um = document.getElementById('umdd');
       if (um && !um.hidden && !e.target.closest('.um')) um.hidden = true;
-      if (e.target.matches && e.target.matches('.mb[data-backdrop]')) { AiC.close(); return; }
+      if (e.target.matches && e.target.matches('.mb[data-backdrop]')) { AppC.close(); return; }
       const el = e.target.closest('[data-act]');
       if (!el || el.disabled) return;
       e.preventDefault();
       const name = el.dataset.act;
       const fn = CORE[name] || (S.cfg.actions && S.cfg.actions[name]);
-      if (!fn) { console.warn('Ação não encontrada:', name); AiC.toast('Ação demonstrativa indisponível: ' + name, 'warn'); return; }
-      try { fn(el.dataset, el, e); } catch (err) { console.error(err); AiC.toast('Não foi possível concluir a ação: ' + err.message, 'bad'); }
+      if (!fn) { console.warn('Ação não encontrada:', name); AppC.toast('Ação demonstrativa indisponível: ' + name, 'warn'); return; }
+      try { fn(el.dataset, el, e); } catch (err) { console.error(err); AppC.toast('Não foi possível concluir a ação: ' + err.message, 'bad'); }
     });
     document.addEventListener('submit', async (e) => {
       const f = e.target.closest('form[data-form]');
@@ -917,13 +919,13 @@
       if (!f.checkValidity()) { f.reportValidity(); return; }
       const name = f.dataset.form;
       const fn = CORE[name] || (S.cfg.actions && S.cfg.actions[name]);
-      if (!fn) { AiC.toast('Formulário demonstrativo indisponível: ' + name, 'warn'); return; }
+      if (!fn) { AppC.toast('Formulário demonstrativo indisponível: ' + name, 'warn'); return; }
       const extra = S.formExtra || {};
-      try { const vals = await formValues(f); fn(vals, extra, f); } catch (err) { console.error(err); AiC.toast('Não foi possível salvar: ' + err.message, 'bad'); }
+      try { const vals = await formValues(f); fn(vals, extra, f); } catch (err) { console.error(err); AppC.toast('Não foi possível salvar: ' + err.message, 'bad'); }
     });
     document.addEventListener('change', (e) => {
       const t = e.target;
-      if (t.dataset && t.dataset.filter && t.tagName === 'SELECT') { S.ui.f[t.dataset.filter] = t.value; AiC.refresh(); return; }
+      if (t.dataset && t.dataset.filter && t.tagName === 'SELECT') { S.ui.f[t.dataset.filter] = t.value; AppC.refresh(); return; }
       if (t.classList && t.classList.contains('ied-m')) {
         const op = t.options[t.selectedIndex];
         const pr = t.closest('tr').querySelector('.ied-p');
@@ -941,14 +943,14 @@
       const t = e.target;
       if (t.dataset && t.dataset.filter && t.tagName === 'INPUT') {
         clearTimeout(debounce);
-        debounce = setTimeout(() => { S.ui.f[t.dataset.filter] = t.value; AiC.refresh(); }, 220);
+        debounce = setTimeout(() => { S.ui.f[t.dataset.filter] = t.value; AppC.refresh(); }, 220);
         return;
       }
       if (t.closest && t.closest('.ied')) recalcItems(t.closest('.ied'));
       if (t.closest && t.closest('#mform')) runCalc();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { if (document.querySelector('#modal-root .mb')) AiC.close(); closeUM(); closeMenu(); }
+      if (e.key === 'Escape') { if (document.querySelector('#modal-root .mb')) AppC.close(); closeUM(); closeMenu(); }
     });
   }
 })();

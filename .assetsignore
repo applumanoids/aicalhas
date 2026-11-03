@@ -1,0 +1,9 @@
+# Arquivos do repositório que NÃO devem ser publicados no site
+.git
+.github
+node_modules
+wrangler.jsonc
+.assetsignore
+README.md
+LEIA-ME.txt
+.gitignore

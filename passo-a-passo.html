@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppCalhas · Passo a passo</title>
+<meta name="description" content="Passo a passo do atendimento AppCalhas, do pedido do cliente ao pós-venda.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z' fill='%233fb0e6'/%3E%3Cpath d='M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z' fill='%23c26d38'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --storm: #13202c; --storm-2: #1b2c3b; --ink: #142230; --ink-2: #2f4050; --muted: #5d6d7c; --faint: #8796a4;
+    --line: #dfe6ec; --bg: #eef2f5; --surface: #fff; --surface-2: #f6f8fa;
+    --copper: #b8612e; --copper-ink: #8e4720; --copper-soft: #f8eadf; --rain: #1b87c9;
+    --flow: #46566a;
+    --font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Roboto, Arial, sans-serif;
+    --font-d: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Arial Narrow", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font); color: var(--ink); background: var(--bg); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4 { font-family: var(--font-d); line-height: 1.15; margin: 0; }
+  a { color: var(--copper-ink); }
+  .wrap { width: min(1440px, 100% - 32px); margin: 0 auto; }
+
+  header.top { background: linear-gradient(170deg, #0e1a25 0%, #15283a 60%, #1d3c55 100%); color: #cfdbe6; }
+  header.top .wrap { padding: 22px 0 20px; display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap; }
+  .logo { display: inline-flex; align-items: center; gap: 9px; color: #fff; text-decoration: none; font-family: var(--font-d); font-size: 19px; }
+  .logo b { font-weight: 700; } .logo span { color: #e8a06a; }
+  header.top h1 { color: #fff; font-size: clamp(26px, 3.4vw, 36px); margin: 10px 0 6px; }
+  header.top p { margin: 0; max-width: 820px; color: #b9c8d6; }
+  .hl { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 14px; border-radius: 9px; font: 600 14px var(--font); text-decoration: none; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+  .btn:hover { border-color: var(--copper); }
+  .btn.p { background: var(--copper); border-color: var(--copper); color: #fff; }
+  .btn.p:hover { background: var(--copper-ink); }
+  .btn.l { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.24); }
+  .btn.sm { min-height: 34px; padding: 0 11px; font-size: 13px; }
+  .btn[disabled] { opacity: .45; cursor: default; }
+
+  .tabs { position: sticky; top: 0; z-index: 10; background: rgba(238,242,245,.96); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+  .tabs .wrap { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0; scrollbar-width: thin; }
+  .tab { flex: none; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 14px; font: 600 13.5px var(--font); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+  .tab b { font-family: var(--font-d); color: var(--copper); margin-right: 4px; }
+  .tab[aria-selected="true"] { background: var(--storm); color: #fff; border-color: var(--storm); }
+  .tab[aria-selected="true"] b { color: #e8a06a; }
+
+  .intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: end; margin: 20px 0 12px; }
+  .intro h2 { font-size: 24px; margin-bottom: 4px; }
+  .intro p { margin: 0; color: var(--muted); max-width: 860px; }
+  .st { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px; font-size: 12.5px; }
+  .st .lb { color: var(--muted); font-weight: 600; margin-right: 2px; }
+  .st span.s { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; color: var(--ink-2); }
+  .st i { color: var(--faint); font-style: normal; }
+
+  .stage { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+  .board { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(19,32,44,.05), 0 4px 14px rgba(19,32,44,.06); }
+  .bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+  .bar .sp { flex: 1; }
+  .bar select { font: 600 13px var(--font); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: #fff; color: var(--ink); }
+  .zoom { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: #fff; }
+  .zoom button { border: 0; background: #fff; min-width: 34px; height: 32px; font: 700 14px var(--font); color: var(--ink-2); cursor: pointer; }
+  .zoom button + button { border-left: 1px solid var(--line); }
+  .zoom button:hover { background: var(--surface-2); }
+  .canvas { overflow: auto; max-height: 76vh; background: #fff; }
+  .canvas svg { display: block; }
+  .cap { display: none; align-items: center; gap: 12px; padding: 10px 14px; border-top: 1px solid var(--line); background: var(--storm); color: #d4e0ea; font-size: 14px; }
+  .cap.on { display: flex; }
+  .cap b { color: #fff; font-family: var(--font-d); font-size: 15px; }
+  .cap .n { flex: none; background: var(--copper); color: #fff; border-radius: 999px; padding: 2px 10px; font-weight: 700; font-size: 12.5px; }
+
+  .panel { position: sticky; top: 64px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: 0 1px 2px rgba(19,32,44,.05), 0 4px 14px rgba(19,32,44,.06); }
+  .panel h3 { font-size: 20px; margin: 8px 0 10px; }
+  .panel .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 10px; background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line); }
+  .chip i { width: 9px; height: 9px; border-radius: 50%; }
+  .panel dl { margin: 0; display: grid; gap: 10px; }
+  .panel dt { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+  .panel dd { margin: 2px 0 0; font-size: 14.5px; color: var(--ink); }
+  .panel .hint { color: var(--muted); font-size: 14px; }
+  .panel ul { margin: 4px 0 0; padding-left: 18px; }
+  .panel .go { margin-top: 14px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 12px 14px; font-size: 12.5px; color: var(--ink-2); border-top: 1px solid var(--line); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .legend svg { flex: none; }
+
+  .lst { margin: 22px 0 10px; }
+  .lst summary { cursor: pointer; font-family: var(--font-d); font-weight: 700; font-size: 17px; color: var(--copper-ink); margin-bottom: 10px; }
+  table.t { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 14px; }
+  .t th, .t td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .t thead th { background: var(--surface-2); font-size: 12.5px; color: var(--ink-2); }
+  .t tr:last-child td { border-bottom: 0; }
+  .t td.n { font-family: var(--font-d); font-weight: 700; color: var(--copper); width: 44px; }
+  .t .who { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; white-space: nowrap; }
+  .t .who i { width: 9px; height: 9px; border-radius: 50%; }
+  .t tr.exc td { background: #fffaf3; }
+  .t small { color: var(--muted); display: block; }
+  .tw { overflow-x: auto; border-radius: 12px; }
+
+  /* SVG */
+  .nd { cursor: pointer; outline: none; }
+  .nd .hit { fill: transparent; }
+  .nd:hover .shape, .nd:focus-visible .shape { filter: drop-shadow(0 0 0 rgba(0,0,0,0)) drop-shadow(0 3px 6px rgba(19,32,44,.18)); }
+  .nd.sel .ring { opacity: 1; }
+  .nd .ring { opacity: 0; fill: none; stroke: var(--copper); stroke-width: 3; }
+  .nd.on .ring { opacity: 1; stroke: #e8a06a; stroke-width: 4; }
+  .nd.on .shape { filter: drop-shadow(0 4px 10px rgba(184,97,46,.45)); }
+  .ed path.ln { fill: none; stroke: var(--flow); stroke-width: 1.6; stroke-linejoin: round; }
+  .ed path.halo { fill: none; stroke: #fff; stroke-width: 7; stroke-linejoin: round; }
+  .ed.on path.ln { stroke: var(--copper); stroke-width: 3; }
+  .ed.dim path.ln { opacity: .35; }
+  .ed text { font-size: 10.5px; fill: var(--ink-2); font-weight: 700; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+  .ed.on text { fill: var(--copper-ink); }
+  text.lbl { font-size: 11px; fill: var(--ink); }
+  text.lbl.b { font-weight: 600; }
+  text.lane { font-family: var(--font-d); font-weight: 700; font-size: 14px; }
+  text.lsub { font-size: 10.5px; fill: var(--muted); }
+
+  footer { margin: 34px 0 0; padding: 22px 0 30px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+
+  @media (max-width: 1100px) {
+    .stage { grid-template-columns: 1fr; }
+    .panel { position: static; }
+  }
+  @media (max-width: 640px) {
+    .wrap { width: calc(100% - 24px); }
+    .intro { grid-template-columns: 1fr; }
+    .hl { margin-left: 0; }
+    .canvas { max-height: 64vh; }
+    .t { font-size: 13px; }
+  }
+  @media print {
+    .tabs, .bar, .hl, .panel { display: none; }
+    .stage { grid-template-columns: 1fr; }
+    .canvas { max-height: none; overflow: visible; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <a class="logo" href="index.html"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true"><path d="M20 3.5s8.2 8.8 8.2 14.5a8.2 8.2 0 0 1-16.4 0C11.8 12.3 20 3.5 20 3.5z" fill="#3fb0e6"/><path d="M4 24.5h32v3.8a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7z" fill="#c26d38"/></svg><b>App<span>Calhas</span></b></a>
+      <h1>Como funciona, passo a passo</h1>
+      <p>Do pedido do cliente ao pós-venda: quem faz cada etapa e o que acontece. Clique em uma etapa para ver o detalhe ou use “Simular” para acompanhar o caminho.</p>
+    </div>
+    <div class="hl"><a class="btn l" href="cenario-3.html">← Voltar à demonstração</a></div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Fases do processo"><div class="wrap" id="tabs" role="tablist"></div></nav>
+
+<main class="wrap">
+  <div class="intro">
+    <div>
+      <h2 id="dTitle"></h2>
+      <p id="dDesc"></p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="board">
+      <div class="bar">
+        <label for="simSel" class="hint" style="font-size:13px;font-weight:600;color:var(--ink-2)">Simular:</label>
+        <select id="simSel" aria-label="Caminho a simular"></select>
+        <button class="btn sm p" id="bPlay" type="button">▶ Simular</button>
+        <button class="btn sm" id="bPrev" type="button" aria-label="Passo anterior">◀</button>
+        <button class="btn sm" id="bNext" type="button" aria-label="Próximo passo">▶|</button>
+        <button class="btn sm" id="bStop" type="button">Reiniciar</button>
+        <span class="sp"></span>
+        <div class="zoom" role="group" aria-label="Zoom"><button type="button" id="zOut" aria-label="Diminuir">−</button><button type="button" id="zFit" aria-label="Ajustar à largura" style="font-size:12px;padding:0 8px">Ajustar</button><button type="button" id="zIn" aria-label="Aumentar">+</button></div>
+      </div>
+      <div class="canvas" id="canvas"></div>
+      <div class="cap" id="cap"><span class="n" id="capN"></span><div><b id="capT"></b><div id="capD"></div></div></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <details class="lst">
+    <summary id="lTitle">Ver os passos em lista</summary>
+    <div class="tw"><table class="t" id="lTable"></table></div>
+  </details>
+
+  <footer>AppCalhas · Ambiente demonstrativo.</footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ======================= Raias ======================= */
+  var LANES = {
+    cli: { n: 'Cliente', s: 'Quem pede o serviço', c: '#2a78d6', t: '#eaf2fc' },
+    med: { n: 'Equipe AppCalhas', s: 'Atendimento e operação', c: '#b8612e', t: '#fbefe6' },
+    app: { n: 'AppCalhas', s: 'O sistema faz sozinho', c: '#5f6f80', t: '#eef1f4' },
+    pro: { n: 'Profissional', s: 'Instalador parceiro', c: '#1f8a5b', t: '#e8f5ee' },
+    fab: { n: 'Fábrica', s: 'Produção e entrega', c: '#6250d6', t: '#efedfb' },
+  };
+  var TYPE = { start: 'Início', end: 'Fim', user: 'Etapa', svc: 'Etapa automática', gw: 'Decisão', par: 'Ao mesmo tempo', timer: 'Espera', link: 'Continua em outra fase', sub: 'Fase', note: 'Observação' };
+
+  /* ======================= Diagramas ======================= */
+  var D = {};
+
+  D.geral = {
+    tab: 'Visão geral', title: 'Visão geral',
+    desc: 'O atendimento completo em seis fases. O cliente contrata e paga a mão de obra direto ao profissional; o material é vendido, faturado e entregue pelo AppCalhas, com fabricação própria. Clique em uma fase para ver o detalhe.',
+    status: ['Solicitação recebida', 'Proposta aprovada', 'Materiais em preparo', 'Pronto para execução', 'Em execução', 'Concluído', 'Encerrado'],
+    lanes: [['cli'], ['med'], ['app'], ['pro'], ['fab']], cols: 9,
+    nodes: [
+      { id: 's0', t: 'start', l: 'cli', c: 0, n: 'Calha com problema', d: { oque: 'Vazamento, transbordamento, infiltração ou instalação nova.' } },
+      { id: 'A', t: 'sub', l: 'med', c: 1, n: 'Solicitação, triagem e visita', go: 'A', d: { oque: 'Pedido do cliente, triagem, designação do profissional, agendamento e visita técnica.' } },
+      { id: 'B', t: 'sub', l: 'med', c: 2, n: 'Proposta, conferência e aprovação', go: 'B', d: { oque: 'Mão de obra e lista técnica do profissional, conferência e precificação AppCalhas, aprovação do cliente.' } },
+      { id: 'g1', t: 'gw', l: 'cli', c: 3, n: 'Proposta aprovada?', lp: 'above' },
+      { id: 'e0', t: 'end', l: 'cli', c: 4, n: 'Encerrado sem venda' },
+      { id: 'C', t: 'sub', l: 'fab', c: 4, n: 'Pagamento, fabricação e entrega', go: 'C', d: { oque: 'Pagamento dos materiais ao AppCalhas, ordem de fabricação, separação, nota fiscal e entrega na véspera.' } },
+      { id: 'Dd', t: 'sub', l: 'pro', c: 5, n: 'Conferência na obra', go: 'D', d: { oque: 'O profissional confere o material; ocorrências são tratadas e repostas pelo AppCalhas.' } },
+      { id: 'E', t: 'sub', l: 'pro', c: 6, n: 'Execução e complementos', go: 'E', d: { oque: 'Execução com atualização de etapas e pedidos de material complementar.' } },
+      { id: 'F', t: 'sub', l: 'med', c: 7, n: 'Conclusão e pós-venda', go: 'F', d: { oque: 'Confirmação com o cliente, avaliação, encerramento e garantias.' } },
+      { id: 'e1', t: 'end', l: 'med', c: 8, n: 'Atendimento encerrado' },
+      { id: 'ds', t: 'note', l: 'app', c: 4.5, w: 210, n: 'Tudo fica registrado no app: atendimento, proposta, pedido, nota fiscal, conversas e histórico.' },
+      { id: 'an', t: 'note', l: 'cli', c: 6, w: 200, n: 'Mão de obra paga direto ao profissional, fora do app.', to: 'E' },
+    ],
+    edges: [['s0', 'A'], ['A', 'B'], ['B', 'g1'], ['g1', 'e0', 'Não'], ['g1', 'C', 'Sim'], ['C', 'Dd'], ['Dd', 'E'], ['E', 'F'], ['F', 'e1']],
+    sims: [{ n: 'Caminho completo', p: ['s0', 'A', 'B', 'g1', 'C', 'Dd', 'E', 'F', 'e1'] }],
+  };
+
+  D.A = {
+    tab: '1 · Solicitação e visita', title: '1. Solicitação, triagem e visita técnica',
+    desc: 'Do pedido do cliente até a visita técnica registrada. O AppCalhas faz a triagem, escolhe um profissional homologado e combina a visita com as duas partes.',
+    status: ['Solicitação recebida', 'Em triagem', 'Profissional designado', 'Visita agendada', 'Aguardando orçamento'],
+    lanes: [['cli'], ['med'], ['app'], ['pro']], cols: 12,
+    nodes: [
+      { id: 'a0', t: 'start', l: 'cli', c: 0, n: 'Calha com problema', d: { oque: 'O cliente percebe vazamento, infiltração ou precisa de calha nova.' } },
+      { id: 'a1', t: 'user', l: 'cli', c: 1, n: 'Abrir solicitação no app', d: { tela: 'Cliente › Nova solicitação', oque: 'Escolhe o serviço, descreve o problema, informa o endereço e envia fotos.', regras: 'O cliente autoriza o compartilhamento dos dados com o profissional.', saida: 'Atendimento criado — “Solicitação recebida”.' } },
+      { id: 'a2', t: 'svc', l: 'app', c: 2, n: 'Registrar e avisar a mediação', d: { oque: 'Gera o código do atendimento, registra no histórico e avisa a mediação.', saida: 'Entra em “Pedidos novos” na Fila do dia.', sla: 'Imediato' } },
+      { id: 'a3', t: 'user', l: 'med', c: 3, n: 'Fazer triagem', d: { tela: 'Mediação › Fila do dia › Iniciar triagem', oque: 'Confere fotos, serviço, região e urgência; liga para o cliente se faltar informação.', saida: '“Em triagem”.', sla: 'Até 2 horas úteis' } },
+      { id: 'g1', t: 'gw', l: 'med', c: 4, n: 'Atende região e serviço?', lp: 'below' },
+      { id: 'a4', t: 'user', l: 'cli', c: 5, n: 'Receber orientação', d: { oque: 'A mediação explica por que não atende (região ou tipo de serviço) e indica alternativas.', saida: 'Atendimento encerrado sem visita.' } },
+      { id: 'e1', t: 'end', l: 'cli', c: 6, n: 'Não atendido' },
+      { id: 'a5', t: 'user', l: 'med', c: 5, n: 'Designar profissional homologado', d: { tela: 'Mediação › Atendimento › Designar profissional', oque: 'O app sugere parceiros por região, especialidade e avaliação; a mediação escolhe e apresenta o profissional na conversa.', regras: 'Somente profissionais ativos e homologados: documentos, capacitação para trabalho em altura e seguro.', saida: '“Profissional designado”.' } },
+      { id: 'a6', t: 'user', l: 'pro', c: 6, n: 'Aceitar e sugerir horários', d: { tela: 'Profissional › Atendimento › Sugerir horários', oque: 'Aceita o atendimento e propõe horários para a visita técnica.', sla: 'Resposta em até 4 horas' } },
+      { id: 'a7', t: 'user', l: 'med', c: 7, n: 'Agendar visita', d: { tela: 'Mediação › Agenda de visitas', oque: 'Fecha o horário com as duas partes; o app envia confirmação e lembrete.', saida: '“Visita agendada”.', sla: 'Visita em até 2 dias úteis' } },
+      { id: 'a8', t: 'user', l: 'cli', c: 8, n: 'Confirmar visita', d: { tela: 'Cliente › Atendimento › Confirmar visita', oque: 'Confirma o horário ou pede outro.' } },
+      { id: 'g2', t: 'gw', l: 'cli', c: 9, n: 'Horário confirmado?', lp: 'right' },
+      { id: 'a9', t: 'user', l: 'pro', c: 10, n: 'Fazer visita técnica', d: { tela: 'Profissional › Registrar visita', oque: 'Mede, diagnostica e fotografa. As medidas viram a especificação de fabricação.', regras: 'Medidas e dimensionamento são responsabilidade técnica do profissional.', saida: '“Aguardando orçamento”.' } },
+      { id: 'l1', t: 'link', l: 'pro', c: 11, n: 'Segue: Proposta', go: 'B' },
+    ],
+    edges: [['a0', 'a1'], ['a1', 'a2'], ['a2', 'a3'], ['a3', 'g1'], ['g1', 'a4', 'Não'], ['a4', 'e1'], ['g1', 'a5', 'Sim', { k: 'h' }], ['a5', 'a6'], ['a6', 'a7'], ['a7', 'a8'], ['a8', 'g2'],
+      ['g2', 'a7', 'Não', { k: 'over', lane: 'cli', off: 6, la: 'left' }], ['g2', 'a9', 'Sim', { k: 'down' }], ['a9', 'l1']],
+    sims: [
+      { n: 'Caminho principal', p: ['a0', 'a1', 'a2', 'a3', 'g1', 'a5', 'a6', 'a7', 'a8', 'g2', 'a9', 'l1'] },
+      { n: 'Com reagendamento', p: ['a0', 'a1', 'a2', 'a3', 'g1', 'a5', 'a6', 'a7', 'a8', 'g2', 'a7', 'a8', 'g2', 'a9', 'l1'] },
+      { n: 'Pedido fora da área', p: ['a0', 'a1', 'a2', 'a3', 'g1', 'a4', 'e1'] },
+    ],
+  };
+
+  D.B = {
+    tab: '2 · Proposta e aprovação', title: '2. Proposta, conferência e aprovação',
+    desc: 'O profissional informa a mão de obra e a lista técnica de materiais, sem preço. O AppCalhas aplica a tabela, confere, precifica e libera uma proposta única para o cliente.',
+    status: ['Proposta em conferência', 'Aguardando aprovação do cliente', 'Aprovado — pagamento dos materiais'],
+    lanes: [['cli'], ['med'], ['app'], ['pro']], cols: 13,
+    nodes: [
+      { id: 'b0', t: 'link', l: 'pro', c: 0, n: 'Visita realizada', go: 'A' },
+      { id: 'b1', t: 'user', l: 'pro', c: 1, n: 'Montar proposta e lista técnica', d: { tela: 'Profissional › Enviar proposta', oque: 'Escopo, mão de obra, prazo, validade, condições de pagamento da mão de obra e lista técnica de materiais (itens e quantidades).', regras: 'O profissional não define preço de material: o campo mostra a tabela AppCalhas, somente leitura.', saida: '“Proposta em conferência”.', sla: 'Até 24 horas após a visita' } },
+      { id: 'b2', t: 'svc', l: 'app', c: 2, n: 'Aplicar a tabela de preços', d: { oque: 'Busca o preço de cada item no catálogo (fabricação própria ou revenda) e calcula o subtotal de materiais.', regras: 'Tabela única; não existe preço de material fora dela.' } },
+      { id: 'b3', t: 'user', l: 'med', c: 3, n: 'Conferir proposta', d: { tela: 'Mediação › Propostas › Conferir e precificar', oque: 'Checklist de 5 itens: escopo, lista técnica com quantidades, mão de obra, prazo e condições.', regras: 'Só libera com os 5 itens conferidos.', sla: 'Até 4 horas úteis' } },
+      { id: 'g3', t: 'gw', l: 'med', c: 4, n: 'Proposta completa?', lp: 'above' },
+      { id: 'b4', t: 'user', l: 'med', c: 5, n: 'Precificar materiais', d: { tela: 'Mediação › Conferir e precificar', oque: 'Define frete, desconto e prazo de preparo.', regras: 'Frete grátis acima de R$ 1.500. Desconto de até 5% liberado pela equipe; acima disso, pelo gestor.' } },
+      { id: 'g4', t: 'gw', l: 'med', c: 6, n: 'Desconto acima de 5%?', lp: 'below' },
+      { id: 'b5', t: 'user', l: 'med', c: 7, n: 'Aprovação do gestor', d: { oque: 'O gestor aprova ou recusa o desconto; a decisão fica registrada no atendimento.' } },
+      { id: 'b6', t: 'user', l: 'med', c: 8, n: 'Liberar proposta consolidada', d: { oque: 'Libera ao cliente uma proposta com dois blocos: materiais (AppCalhas) e mão de obra (profissional).', saida: '“Aguardando aprovação do cliente”.' } },
+      { id: 'b7', t: 'user', l: 'cli', c: 9, n: 'Analisar proposta', d: { tela: 'Cliente › Atendimento › Proposta', oque: 'Vê materiais com preço, frete e prazo de preparo; mão de obra com condições; e o investimento total.', sla: 'Lembrete automático após 72 horas sem resposta' } },
+      { id: 'g5', t: 'gw', l: 'cli', c: 10, n: 'Decisão do cliente', lp: 'aboveleft', wl: 22 },
+      { id: 'e2', t: 'end', l: 'cli', c: 11, n: 'Proposta recusada' },
+      { id: 'b8', t: 'svc', l: 'app', c: 11, n: 'Gerar pedido de materiais', d: { oque: 'Cria o pedido de materiais com itens, frete, desconto e total, e planeja o início do serviço.', saida: 'Atendimento “Aprovado — pagamento dos materiais”; pedido “Aguardando pagamento”.' } },
+      { id: 'l2', t: 'link', l: 'app', c: 12, n: 'Segue: Pagamento', go: 'C' },
+    ],
+    edges: [['b0', 'b1'], ['b1', 'b2'], ['b2', 'b3'], ['b3', 'g3'], ['g3', 'b4', 'Sim'], ['g3', 'b1', 'Não: devolver', { k: 'under', lane: 'pro', off: 12, tdx: 14 }],
+      ['b4', 'g4'], ['g4', 'b5', 'Sim'], ['g4', 'b6', 'Não', { k: 'over', lane: 'med', off: 10 }], ['b5', 'b6'], ['b6', 'b7'], ['b7', 'g5'], ['g5', 'e2', 'Recusa'], ['g5', 'b8', 'Aprova', { k: 'down' }],
+      ['g5', 'b1', 'Pede ajuste', { k: 'over', lane: 'cli', off: 6, tdx: -14 }], ['b8', 'l2']],
+    sims: [
+      { n: 'Caminho principal', p: ['b0', 'b1', 'b2', 'b3', 'g3', 'b4', 'g4', 'b6', 'b7', 'g5', 'b8', 'l2'] },
+      { n: 'Devolução e desconto especial', p: ['b0', 'b1', 'b2', 'b3', 'g3', 'b1', 'b2', 'b3', 'g3', 'b4', 'g4', 'b5', 'b6', 'b7', 'g5', 'b8', 'l2'] },
+      { n: 'Cliente pede ajuste', p: ['b0', 'b1', 'b2', 'b3', 'g3', 'b4', 'g4', 'b6', 'b7', 'g5', 'b1', 'b2', 'b3', 'g3', 'b4', 'g4', 'b6', 'b7', 'g5', 'b8', 'l2'] },
+    ],
+  };
+
+  D.C = {
+    tab: '3 · Pagamento, fábrica e entrega', title: '3. Pagamento, fabricação e entrega na véspera',
+    desc: 'O cliente paga os materiais ao AppCalhas. Só então sai a ordem de fabricação. Peças sob medida e itens de revenda são preparados ao mesmo tempo, conferidos, faturados e entregues na véspera do serviço.',
+    status: ['Aguardando pagamento', 'Pagamento confirmado', 'Em fabricação', 'Separado e faturado', 'Entrega programada', 'Em rota de entrega', 'Entregue — conferência pendente'],
+    lanes: [['cli'], ['med'], ['app'], ['pro'], ['fab', 2]], cols: 14,
+    nodes: [
+      { id: 'c0', t: 'link', l: 'app', c: 0, n: 'Pedido de materiais gerado', go: 'B' },
+      { id: 'c1', t: 'user', l: 'cli', c: 1, n: 'Pagar materiais', d: { tela: 'Cliente › Materiais e pagamentos › Pagar', oque: 'Escolhe Pix, cartão em até 3x ou boleto. O valor é recebido pelo AppCalhas.', regras: 'A mão de obra não passa pelo app: é paga direto ao profissional.' } },
+      { id: 'g6', t: 'gw', l: 'cli', c: 2, n: 'Forma de pagamento', lp: 'above' },
+      { id: 't1', t: 'timer', l: 'cli', c: 3, wl: 11, n: 'Compensação do boleto', d: { oque: 'Aguarda a compensação (até 2 dias úteis).', regras: 'Após 24 horas sem pagamento, a mediação recebe alerta e lembra o cliente.' } },
+      { id: 'c2', t: 'svc', l: 'app', c: 3, n: 'Confirmar pagamento', d: { oque: 'A instituição de pagamento confirma Pix ou cartão em tempo real e o app libera a próxima etapa.', saida: 'Pedido “Pagamento confirmado”; atendimento “Materiais em preparo”.' } },
+      { id: 'c3', t: 'user', l: 'med', c: 4, n: 'Registrar compensação', d: { tela: 'Mediação › Atendimento › Registrar pagamento recebido', oque: 'Confere a compensação do boleto no extrato e registra no pedido.' } },
+      { id: 'c4', t: 'user', l: 'med', c: 5, n: 'Emitir ordem de fabricação', d: { tela: 'Mediação › Materiais e entregas › Emitir ordem de fabricação', oque: 'Envia à fábrica a especificação: medidas da visita, cor e comprimento das peças.', regras: 'A ordem só sai com o pagamento confirmado.', saida: 'Pedido “Em fabricação”.', sla: 'Até 4 horas úteis após o pagamento' } },
+      { id: 'p1', t: 'par', l: 'fab', c: 6, r: 0.5 },
+      { id: 'c5', t: 'user', l: 'fab', c: 7, r: 0, n: 'Fabricar peças sob medida', d: { oque: 'Dobra de calhas, rufos, pingadeiras e bocais em galvalume, na cor definida.', sla: 'Prazo de preparo da proposta (ex.: 1 dia útil)' } },
+      { id: 'c6', t: 'user', l: 'fab', c: 7, r: 1, n: 'Separar itens de revenda', d: { oque: 'Separa condutores, suportes, vedantes e telas do estoque ou de fornecedores parceiros.' } },
+      { id: 'p2', t: 'par', l: 'fab', c: 8, r: 0.5 },
+      { id: 'c7', t: 'user', l: 'fab', c: 9, r: 0.5, n: 'Conferir expedição e emitir NF-e', d: { tela: 'Mediação › Concluir fabricação, separar e faturar', oque: 'Confere cada item contra o pedido e emite a nota fiscal de venda dos materiais.', regras: 'Sem conferência completa e sem nota fiscal, nada sai para entrega.', saida: 'Pedido “Separado e faturado”.' } },
+      { id: 'c8', t: 'user', l: 'med', c: 10, n: 'Programar entrega', d: { tela: 'Mediação › Agenda de entregas', oque: 'Define data, janela (08h–12h ou 13h–17h), veículo e quem recebe; avisa cliente e profissional.', regras: 'Regra da véspera: o material chega no dia anterior ao início do serviço.' } },
+      { id: 'g7', t: 'gw', l: 'med', c: 11, n: 'Entrega na véspera?', lp: 'above' },
+      { id: 'c9', t: 'user', l: 'pro', c: 11, n: 'Confirmar nova data de início', d: { oque: 'Se não for possível entregar na véspera, a mediação replaneja o início com o profissional e o cliente.', saida: 'Nova data de início registrada no atendimento.' } },
+      { id: 'c10', t: 'user', l: 'fab', c: 12, r: 0.5, n: 'Despachar e entregar na obra', d: { tela: 'Mediação › Despachar / Registrar entrega', oque: 'O material sai da expedição; na obra, registra quem recebeu e a foto do material no local.', saida: 'Pedido “Entregue — conferência pendente”; comprovante de entrega.' } },
+      { id: 'l3', t: 'link', l: 'pro', c: 13, n: 'Segue: Conferência na obra', go: 'D' },
+    ],
+    edges: [['c0', 'c1'], ['c1', 'g6'], ['g6', 't1', 'Boleto'], ['g6', 'c2', 'Pix ou cartão', { k: 'down' }], ['t1', 'c3'], ['c3', 'c4'], ['c2', 'c4', '', { k: 'hfirst' }],
+      ['c4', 'p1'], ['p1', 'c5', '', { k: 'vfirst' }], ['p1', 'c6', '', { k: 'vfirst' }], ['c5', 'p2', '', { k: 'hfirst' }], ['c6', 'p2', '', { k: 'hfirst' }], ['p2', 'c7'], ['c7', 'c8'], ['c8', 'g7'],
+      ['g7', 'c9', 'Não', { k: 'down' }], ['c9', 'c8', 'Replanejar', { k: 'leftup' }], ['g7', 'c10', 'Sim', { k: 'hfirst' }], ['c10', 'l3']],
+    sims: [
+      { n: 'Pix ou cartão', p: ['c0', 'c1', 'g6', 'c2', 'c4', 'p1', 'c5', 'c6', 'p2', 'c7', 'c8', 'g7', 'c10', 'l3'] },
+      { n: 'Boleto', p: ['c0', 'c1', 'g6', 't1', 'c3', 'c4', 'p1', 'c5', 'c6', 'p2', 'c7', 'c8', 'g7', 'c10', 'l3'] },
+      { n: 'Replanejamento do início', p: ['c0', 'c1', 'g6', 'c2', 'c4', 'p1', 'c5', 'c6', 'p2', 'c7', 'c8', 'g7', 'c9', 'c8', 'g7', 'c10', 'l3'] },
+    ],
+  };
+
+  D.D = {
+    tab: '4 · Conferência na obra', title: '4. Conferência do material na obra e ocorrências',
+    desc: 'O serviço só começa depois que o profissional confere o material. Falta, avaria, medida ou cor divergente viram ocorrência, tratada pelo AppCalhas com reposição ou crédito.',
+    status: ['Entregue — conferência pendente', 'Ocorrência na entrega (se houver)', 'Recebido e conferido', 'Pronto para execução'],
+    lanes: [['med'], ['app'], ['pro', 2], ['fab']], cols: 8,
+    nodes: [
+      { id: 'd0', t: 'link', l: 'pro', c: 0, r: 0, n: 'Material entregue', go: 'C' },
+      { id: 'd1', t: 'user', l: 'pro', c: 1, r: 0, n: 'Conferir material item a item', d: { tela: 'Profissional › Materiais das obras › Conferir materiais', oque: 'Confere quantidade, medida, cor e estado de cada item antes de começar.', regras: 'Sem conferência, o botão “Iniciar serviço” não aparece.', sla: 'Até 6 horas após a entrega' } },
+      { id: 'g8', t: 'gw', l: 'pro', c: 2, r: 0, n: 'Tudo conforme?', lp: 'right' },
+      { id: 'd7', t: 'svc', l: 'app', c: 3, n: 'Liberar início do serviço', d: { oque: 'Com o material conferido, o app libera “Iniciar serviço” e avisa cliente e mediação.', saida: 'Pedido “Recebido e conferido”; atendimento “Pronto para execução”.' } },
+      { id: 'l4', t: 'link', l: 'app', c: 4, n: 'Segue: Execução', go: 'E' },
+      { id: 'd2', t: 'user', l: 'pro', c: 4, r: 1, n: 'Registrar ocorrência com fotos', d: { tela: 'Profissional › Conferir materiais › Há divergência', oque: 'Informa o tipo (falta, avaria, medida ou cor divergente), os itens afetados, a descrição e fotos.', saida: 'Pedido “Ocorrência na entrega”; alerta para a mediação.' } },
+      { id: 'd3', t: 'user', l: 'med', c: 5, n: 'Analisar ocorrência', d: { tela: 'Mediação › Pendências / Tratar ocorrência', oque: 'Avalia as fotos com o profissional e decide a solução.', sla: 'Resposta em até 2 horas úteis' } },
+      { id: 'g9', t: 'gw', l: 'med', c: 6, n: 'Como resolver?', lp: 'above' },
+      { id: 'd4', t: 'user', l: 'fab', c: 6, n: 'Repor ou refazer a peça', d: { oque: 'Reposição sem custo ou ajuste de medida na fábrica, com entrega expressa na obra.', regras: 'Sem custo para o cliente quando a falha é de fabricação ou transporte.', sla: 'Mesmo dia ou até 24 horas' } },
+      { id: 'd5', t: 'user', l: 'med', c: 7, n: 'Registrar crédito ao cliente', d: { oque: 'Quando o item não será reposto, o valor vira crédito ou estorno e o cliente é avisado pelo app.' } },
+    ],
+    edges: [['d0', 'd1'], ['d1', 'g8'], ['g8', 'd7', 'Sim', { k: 'up', la: 'left' }], ['d7', 'l4'], ['g8', 'd2', 'Não', { k: 'down' }], ['d2', 'd3'], ['d3', 'g9'],
+      ['g9', 'd4', 'Repor', { k: 'down' }], ['g9', 'd5', 'Crédito'], ['d4', 'd1', 'Conferir de novo', { k: 'leftup' }], ['d5', 'd7', '', { k: 'over', lane: 'med', off: 10 }]],
+    sims: [
+      { n: 'Tudo conforme', p: ['d0', 'd1', 'g8', 'd7', 'l4'] },
+      { n: 'Com ocorrência e reposição', p: ['d0', 'd1', 'g8', 'd2', 'd3', 'g9', 'd4', 'd1', 'g8', 'd7', 'l4'] },
+      { n: 'Com ocorrência e crédito', p: ['d0', 'd1', 'g8', 'd2', 'd3', 'g9', 'd5', 'd7', 'l4'] },
+    ],
+  };
+
+  D.E = {
+    tab: '5 · Execução', title: '5. Execução do serviço e material complementar',
+    desc: 'O profissional executa e atualiza as etapas com fotos. Se faltar material durante a obra, ele pede pelo app: o AppCalhas precifica, o cliente aprova e paga, e a fábrica entrega na próxima rota.',
+    status: ['Pronto para execução', 'Em execução', 'Complemento: aguardando precificação → aprovação → entregue', 'Concluído — aguardando confirmação'],
+    lanes: [['cli'], ['med'], ['app'], ['pro', 2], ['fab']], cols: 9,
+    nodes: [
+      { id: 'x0', t: 'link', l: 'pro', c: 0, r: 0, n: 'Início liberado', go: 'D' },
+      { id: 'x1', t: 'user', l: 'pro', c: 1, r: 0, n: 'Iniciar serviço', d: { tela: 'Profissional › Atendimento › Iniciar serviço', oque: 'Registra o início real e a previsão de término.', regras: 'Disponível somente depois da conferência do material.', saida: '“Em execução”.' } },
+      { id: 'x2', t: 'user', l: 'pro', c: 2, r: 0, n: 'Executar e atualizar etapas', d: { tela: 'Profissional › Atualizar etapas', oque: 'Remoção, instalação, condutores e vedação, teste de escoamento e limpeza — com fotos. O cliente acompanha pelo app.' } },
+      { id: 'g10', t: 'gw', l: 'pro', c: 3, r: 0, n: 'Falta material?', lp: 'above' },
+      { id: 'x7', t: 'user', l: 'pro', c: 4, r: 0, n: 'Concluir serviço', d: { tela: 'Profissional › Concluir serviço', oque: 'Relato final, fotos, garantia da mão de obra e destino das sobras de material.', regras: 'Sobras recolhidas pelo AppCalhas viram crédito ao cliente.', saida: '“Concluído — aguardando confirmação”.' } },
+      { id: 'l5', t: 'link', l: 'pro', c: 5, r: 0, n: 'Segue: Conclusão', go: 'F' },
+      { id: 'x3', t: 'user', l: 'pro', c: 5, r: 1, n: 'Pedir material complementar', d: { tela: 'Profissional › Solicitar material complementar', oque: 'Escolhe itens e quantidades (preço da tabela, somente leitura) e informa o motivo.', saida: 'Complemento “Aguardando precificação”.' } },
+      { id: 'x4', t: 'user', l: 'med', c: 6, n: 'Precificar complemento', d: { tela: 'Mediação › Precificar complemento', oque: 'Confere os itens, define o frete (normalmente grátis na rota do dia) e envia ao cliente.', sla: 'Até 1 hora útil' } },
+      { id: 'x5', t: 'user', l: 'cli', c: 7, n: 'Aprovar e pagar complemento', d: { tela: 'Cliente › Atendimento › Aprovar e pagar complemento', oque: 'Aprova e paga via Pix; o AppCalhas libera a entrega.' } },
+      { id: 'x6', t: 'user', l: 'fab', c: 8, n: 'Entregar complemento', d: { oque: 'Separa e entrega na próxima rota do dia.', saida: 'Complemento “Entregue”.' } },
+      { id: 'an', t: 'note', l: 'cli', c: 1.6, w: 230, n: 'Mão de obra: o cliente paga direto ao profissional (fora do app), nas condições da proposta.', to: 'x1' },
+    ],
+    edges: [['x0', 'x1'], ['x1', 'x2'], ['x2', 'g10'], ['g10', 'x7', 'Não'], ['x7', 'l5'], ['g10', 'x3', 'Sim', { k: 'down' }], ['x3', 'x4'], ['x4', 'x5'], ['x5', 'x6'], ['x6', 'x2', 'Continuar a obra', { k: 'leftup' }]],
+    sims: [
+      { n: 'Sem complemento', p: ['x0', 'x1', 'x2', 'g10', 'x7', 'l5'] },
+      { n: 'Com material complementar', p: ['x0', 'x1', 'x2', 'g10', 'x3', 'x4', 'x5', 'x6', 'x2', 'g10', 'x7', 'l5'] },
+    ],
+  };
+
+  D.F = {
+    tab: '6 · Conclusão e pós-venda', title: '6. Conclusão, avaliação e garantia',
+    desc: 'O cliente confere e confirma a conclusão. Pendências voltam ao profissional com prazo. Depois do encerramento, o AppCalhas acompanha o período de garantia do material e da mão de obra.',
+    status: ['Concluído — aguardando confirmação', 'Encerrado', 'Avaliado', 'Garantia'],
+    lanes: [['cli'], ['med'], ['app'], ['pro']], cols: 11,
+    nodes: [
+      { id: 'f0', t: 'link', l: 'pro', c: 0, n: 'Serviço concluído', go: 'E' },
+      { id: 'f1', t: 'svc', l: 'app', c: 1, n: 'Avisar cliente e mediação', d: { oque: 'Notifica a conclusão com as fotos e abre a confirmação para o cliente.' } },
+      { id: 'f2', t: 'user', l: 'cli', c: 2, n: 'Conferir o serviço', d: { tela: 'Cliente › Atendimento › Confirmar conclusão e avaliar', oque: 'Confere o resultado e as fotos.', sla: 'A mediação liga se não houver resposta em 12 horas' } },
+      { id: 'g11', t: 'gw', l: 'cli', c: 3, n: 'Está tudo certo?', lp: 'above' },
+      { id: 'f5', t: 'user', l: 'cli', c: 4, n: 'Avaliar atendimento', d: { oque: 'Nota de 1 a 5 e comentário; a avaliação entra no desempenho do profissional.', saida: '“Encerrado”.' } },
+      { id: 'f3', t: 'user', l: 'med', c: 4, n: 'Registrar pendência', d: { tela: 'Mediação › Pendências e reclamações', oque: 'Registra o que falta e aciona o profissional com prazo.' } },
+      { id: 'f4', t: 'user', l: 'pro', c: 5, n: 'Corrigir pendência', d: { oque: 'Volta à obra, corrige e registra fotos.' } },
+      { id: 'f6', t: 'user', l: 'med', c: 6, n: 'Encerrar e acompanhar garantia', d: { tela: 'Mediação › Pós-venda', oque: 'Confirma o encerramento, acompanha os prazos de garantia e solicita a avaliação, se faltar.' } },
+      { id: 't2', t: 'timer', l: 'med', c: 7, n: 'Prazo de garantia', d: { oque: 'Material: garantia do fabricante. Mão de obra: garantia do profissional (ex.: 12 meses).' } },
+      { id: 'g12', t: 'gw', l: 'med', c: 8, n: 'Houve reclamação?', lp: 'above' },
+      { id: 'e3', t: 'end', l: 'med', c: 9, n: 'Garantia encerrada' },
+      { id: 'f7', t: 'user', l: 'pro', c: 9, n: 'Atender garantia', d: { tela: 'Profissional › Registrar atendimento de garantia', oque: 'Mão de obra: o profissional corrige. Material com defeito: o AppCalhas repõe pela fábrica.', regras: 'A mediação classifica a reclamação e acompanha até a solução.' } },
+      { id: 'e4', t: 'end', l: 'pro', c: 10, n: 'Reclamação resolvida' },
+    ],
+    edges: [['f0', 'f1'], ['f1', 'f2'], ['f2', 'g11'], ['g11', 'f5', 'Sim'], ['g11', 'f3', 'Não', { k: 'down' }], ['f3', 'f4'], ['f4', 'f1', 'Avisar de novo', { k: 'under', lane: 'pro', off: 10, bottom: true }],
+      ['f5', 'f6'], ['f6', 't2'], ['t2', 'g12'], ['g12', 'e3', 'Não'], ['g12', 'f7', 'Sim', { k: 'down' }], ['f7', 'e4']],
+    sims: [
+      { n: 'Caminho principal', p: ['f0', 'f1', 'f2', 'g11', 'f5', 'f6', 't2', 'g12', 'e3'] },
+      { n: 'Com pendência e garantia', p: ['f0', 'f1', 'f2', 'g11', 'f3', 'f4', 'f1', 'f2', 'g11', 'f5', 'f6', 't2', 'g12', 'f7', 'e4'] },
+    ],
+  };
+  var ORDER = ['geral', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+  /* ======================= Geometria ======================= */
+  var COLW = 114, HEADW = 132, PADL = 18, PADR = 34, H1 = 116, H2 = 192;
+  var TW = 100, TH = 56, SW = 108, SH = 64, GW = 22, ER = 16;
+  var NS = 'http://www.w3.org/2000/svg';
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+
+  function wrap(text, max) {
+    var w = String(text).split(' '), lines = [], cur = '';
+    w.forEach(function (x) { if ((cur + ' ' + x).trim().length > max && cur) { lines.push(cur); cur = x; } else cur = (cur + ' ' + x).trim(); });
+    if (cur) lines.push(cur);
+    return lines;
+  }
+  function tspans(lines, x, y0, lh, cls, anchor) {
+    return '<text class="lbl ' + (cls || '') + '" text-anchor="' + (anchor || 'middle') + '">' + lines.map(function (l, i) { return '<tspan x="' + x + '" y="' + (y0 + i * lh) + '">' + esc(l) + '</tspan>'; }).join('') + '</text>';
+  }
+
+  function layout(dg) {
+    var y = 0, L = {};
+    dg.lanes.forEach(function (ln) { var id = ln[0], rows = ln[1] || 1, h = rows === 2 ? H2 : H1; L[id] = { top: y, h: h, rows: rows }; y += h; });
+    var W = HEADW + PADL + dg.cols * COLW + PADR, H = y;
+    var N = {};
+    dg.nodes.forEach(function (n) {
+      var ln = L[n.l], cx = HEADW + PADL + n.c * COLW + COLW / 2, cy;
+      if (ln.rows === 2 && n.r != null) cy = n.r === 0 ? ln.top + 62 : n.r === 1 ? ln.top + ln.h - 62 : ln.top + ln.h / 2;
+      else cy = ln.top + ln.h / 2;
+      var w, h;
+      if (n.t === 'user' || n.t === 'svc') { w = TW; h = TH; } else if (n.t === 'sub') { w = SW; h = SH; } else if (n.t === 'gw' || n.t === 'par') { w = h = GW * 2; } else if (n.t === 'note') { w = n.w || 180; h = 48; } else { w = h = ER * 2; }
+      N[n.id] = Object.assign({}, n, { x: cx, y: cy, w: w, h: h });
+    });
+    return { W: W, H: H, L: L, N: N };
+  }
+  var A = {
+    l: function (n) { return [n.x - n.w / 2, n.y]; }, r: function (n) { return [n.x + n.w / 2, n.y]; },
+    t: function (n) { return [n.x, n.y - n.h / 2]; }, b: function (n) { return [n.x, n.y + n.h / 2]; },
+  };
+
+  function route(G, e) {
+    var S = G.N[e[0]], T = G.N[e[1]], o = e[3] || {}, k = o.k, P;
+    var tdx = o.tdx || 0;
+    var laneY = function (lane, off, bottom) { var ln = G.L[lane]; return bottom ? ln.top + ln.h - off : ln.top + off; };
+    if (k === 'over') { var y0 = laneY(o.lane, o.off); P = [A.t(S), [S.x, y0], [T.x + tdx, y0], [T.x + tdx, T.y - T.h / 2]]; }
+    else if (k === 'under') { var y1 = laneY(o.lane, o.off, o.bottom); var sb = A.b(S); P = o.bottom ? [sb, [S.x, y1], [T.x + tdx, y1], [T.x + tdx, T.y + T.h / 2]] : [sb, [S.x, y1], [T.x + tdx, y1], [T.x + tdx, T.y - T.h / 2]]; }
+    else if (k === 'leftup') { P = [A.l(S), [T.x, S.y], [T.x, T.y + T.h / 2]]; }
+    else if (k === 'down' || k === 'up') { var st = k === 'down' ? A.b(S) : A.t(S); P = Math.abs(S.x - T.x) < 2 ? [st, (T.y > S.y ? A.t(T) : A.b(T))] : [st, [S.x, T.y], A.l(T)]; }
+    else if (k === 'hfirst') { P = [A.r(S), [T.x, S.y], T.y > S.y ? A.t(T) : A.b(T)]; }
+    else if (k === 'vfirst') { var s2 = T.y < S.y ? A.t(S) : A.b(S); P = [s2, [S.x, T.y], A.l(T)]; }
+    else if (k === 'h') { P = [A.r(S), A.l(T)]; if (Math.abs(S.y - T.y) > 1) { var m0 = (S.x + S.w / 2 + T.x - T.w / 2) / 2; P = [A.r(S), [m0, S.y], [m0, T.y], A.l(T)]; } }
+    else if (Math.abs(S.y - T.y) < 2) { P = [A.r(S), A.l(T)]; }
+    else if ((S.t === 'gw' || S.t === 'par') && T.x > S.x) { P = [T.y < S.y ? A.t(S) : A.b(S), [S.x, T.y], A.l(T)]; }
+    else { var mx = o.mx != null ? o.mx : (S.x + S.w / 2 + T.x - T.w / 2) / 2; P = [A.r(S), [mx, S.y], [mx, T.y], A.l(T)]; }
+    return P;
+  }
+  function pathD(P) { return 'M' + P.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L'); }
+
+  function icon(t, x, y) {
+    if (t === 'user') return '<g transform="translate(' + x + ',' + y + ')" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="4" r="2.6"/><path d="M1.2 12c.4-3 2.4-4.6 4.8-4.6s4.4 1.6 4.8 4.6"/></g>';
+    if (t === 'svc') return '<g transform="translate(' + x + ',' + y + ')" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="6" r="2.2"/><path d="M6 .8v2M6 9.2v2M.8 6h2M9.2 6h2M2.3 2.3l1.4 1.4M8.3 8.3l1.4 1.4M2.3 9.7l1.4-1.4M8.3 3.7l1.4-1.4"/></g>';
+    return '';
+  }
+
+  function nodeSVG(n, G) {
+    var ln = LANES[n.l], s = '', x = n.x, y = n.y, lab;
+    var g = '<g class="nd" data-id="' + n.id + '" tabindex="0" role="button" aria-label="' + esc((n.n || TYPE[n.t]) + ' — ' + ln.n) + '" style="color:' + ln.c + '">';
+    if (n.t === 'user' || n.t === 'svc') {
+      s += '<rect class="ring" x="' + (x - n.w / 2 - 4) + '" y="' + (y - n.h / 2 - 4) + '" width="' + (n.w + 8) + '" height="' + (n.h + 8) + '" rx="12"/>';
+      s += '<rect class="shape" x="' + (x - n.w / 2) + '" y="' + (y - n.h / 2) + '" width="' + n.w + '" height="' + n.h + '" rx="9" fill="' + ln.t + '" stroke="' + ln.c + '" stroke-width="1.4"' + (n.t === 'svc' ? ' stroke-dasharray="5 3"' : '') + '/>';
+      s += icon(n.t, x - n.w / 2 + 5, y - n.h / 2 + 5);
+      lab = wrap(n.n, 14).slice(0, 4);
+      s += tspans(lab, x, y - (lab.length - 1) * 6.5 + 7 + (lab.length > 2 ? 1 : 0), 13, 'b');
+    } else if (n.t === 'sub') {
+      s += '<rect class="ring" x="' + (x - n.w / 2 - 4) + '" y="' + (y - n.h / 2 - 4) + '" width="' + (n.w + 8) + '" height="' + (n.h + 8) + '" rx="13"/>';
+      s += '<rect class="shape" x="' + (x - n.w / 2) + '" y="' + (y - n.h / 2) + '" width="' + n.w + '" height="' + n.h + '" rx="10" fill="' + ln.t + '" stroke="' + ln.c + '" stroke-width="2.2"/>';
+      s += '<rect x="' + (x - 6) + '" y="' + (y + n.h / 2 - 14) + '" width="12" height="12" fill="#fff" stroke="' + ln.c + '" stroke-width="1.2"/><path d="M' + (x - 3.5) + ' ' + (y + n.h / 2 - 8) + 'h7M' + x + ' ' + (y + n.h / 2 - 11.5) + 'v7" stroke="' + ln.c + '" stroke-width="1.4"/>';
+      lab = wrap(n.n, 16).slice(0, 3);
+      s += tspans(lab, x, y - (lab.length - 1) * 6.5 - 2, 13, 'b');
+    } else if (n.t === 'gw' || n.t === 'par') {
+      var d = GW;
+      s += '<path class="ring" d="M' + x + ' ' + (y - d - 6) + ' L' + (x + d + 6) + ' ' + y + ' L' + x + ' ' + (y + d + 6) + ' L' + (x - d - 6) + ' ' + y + 'Z"/>';
+      s += '<path class="shape" d="M' + x + ' ' + (y - d) + ' L' + (x + d) + ' ' + y + ' L' + x + ' ' + (y + d) + ' L' + (x - d) + ' ' + y + 'Z" fill="#fff7e0" stroke="#c98500" stroke-width="1.8"/>';
+      s += n.t === 'gw' ? '<path d="M' + (x - 7) + ' ' + (y - 7) + 'l14 14M' + (x + 7) + ' ' + (y - 7) + 'l-14 14" stroke="#9a5a06" stroke-width="2.6" stroke-linecap="round"/>' : '<path d="M' + x + ' ' + (y - 10) + 'v20M' + (x - 10) + ' ' + y + 'h20" stroke="#9a5a06" stroke-width="2.8" stroke-linecap="round"/>';
+      if (n.n) {
+        lab = wrap(n.n, n.wl || 16);
+        var lp = n.lp || 'above';
+        if (lp === 'above') s += tspans(lab, x, y - d - 8 - (lab.length - 1) * 12, 12, 'b');
+        else if (lp === 'below') s += tspans(lab, x, y + d + 15, 12, 'b');
+        else if (lp === 'below2') s += tspans(lab, x + d + 6, y + d + 12, 12, 'b', 'start');
+        else if (lp === 'aboveleft') s += tspans(lab, x - d - 2, y - d - 6 - (lab.length - 1) * 12, 12, 'b', 'end');
+        else s += tspans(lab, x + d + 8, y - d + 2, 12, 'b', 'start');
+      }
+    } else if (n.t === 'note') {
+      var nl = wrap(n.n, Math.round((n.w - 16) / 6.1));
+      var nh = Math.max(n.h, nl.length * 13 + 14);
+      s += '<path d="M' + (x - n.w / 2 + 10) + ' ' + (y - nh / 2) + ' H' + (x - n.w / 2) + ' V' + (y + nh / 2) + ' H' + (x - n.w / 2 + 10) + '" fill="none" stroke="#7b8a98" stroke-width="1.3"/>';
+      s += '<rect class="shape" x="' + (x - n.w / 2) + '" y="' + (y - nh / 2) + '" width="' + n.w + '" height="' + nh + '" fill="transparent"/>';
+      s += '<text class="lbl" text-anchor="start" style="font-size:11px;fill:#2f4050">' + nl.map(function (l, i) { return '<tspan x="' + (x - n.w / 2 + 9) + '" y="' + (y - nh / 2 + 17 + i * 13) + '">' + esc(l) + '</tspan>'; }).join('') + '</text>';
+      if (n.to) { var T = G.N[n.to]; s = '<path d="M' + x + ' ' + (y + nh / 2) + ' L' + T.x + ' ' + (T.y - T.h / 2) + '" stroke="#7b8a98" stroke-width="1.2" stroke-dasharray="2 4" fill="none"/>' + s; }
+      return '<g class="nd" data-id="' + n.id + '" tabindex="0" role="button" aria-label="Anotação">' + s + '</g>';
+    } else {
+      s += '<circle class="ring" cx="' + x + '" cy="' + y + '" r="' + (ER + 5) + '"/>';
+      if (n.t === 'start') s += '<circle class="shape" cx="' + x + '" cy="' + y + '" r="' + ER + '" fill="#e9f7ef" stroke="#2e9d5b" stroke-width="2"/>';
+      else if (n.t === 'end') s += '<circle class="shape" cx="' + x + '" cy="' + y + '" r="' + ER + '" fill="#fdecec" stroke="#c0392b" stroke-width="4"/>';
+      else if (n.t === 'timer') s += '<circle class="shape" cx="' + x + '" cy="' + y + '" r="' + ER + '" fill="#fff" stroke="#8a6d00" stroke-width="1.6"/><circle cx="' + x + '" cy="' + y + '" r="' + (ER - 4) + '" fill="none" stroke="#8a6d00" stroke-width="1.2"/><path d="M' + x + ' ' + (y - 7) + 'V' + y + 'l5 3" stroke="#8a6d00" stroke-width="1.5" fill="none" stroke-linecap="round"/>';
+      else if (n.t === 'link') s += '<circle class="shape" cx="' + x + '" cy="' + y + '" r="' + ER + '" fill="#fff" stroke="#34495e" stroke-width="1.6"/><circle cx="' + x + '" cy="' + y + '" r="' + (ER - 4) + '" fill="none" stroke="#34495e" stroke-width="1.2"/><path d="M' + (x - 6) + ' ' + (y - 3) + 'h6v-4l7 7-7 7v-4h-6z" fill="#34495e"/>';
+      lab = wrap(n.n, n.wl || 16);
+      s += tspans(lab, x, y + ER + 15, 12, n.t === 'link' ? 'b' : '');
+    }
+    s += '<rect class="hit" x="' + (x - n.w / 2 - 6) + '" y="' + (y - n.h / 2 - 6) + '" width="' + (n.w + 12) + '" height="' + (n.h + 12) + '"/>';
+    return g + s + '</g>';
+  }
+
+  function render(key) {
+    var dg = D[key], G = layout(dg), s = '';
+    s += '<svg xmlns="' + NS + '" id="svg" viewBox="0 0 ' + G.W + ' ' + G.H + '" width="' + G.W + '" height="' + G.H + '" role="img" aria-label="' + esc(dg.title) + '" font-family="Segoe UI, system-ui, -apple-system, Roboto, Arial, sans-serif">';
+    s += '<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#46566a"/></marker><marker id="aro" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#b8612e"/></marker></defs>';
+    /* Pool e raias */
+    s += '<rect x="0" y="0" width="' + G.W + '" height="' + G.H + '" fill="#fff"/>';
+    s += '<rect x="0" y="0" width="28" height="' + G.H + '" fill="#1b2c3b"/><text transform="translate(18,' + (G.H / 2) + ') rotate(-90)" text-anchor="middle" fill="#fff" style="font-family:var(--font-d);font-weight:700;font-size:12.5px;letter-spacing:.03em">AppCalhas</text>';
+    dg.lanes.forEach(function (ln, i) {
+      var id = ln[0], P = G.L[id], C = LANES[id];
+      s += '<rect x="28" y="' + P.top + '" width="' + (G.W - 28) + '" height="' + P.h + '" fill="' + (i % 2 ? '#fbfcfd' : '#fff') + '"/>';
+      s += '<rect x="28" y="' + P.top + '" width="' + (HEADW - 28) + '" height="' + P.h + '" fill="' + C.t + '"/><rect x="28" y="' + P.top + '" width="5" height="' + P.h + '" fill="' + C.c + '"/>';
+      var nm = wrap(C.n, 10);
+      s += '<text class="lane" fill="' + C.c + '" text-anchor="start">' + nm.map(function (l, j) { return '<tspan x="42" y="' + (P.top + P.h / 2 - (nm.length - 1) * 8 + j * 16 - 4) + '">' + esc(l) + '</tspan>'; }).join('') + '</text>';
+      var sb = wrap(C.s, 15);
+      s += '<text class="lsub" text-anchor="start">' + sb.map(function (l, j) { return '<tspan x="42" y="' + (P.top + P.h / 2 + (nm.length - 1) * 8 + 14 + j * 12) + '">' + esc(l) + '</tspan>'; }).join('') + '</text>';
+      s += '<line x1="28" x2="' + G.W + '" y1="' + P.top + '" y2="' + P.top + '" stroke="#cdd7e0"/>';
+    });
+    s += '<line x1="' + HEADW + '" x2="' + HEADW + '" y1="0" y2="' + G.H + '" stroke="#cdd7e0"/><rect x="0.5" y="0.5" width="' + (G.W - 1) + '" height="' + (G.H - 1) + '" fill="none" stroke="#9fb0c0"/>';
+    /* Fluxos */
+    dg.edges.forEach(function (e, i) {
+      var P = route(G, e), d = pathD(P), lab = e[2];
+      s += '<g class="ed" data-e="' + e[0] + '>' + e[1] + '"><path class="halo" d="' + d + '"/><path class="ln" d="' + d + '" marker-end="url(#ar)"/>';
+      if (lab) {
+        var p0 = P[0], p1 = P[1], vert = Math.abs(p0[0] - p1[0]) < 1, tx, ty, an = 'start';
+        if (vert) { tx = p0[0] + ((e[3] || {}).la === 'left' ? -6 : 6); ty = p0[1] + (p1[1] > p0[1] ? 16 : -8); an = (e[3] || {}).la === 'left' ? 'end' : 'start'; }
+        else { tx = p0[0] + (p1[0] > p0[0] ? 6 : -6); ty = p0[1] - 6; an = p1[0] > p0[0] ? 'start' : 'end'; }
+        s += '<text x="' + tx + '" y="' + ty + '" text-anchor="' + an + '">' + esc(lab) + '</text>';
+      }
+      s += '</g>';
+    });
+    /* Elementos */
+    dg.nodes.forEach(function (n) { s += nodeSVG(G.N[n.id], G); });
+    s += '</svg>';
+    return { svg: s, G: G };
+  }
+
+  /* ======================= Interface ======================= */
+  var cur = 'geral', G = null, scale = 1, sel = null, sim = { i: -1, timer: null, path: [] };
+  var $ = function (id) { return document.getElementById(id); };
+  var canvas = $('canvas');
+
+  $('tabs').innerHTML = ORDER.map(function (k) { var t = D[k].tab, m = t.match(/^(\d) · (.*)$/); return '<button type="button" class="tab" role="tab" data-k="' + k + '">' + (m ? '<b>' + m[1] + '</b>' + esc(m[2]) : esc(t)) + '</button>'; }).join('');
+  $('tabs').addEventListener('click', function (ev) { var b = ev.target.closest('.tab'); if (b) open(b.dataset.k); });
+
+  function legend() {
+    var it = [
+      ['<circle cx="11" cy="11" r="8" fill="#e9f7ef" stroke="#2e9d5b" stroke-width="2"/>', 'Início'],
+      ['<circle cx="11" cy="11" r="8" fill="#fdecec" stroke="#c0392b" stroke-width="3.5"/>', 'Fim'],
+      ['<rect x="2" y="5" width="22" height="13" rx="3" fill="#fff" stroke="#46566a"/>' + icon('user', 3, 6).replace('currentColor', '#46566a'), 'Etapa'],
+      ['<rect x="2" y="5" width="22" height="13" rx="3" fill="#fff" stroke="#46566a" stroke-dasharray="3 2"/>' + icon('svc', 3, 6).replace('currentColor', '#46566a'), 'Etapa automática'],
+      ['<rect x="2" y="3" width="22" height="16" rx="3" fill="#fff" stroke="#46566a" stroke-width="2"/><path d="M10 14h6M13 11v6" stroke="#46566a"/>', 'Fase (clique para abrir)'],
+      ['<path d="M11 1l10 10-10 10L1 11z" fill="#fff7e0" stroke="#c98500" stroke-width="1.5"/><path d="M7.5 7.5l7 7M14.5 7.5l-7 7" stroke="#9a5a06" stroke-width="1.8"/>', 'Decisão'],
+      ['<path d="M11 1l10 10-10 10L1 11z" fill="#fff7e0" stroke="#c98500" stroke-width="1.5"/><path d="M11 6v10M6 11h10" stroke="#9a5a06" stroke-width="2"/>', 'Ao mesmo tempo'],
+      ['<circle cx="11" cy="11" r="8" fill="#fff" stroke="#8a6d00" stroke-width="1.4"/><path d="M11 7v4l3 2" stroke="#8a6d00" fill="none"/>', 'Espera'],
+      ['<circle cx="11" cy="11" r="8" fill="#fff" stroke="#34495e" stroke-width="1.4"/><path d="M7 9h4V6l5 5-5 5v-3H7z" fill="#34495e"/>', 'Continua em outra fase'],
+      ['<path d="M2 11h16" stroke="#46566a" stroke-width="1.6"/><path d="M15 7l6 4-6 4z" fill="#46566a"/>', 'Sequência'],
+    ];
+    $('legend').innerHTML = it.map(function (x) { return '<span><svg width="26" height="22" viewBox="0 0 26 22" aria-hidden="true">' + x[0] + '</svg>' + x[1] + '</span>'; }).join('');
+  }
+  legend();
+
+  function setScale(s) {
+    scale = Math.max(0.5, Math.min(1.6, s));
+    var svg = $('svg'); if (!svg) return;
+    svg.setAttribute('width', Math.round(G.W * scale)); svg.setAttribute('height', Math.round(G.H * scale));
+  }
+  function fit() { var w = canvas.clientWidth - 2; var s = w / G.W; setScale(window.innerWidth < 700 ? Math.max(0.62, Math.min(1, s)) : Math.max(0.78, Math.min(1, s))); }
+  $('zIn').onclick = function () { setScale(scale + 0.1); };
+  $('zOut').onclick = function () { setScale(scale - 0.1); };
+  $('zFit').onclick = fit;
+
+  function open(k) {
+    stop(); cur = k; sel = null;
+    var dg = D[k], R = render(k); G = R.G;
+    canvas.innerHTML = R.svg;
+    document.querySelectorAll('.tab').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.k === k ? 'true' : 'false'); });
+    $('dTitle').textContent = dg.title; $('dDesc').textContent = dg.desc;
+    $('simSel').innerHTML = dg.sims.map(function (x, i) { return '<option value="' + i + '">' + esc(x.n) + '</option>'; }).join('');
+    fit(); panelIntro(); list();
+    canvas.scrollLeft = 0;
+    try { history.replaceState(null, '', '#' + k); } catch (e) { /* ignora */ }
+  }
+
+  function laneChip(l) { var C = LANES[l]; return '<span class="chip"><i style="background:' + C.c + '"></i>' + esc(C.n) + '</span>'; }
+  function panelIntro() {
+    var dg = D[cur];
+    $('panel').innerHTML = '<div class="chips"><span class="chip">' + (cur === 'geral' ? 'Atendimento completo' : 'Fase ' + ORDER.indexOf(cur) + ' de 6') + '</span></div><h3>' + esc(dg.title) + '</h3><p class="hint">Clique em uma etapa do desenho para ver quem faz, onde no app e o que acontece.</p>';
+  }
+  function panelNode(id) {
+    var n = G.N[id]; if (!n) return;
+    var d = n.d || {}, rows = [];
+    if (d.tela) rows.push(['Onde, no app', esc(d.tela)]);
+    if (d.oque) rows.push(['O que acontece', esc(d.oque)]);
+    if (d.regras) rows.push(['Regra', esc(d.regras)]);
+    if (d.saida) rows.push(['Resultado', esc(d.saida)]);
+    if (d.sla) rows.push(['Prazo', esc(d.sla)]);
+    if (n.t === 'gw' || n.t === 'par') {
+      var outs = D[cur].edges.filter(function (e) { return e[0] === id; });
+      rows.push([n.t === 'par' ? 'Acontece ao mesmo tempo' : 'Caminhos possíveis', '<ul>' + outs.map(function (e) { return '<li>' + (e[2] ? '<b>' + esc(e[2]) + '</b> → ' : '') + esc(G.N[e[1]].n || TYPE[G.N[e[1]].t]) + '</li>'; }).join('') + '</ul>']);
+    }
+    if (n.t === 'note') rows.push(['Observação', esc(n.n)]);
+    var go = n.go ? '<div class="go"><button type="button" class="btn p" data-go="' + n.go + '">' + (n.t === 'sub' ? 'Ver esta fase' : 'Ir para: ' + esc(D[n.go].title)) + '</button></div>' : '';
+    $('panel').innerHTML = '<div class="chips">' + laneChip(n.l) + '</div><h3>' + esc(n.t === 'note' ? 'Anotação' : n.n || TYPE[n.t]) + '</h3>' +
+      (rows.length ? '<dl>' + rows.map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>'; }).join('') + '</dl>' : '<p class="hint">Sem detalhes adicionais.</p>') + go;
+  }
+  $('panel').addEventListener('click', function (ev) { var b = ev.target.closest('[data-go]'); if (b) { open(b.dataset.go); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+
+  function select(id) {
+    document.querySelectorAll('.nd.sel').forEach(function (x) { x.classList.remove('sel'); });
+    var g = canvas.querySelector('.nd[data-id="' + id + '"]'); if (g) g.classList.add('sel');
+    sel = id; panelNode(id);
+  }
+  canvas.addEventListener('click', function (ev) { var g = ev.target.closest('.nd'); if (g) { stop(true); select(g.dataset.id); } });
+  canvas.addEventListener('dblclick', function (ev) { var g = ev.target.closest('.nd'); if (g) { var n = G.N[g.dataset.id]; if (n && n.go) open(n.go); } });
+  canvas.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { var g = ev.target.closest('.nd'); if (g) { ev.preventDefault(); select(g.dataset.id); } } });
+
+  /* Simulação */
+  function clearHi() {
+    canvas.querySelectorAll('.nd.on').forEach(function (x) { x.classList.remove('on'); });
+    canvas.querySelectorAll('.ed').forEach(function (x) { x.classList.remove('on', 'dim'); x.querySelector('.ln').setAttribute('marker-end', 'url(#ar)'); });
+  }
+  function step(i) {
+    var p = sim.path; if (i < 0 || i >= p.length) return;
+    sim.i = i; clearHi();
+    canvas.querySelectorAll('.ed').forEach(function (x) { x.classList.add('dim'); });
+    for (var k = 0; k <= i; k++) {
+      var g = canvas.querySelector('.nd[data-id="' + p[k] + '"]');
+      if (k === i && g) g.classList.add('on');
+      if (k > 0) { var ed = canvas.querySelector('.ed[data-e="' + p[k - 1] + '>' + p[k] + '"]'); if (ed) { ed.classList.remove('dim'); ed.classList.add('on'); ed.querySelector('.ln').setAttribute('marker-end', 'url(#aro)'); } }
+    }
+    var n = G.N[p[i]], d = n.d || {};
+    $('cap').classList.add('on'); $('capN').textContent = 'Passo ' + (i + 1) + ' de ' + p.length;
+    $('capT').textContent = (n.n || TYPE[n.t]) + ' — ' + LANES[n.l].n;
+    var out = '';
+    if (n.t === 'gw' && i + 1 < p.length) { var e = D[cur].edges.find(function (x) { return x[0] === p[i] && x[1] === p[i + 1]; }); out = e && e[2] ? 'Resposta neste caminho: ' + e[2] + '.' : ''; }
+    $('capD').textContent = d.oque || out || TYPE[n.t];
+    panelNode(p[i]);
+    var gEl = canvas.querySelector('.nd[data-id="' + p[i] + '"]');
+    if (gEl) { var nx = n.x * scale, ny = n.y * scale; canvas.scrollTo({ left: Math.max(0, nx - canvas.clientWidth / 2), top: Math.max(0, ny - canvas.clientHeight / 2), behavior: 'smooth' }); }
+    $('bPrev').disabled = i === 0; $('bNext').disabled = i === p.length - 1;
+  }
+  function stop(keepPanel) {
+    clearInterval(sim.timer); sim.timer = null; sim.i = -1; $('bPlay').textContent = '▶ Simular';
+    if (canvas.querySelector('svg')) clearHi();
+    $('cap').classList.remove('on'); $('bPrev').disabled = true; $('bNext').disabled = false;
+    if (!keepPanel && G) panelIntro();
+  }
+  $('bPlay').onclick = function () {
+    if (sim.timer) { clearInterval(sim.timer); sim.timer = null; $('bPlay').textContent = '▶ Continuar'; return; }
+    sim.path = D[cur].sims[+$('simSel').value].p;
+    if (sim.i < 0 || sim.i >= sim.path.length - 1) step(0);
+    $('bPlay').textContent = '⏸ Pausar';
+    sim.timer = setInterval(function () { if (sim.i >= sim.path.length - 1) { clearInterval(sim.timer); sim.timer = null; $('bPlay').textContent = '↺ Repetir'; sim.i = -1; return; } step(sim.i + 1); }, 1900);
+  };
+  $('bNext').onclick = function () { clearInterval(sim.timer); sim.timer = null; $('bPlay').textContent = '▶ Continuar'; sim.path = D[cur].sims[+$('simSel').value].p; step(sim.i < 0 ? 0 : Math.min(sim.path.length - 1, sim.i + 1)); };
+  $('bPrev').onclick = function () { clearInterval(sim.timer); sim.timer = null; $('bPlay').textContent = '▶ Continuar'; step(Math.max(0, sim.i - 1)); };
+  $('bStop').onclick = function () { stop(); };
+  $('simSel').onchange = function () { stop(); };
+
+  /* Roteiro em texto */
+  function list() {
+    var dg = D[cur], main = dg.sims[0].p, seen = {}, rows = [], k = 0;
+    main.forEach(function (id) { if (seen[id]) return; seen[id] = 1; var n = G.N[id]; if (n.t === 'note') return; rows.push({ n: n, exc: false }); });
+    dg.nodes.forEach(function (x) { if (!seen[x.id] && x.t !== 'note' && x.t !== 'par') { seen[x.id] = 1; rows.push({ n: G.N[x.id], exc: true }); } });
+    $('lTable').innerHTML = '<thead><tr><th>#</th><th>Quem</th><th>Etapa</th><th>O que acontece</th></tr></thead><tbody>' + rows.map(function (r) {
+      var n = r.n, d = n.d || {}, C = LANES[n.l];
+      if (n.t === 'par') return '';
+      k++;
+      var outs = (n.t === 'gw') ? dg.edges.filter(function (e) { return e[0] === n.id; }).map(function (e) { return (e[2] || '') + ' → ' + (G.N[e[1]].n || TYPE[G.N[e[1]].t]); }).join('; ') : '';
+      return '<tr class="' + (r.exc ? 'exc' : '') + '"><td class="n">' + k + '</td><td><span class="who"><i style="background:' + C.c + '"></i>' + esc(C.n) + '</span></td><td><b>' + esc(n.n || TYPE[n.t]) + '</b>' + (r.exc ? '<small>Caminho alternativo</small>' : '') + '</td><td>' + esc(d.oque || '') + (outs ? '<small>' + esc(outs) + '</small>' : '') + '</td></tr>';
+    }).join('') + '</tbody>';
+  }
+
+  window.addEventListener('resize', function () { clearTimeout(window.__rz); window.__rz = setTimeout(fit, 150); });
+  var h = (location.hash || '').slice(1);
+  open(D[h] ? h : 'geral');
+})();
+</script>
+</body>
+</html>

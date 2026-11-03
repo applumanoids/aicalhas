@@ -1,0 +1,9 @@
+{
+  // Publicação no Cloudflare Workers (Static Assets) — site estático, sem build.
+  // O "name" precisa ser igual ao nome do Worker criado no painel da Cloudflare.
+  "name": "appcalhas",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./"
+  }
+}

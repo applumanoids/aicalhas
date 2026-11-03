@@ -1,11 +1,11 @@
 /* =====================================================================
-   AiCalhas — Cenário 1: Vitrine de profissionais
+   AppCalhas — Cenário 1: Vitrine de profissionais
    O cliente encontra profissionais e negocia diretamente com eles.
-   A AiCalhas organiza a vitrine: cadastros, moderação e relatos.
+   O AppCalhas organiza a vitrine: cadastros, moderação e relatos.
    ===================================================================== */
 (function () {
   'use strict';
-  const A = AiC, e = A.esc, I = A.icon;
+  const A = AppC, e = A.esc, I = A.icon;
   const db = () => A.db();
   const MYPRO = 'PRF-101', MYCLI = 'CLI-201';
   const pro = (id) => db().pros.find((p) => p.id === id);
@@ -120,7 +120,7 @@
      ------------------------------------------------------------------ */
   function proCard(p, preview) {
     const ph = pubPhotos(p).slice(0, 3);
-    return '<section class="card pcard"><div class="pcard-top">' + A.av(p.empresa, p.cor) + '<div class="tt"><h3>' + e(p.empresa) + '</h3><small>' + e(p.nome) + ' — ' + e(p.cidade) + ' — desde ' + p.desde + '</small>' + A.rating(p.nota, p.avals) + '</div><span class="ver" title="Cadastro e documentos verificados pela AiCalhas">' + I('shield', 14) + ' Verificado</span></div>' +
+    return '<section class="card pcard"><div class="pcard-top">' + A.av(p.empresa, p.cor) + '<div class="tt"><h3>' + e(p.empresa) + '</h3><small>' + e(p.nome) + ' — ' + e(p.cidade) + ' — desde ' + p.desde + '</small>' + A.rating(p.nota, p.avals) + '</div><span class="ver" title="Cadastro e documentos verificados pelo AppCalhas">' + I('shield', 14) + ' Verificado</span></div>' +
       '<div class="body">' + (ph.length ? '<div class="thumbs">' + ph.map((f) => A.photo(f.img)).join('') + '</div>' : '') +
       A.chips(activeSrv(p).slice(0, 3).map(srvName).concat(activeSrv(p).length > 3 ? ['+' + (activeSrv(p).length - 3)] : [])) +
       '<div class="small muted">' + I('pin', 14) + ' Atende: ' + e(p.regioes.join(', ')) + '</div>' +
@@ -145,7 +145,7 @@
       (a.resposta ? '<div class="note neutral" style="margin-top:8px"><div><b>Resposta do profissional:</b> ' + e(a.resposta) + '</div></div>' : '') + '</div>' +
       (withReply && a.status === 'Publicada' && !a.resposta ? A.b('Responder', 'c1.avResp', { id: a.id }, 'sm', 'chat') : '') + '</div>').join('');
   }
-  const perOpts = AiC.PERIODS;
+  const perOpts = AppC.PERIODS;
 
   /* ------------------------------------------------------------------
      Telas — Cliente
@@ -156,12 +156,12 @@
     if (cid) list = list.filter((p) => p.regioes.indexOf(cid) >= 0);
     if (sv) list = list.filter((p) => activeSrv(p).indexOf(sv) >= 0);
     list.sort((a, b) => (ord === 'nome' ? a.empresa.localeCompare(b.empresa) : ord === 'avals' ? b.avals - a.avals : b.nota - a.nota));
-    return A.ph('Encontre um profissional de calhas', 'Pesquise por cidade e serviço, compare perfis, portfólios e avaliações e fale diretamente com o profissional. A compra e a entrega de materiais são sempre realizadas pela AiCalhas.', A.b('Compra e entrega de materiais', 'c1.loja', {}, '', 'cart')) +
+    return A.ph('Encontre um profissional de calhas', 'Pesquise por cidade e serviço, compare perfis, portfólios e avaliações e fale diretamente com o profissional. A compra e a entrega de materiais são sempre realizadas pelo AppCalhas.', A.b('Compra e entrega de materiais', 'c1.loja', {}, '', 'cart')) +
       A.card(null, A.filters('busca', [
         { k: 'cid', l: 'Cidade', o: A.opts(db().cidades, 'Todas as cidades') },
         { k: 'srv', l: 'Serviço', o: A.opts(db().servicos.filter((s) => s.ativo).map((s) => ({ v: s.id, l: s.nome })), 'Todos os serviços') },
         { k: 'ord', l: 'Ordenar por', def: 'nota', o: [{ v: 'nota', l: 'Melhor avaliação' }, { v: 'avals', l: 'Mais avaliações' }, { v: 'nome', l: 'Nome' }] },
-      ]) + '<div class="row small muted">' + I('shield', 15) + ' ' + list.length + ' profissional(is) com cadastro verificado pela AiCalhas' + (cid ? ' em ' + e(cid) : '') + '.</div>') +
+      ]) + '<div class="row small muted">' + I('shield', 15) + ' ' + list.length + ' profissional(is) com cadastro verificado pelo AppCalhas' + (cid ? ' em ' + e(cid) : '') + '.</div>') +
       (list.length ? '<div class="pcards mt">' + list.map((p) => proCard(p)).join('') + '</div>' : '<div class="card mt">' + A.empty('Nenhum profissional publicado atende a esse filtro. Tente outra cidade ou serviço.', 'search') + '</div>');
   }
   function vPerfil() {
@@ -178,13 +178,13 @@
       '</div><div class="stack">' +
       A.card('Serviços oferecidos', (p.servDet || []).filter((s) => s.ativo).map((s) => '<div class="li"><div class="lt"><b>' + e(srvName(s.srv)) + '</b><small>Prazo médio: ' + e(s.prazo) + '</small></div><span class="small muted">a partir de</span><b class="num">' + A.money(s.apartir) + '</b></div>').join(''), { icon: 'tool' }) +
       A.card('Regiões atendidas', A.chips(p.regioes, 'acc'), { icon: 'pin' }) +
-      A.card('Sobre', '<p>' + e(p.sobre) + '</p>' + A.note('Mão de obra, prazo de execução e pagamento do serviço são combinados diretamente com o profissional. Materiais são comprados e pagos à AiCalhas, que organiza a entrega.'), { icon: 'info' }) +
+      A.card('Sobre', '<p>' + e(p.sobre) + '</p>' + A.note('Mão de obra, prazo de execução e pagamento do serviço são combinados diretamente com o profissional. Materiais são comprados e pagos ao AppCalhas, que organiza a entrega.'), { icon: 'info' }) +
       '</div></div>';
   }
   function vCliContatos() {
     const list = db().contatos.filter((c) => c.clienteId === MYCLI).sort((a, b) => (a.ts < b.ts ? 1 : -1));
     return A.ph('Meus contatos', 'Profissionais com quem você entrou em contato pela vitrine.') +
-      A.note('Neste modelo, a conversa sobre a mão de obra acontece diretamente entre você e o profissional. A compra e a entrega de todos os materiais continuam centralizadas na AiCalhas.') + '<div class="mt"></div>' +
+      A.note('Neste modelo, a conversa sobre a mão de obra acontece diretamente entre você e o profissional. A compra e a entrega de todos os materiais continuam centralizadas no AppCalhas.') + '<div class="mt"></div>' +
       A.card(null, A.table([
         { l: 'Data', f: (c) => A.fdtn(c.ts) },
         { l: 'Profissional', f: (c) => '<b>' + e(pro(c.pro).empresa) + '</b><small>' + e(pro(c.pro).nome) + '</small>' },
@@ -199,12 +199,12 @@
     const av = db().avaliacoes.filter((a) => a.cliente === me).sort((a, b) => (a.ts < b.ts ? 1 : -1));
     const rl = db().relatos.filter((r) => r.cliente === me).sort((a, b) => (a.ts < b.ts ? 1 : -1));
     const tab = A.tab('minhas', 'av');
-    return A.ph('Avaliações e relatos', 'Acompanhe as avaliações enviadas e os relatos feitos à AiCalhas.') +
+    return A.ph('Avaliações e relatos', 'Acompanhe as avaliações enviadas e os relatos feitos ao AppCalhas.') +
       A.card(null, A.tabs('minhas', [{ id: 'av', l: 'Minhas avaliações', n: av.length }, { id: 'rl', l: 'Meus relatos', n: rl.length }]) +
         (tab === 'av' ? A.table([
           { l: 'Data', f: (a) => A.fd(a.ts) }, { l: 'Profissional', f: (a) => e(pro(a.pro).empresa) }, { l: 'Nota', f: (a) => A.stars(a.nota) }, { l: 'Comentário', f: (a) => e(a.texto) }, { l: 'Situação', f: (a) => A.badge(a.status) + (a.motivo ? '<small>' + e(a.motivo) + '</small>' : '') },
         ], av, { empty: 'Você ainda não avaliou nenhum profissional.' }) : A.table([
-          { l: 'Data', f: (r) => A.fd(r.ts) }, { l: 'Profissional', f: (r) => e(pro(r.pro).empresa) }, { l: 'Tipo', f: (r) => e(r.tipo) }, { l: 'Situação', f: (r) => A.badge(r.status) }, { l: 'Retorno da AiCalhas', f: (r) => e(r.parecer || 'Em andamento') },
+          { l: 'Data', f: (r) => A.fd(r.ts) }, { l: 'Profissional', f: (r) => e(pro(r.pro).empresa) }, { l: 'Tipo', f: (r) => e(r.tipo) }, { l: 'Situação', f: (r) => A.badge(r.status) }, { l: 'Retorno do AppCalhas', f: (r) => e(r.parecer || 'Em andamento') },
         ], rl, { empty: 'Nenhum relato registrado.' })));
   }
   function vCliDados() {
@@ -223,7 +223,7 @@
     const ct30 = ct.filter((c) => A.inPeriod(c.ts, '30'));
     const cp = completude(p);
     const pend = [];
-    db().portfolio.filter((f) => f.pro === p.id && f.status === 'Em moderação').forEach((f) => pend.push(['Foto em moderação pela AiCalhas', f.legenda, 'portfolio']));
+    db().portfolio.filter((f) => f.pro === p.id && f.status === 'Em moderação').forEach((f) => pend.push(['Foto em moderação pelo AppCalhas', f.legenda, 'portfolio']));
     reviewsOf(p).filter((a) => !a.resposta).forEach((a) => pend.push(['Avaliação sem resposta', a.cliente + ' — ' + a.nota + ' estrelas', 'avaliacoes']));
     ct.filter((c) => c.retorno === 'Aguardando retorno').forEach((c) => pend.push(['Contato aguardando seu retorno', c.cliente + ' — ' + srvName(c.srv), 'contatos']));
     return A.ph('Olá, ' + A.first(p.nome) + '!', 'Acompanhe como seu perfil está aparecendo na vitrine e os contatos gerados pelos clientes.', A.nav('Editar perfil', 'perfil', null, 'p', 'edit')) +
@@ -242,7 +242,7 @@
   }
   function vProPerfil() {
     const p = pro(MYPRO);
-    return A.ph('Meu perfil', 'Dados exibidos na vitrine. Alterações ficam registradas no histórico e podem ser revisadas pela AiCalhas.', A.b('Editar perfil', 'c1.proEdit', {}, 'p', 'edit')) +
+    return A.ph('Meu perfil', 'Dados exibidos na vitrine. Alterações ficam registradas no histórico e podem ser revisadas pelo AppCalhas.', A.b('Editar perfil', 'c1.proEdit', {}, 'p', 'edit')) +
       '<div class="g21">' + A.card('Dados do perfil', A.dl([['Nome fantasia', e(p.empresa)], ['Responsável', e(p.nome)], ['Documento', e(p.doc)], ['Cidade-base', e(p.cidade)], ['Telefone / WhatsApp', e(p.tel)], ['E-mail', e(p.email)], ['Atua desde', p.desde], ['Atende urgências', p.urgencia ? 'Sim' : 'Não']]) + '<h4 style="margin:16px 0 6px">Descrição</h4><p>' + e(p.sobre) + '</p>' +
         '<h4 style="margin:16px 0 6px">Documentos verificados</h4><ul class="ul chk">' + Object.keys(DOCS).map((k) => '<li style="color:' + (p.docs[k] ? 'inherit' : 'var(--muted)') + '">' + I(p.docs[k] ? 'check' : 'x', 15) + '<span>' + e(DOCS[k]) + '</span></li>').join('') + '</ul>', { icon: 'user' }) +
       '<div><div class="small muted" style="margin-bottom:6px">Prévia na vitrine</div>' + proCard(p, true) + '</div></div>';
@@ -262,12 +262,12 @@
     const p = pro(MYPRO);
     return A.ph('Regiões atendidas', 'Os clientes encontram você pelas cidades marcadas aqui. Mantenha a lista atualizada para evitar contatos sem resultado.', A.b('Editar regiões', 'c1.regEdit', {}, 'p', 'edit')) +
       '<div class="g2">' + A.card('Cidades atendidas (' + p.regioes.length + ')', '<div class="chips">' + p.regioes.map((c) => '<span class="chip acc">' + e(c) + '<button type="button" data-act="c1.regDel" data-c="' + e(c) + '" title="Remover ' + e(c) + '" aria-label="Remover ' + e(c) + '">' + I('x', 13) + '</button></span>').join('') + '</div><div class="mt"></div>' +
-        A.dl([['Atende urgências', p.urgencia ? 'Sim, em até 24 h' : 'Não'], ['Cidade-base', e(p.cidade)]]) + '<div class="mt"></div>' + A.note('Se você deixar de atender uma cidade, remova-a aqui. A AiCalhas também pode ajustar a lista quando receber relatos de clientes.'), { icon: 'pin' }) +
+        A.dl([['Atende urgências', p.urgencia ? 'Sim, em até 24 h' : 'Não'], ['Cidade-base', e(p.cidade)]]) + '<div class="mt"></div>' + A.note('Se você deixar de atender uma cidade, remova-a aqui. O AppCalhas também pode ajustar a lista quando receber relatos de clientes.'), { icon: 'pin' }) +
       A.card('Mapa de atendimento', A.regionMap(p.regioes), { icon: 'map' }) + '</div>';
   }
   function vProPortfolio() {
     const list = db().portfolio.filter((f) => f.pro === MYPRO).sort((a, b) => (a.ts < b.ts ? 1 : -1));
-    return A.ph('Portfólio', 'Mostre trabalhos reais. Cada foto passa pela moderação da AiCalhas antes de aparecer na vitrine.', A.b('Adicionar fotos', 'c1.fotoAdd', {}, 'p', 'camera')) +
+    return A.ph('Portfólio', 'Mostre trabalhos reais. Cada foto passa pela moderação do AppCalhas antes de aparecer na vitrine.', A.b('Adicionar fotos', 'c1.fotoAdd', {}, 'p', 'camera')) +
       A.note('<b>Regras do portfólio:</b> somente fotos de trabalhos próprios; sem marca d\'água ou telefone de outras empresas; sem dados pessoais ou rosto de clientes; imagem nítida e relacionada a calhas e coberturas.') + '<div class="mt"></div>' +
       A.card(null, list.length ? '<div class="gal">' + list.map((f) => '<div class="gal-i">' + A.zoomable(f.img, f.legenda, A.badge(f.status)) + (f.motivo ? '<small class="muted">Motivo: ' + e(f.motivo) + '</small>' : '') + '<div class="acts-row">' + A.b('Remover', 'c1.fotoDel', { id: f.id }, 'sm gh', 'trash') + '</div></div>').join('') + '</div>' : A.empty('Nenhuma foto cadastrada.', 'image'));
   }
@@ -286,13 +286,13 @@
   function vProAvaliacoes() {
     const p = pro(MYPRO);
     const all = reviewsOf(p, true);
-    return A.ph('Avaliações recebidas', 'Avaliações publicadas passam pela moderação da AiCalhas. Você pode responder publicamente.') +
+    return A.ph('Avaliações recebidas', 'Avaliações publicadas passam pela moderação do AppCalhas. Você pode responder publicamente.') +
       '<div class="g4 mb16">' + A.kpi({ l: 'Nota média', v: A.num(p.nota, 1), icon: 'star' }) + A.kpi({ l: 'Avaliações publicadas', v: reviewsOf(p).length, icon: 'check' }) + A.kpi({ l: 'Em moderação', v: all.filter((a) => a.status === 'Em moderação').length, icon: 'clock', tone: 'warn' }) + A.kpi({ l: 'Sem resposta', v: reviewsOf(p).filter((a) => !a.resposta).length, icon: 'chat' }) + '</div>' +
       A.card(null, reviewList(all, true));
   }
   function vProCadastro() {
     return A.ph('Novo cadastro de profissional', 'Simulação do formulário que um instalador preenche para entrar na vitrine. O cadastro enviado aparece para o mediador aprovar.') +
-      '<div class="g21"><div>' + A.card('Como funciona a entrada na vitrine', '<ol class="ol"><li>O profissional preenche dados, serviços, regiões e documentos.</li><li>A AiCalhas confere documentos (incluindo NR-35 para trabalho em altura).</li><li>O mediador aprova, pede ajuste ou recusa o cadastro.</li><li>Aprovado, o perfil aparece na busca dos clientes.</li></ol><div class="mt"></div>' + A.b('Preencher cadastro de demonstração', 'c1.cadastro', {}, 'p', 'clipboard'), { icon: 'clipboard' }) + '</div>' +
+      '<div class="g21"><div>' + A.card('Como funciona a entrada na vitrine', '<ol class="ol"><li>O profissional preenche dados, serviços, regiões e documentos.</li><li>O AppCalhas confere documentos (incluindo NR-35 para trabalho em altura).</li><li>O mediador aprova, pede ajuste ou recusa o cadastro.</li><li>Aprovado, o perfil aparece na busca dos clientes.</li></ol><div class="mt"></div>' + A.b('Preencher cadastro de demonstração', 'c1.cadastro', {}, 'p', 'clipboard'), { icon: 'clipboard' }) + '</div>' +
       '<div>' + A.card('Cadastros enviados por esta demonstração', (db().pros.filter((p) => p.criadoDemo).map((p) => '<div class="li">' + A.av(p.empresa, p.cor) + '<div class="lt"><b>' + e(p.empresa) + '</b><small>' + e(p.cidade) + ' — enviado ' + A.ago(p.enviado) + '</small></div>' + A.badge(p.status) + '</div>').join('') || A.empty('Nenhum cadastro enviado ainda.', 'inbox')), { icon: 'inbox' }) + '</div></div>';
   }
 
@@ -466,7 +466,7 @@
     'c1.lojaInt': () => A.go('materiais'),
     'c1.portfolio': (ds) => {
       const p = pro(ds.id), ph = pubPhotos(p);
-      A.modal({ title: 'Portfólio — ' + p.empresa, sub: ph.length + ' foto(s) aprovada(s) pela AiCalhas', size: 'lg', body: ph.length ? '<div class="gal">' + ph.map((f) => '<div class="gal-i">' + A.photo(f.img, f.legenda) + '</div>').join('') + '</div>' : A.empty('Sem fotos publicadas.', 'image'), foot: '<button class="btn" data-act="core.close">Fechar</button>' + A.b('Entrar em contato', 'c1.contato', { id: p.id }, 'p', 'chat') });
+      A.modal({ title: 'Portfólio — ' + p.empresa, sub: ph.length + ' foto(s) aprovada(s) pelo AppCalhas', size: 'lg', body: ph.length ? '<div class="gal">' + ph.map((f) => '<div class="gal-i">' + A.photo(f.img, f.legenda) + '</div>').join('') + '</div>' : A.empty('Sem fotos publicadas.', 'image'), foot: '<button class="btn" data-act="core.close">Fechar</button>' + A.b('Entrar em contato', 'c1.contato', { id: p.id }, 'p', 'chat') });
     },
     'c1.contato': (ds) => {
       const p = pro(ds.id), c = db().clientes.find((x) => x.id === MYCLI);
@@ -478,7 +478,7 @@
           { name: 'srv', label: 'Serviço desejado', type: 'select', options: activeSrv(p).map((s) => ({ v: s, l: srvName(s) })), required: true },
           { name: 'cidade', label: 'Cidade do imóvel', type: 'select', options: p.regioes, value: p.regioes.indexOf(c.cidade) >= 0 ? c.cidade : p.regioes[0], required: true },
           { name: 'canal', label: 'Como prefere ser contatado?', type: 'radios', options: CANAIS, value: c.prefContato || 'WhatsApp', full: true, required: true },
-          { name: 'msg', label: 'Mensagem', type: 'textarea', value: 'Olá! Encontrei seu perfil na AiCalhas. A calha da frente da minha casa está vazando na emenda. Vocês conseguem avaliar ainda esta semana?', full: true, required: true },
+          { name: 'msg', label: 'Mensagem', type: 'textarea', value: 'Olá! Encontrei seu perfil no AppCalhas. A calha da frente da minha casa está vazando na emenda. Vocês conseguem avaliar ainda esta semana?', full: true, required: true },
           { name: 'lgpd', type: 'check', text: 'Autorizo o compartilhamento do meu nome e telefone com este profissional para este atendimento.', value: true, required: true },
         ] });
     },
@@ -491,12 +491,12 @@
       A.refresh();
       A.modal({ title: 'Contato registrado', size: 'sm', body: '<div class="empty" style="padding:6px">' + I('check', 34) + '<p><b>Contato enviado para ' + e(p.empresa) + '.</b></p></div>' +
         A.dl([['Canal escolhido', e(v.canal)], ['Telefone do profissional', e(p.tel)], ['Protocolo', id]], 'one') + '<div class="mt"></div>' +
-        A.note('Simulação: em um sistema real, o ' + (v.canal === 'WhatsApp' ? 'WhatsApp abriria com a mensagem pronta' : v.canal === 'Telefone' ? 'telefone do profissional seria exibido para ligação' : 'profissional receberia a mensagem na plataforma') + '. O contato já aparece no perfil do profissional e nos relatórios da AiCalhas.'),
+        A.note('Simulação: em um sistema real, o ' + (v.canal === 'WhatsApp' ? 'WhatsApp abriria com a mensagem pronta' : v.canal === 'Telefone' ? 'telefone do profissional seria exibido para ligação' : 'profissional receberia a mensagem na plataforma') + '. O contato já aparece no perfil do profissional e nos relatórios do AppCalhas.'),
         foot: '<button class="btn" data-act="core.close">Fechar</button>' + A.nav('Ver meus contatos', 'contatos', null, 'p') });
     },
     'c1.avaliar': (ds) => {
       const p = pro(ds.id);
-      A.form({ title: 'Avaliar ' + p.empresa, sub: 'Sua avaliação passa pela moderação da AiCalhas antes de ser publicada.', submit: 'c1.avSave', submitLabel: 'Enviar avaliação', icon: 'star', extra: { pro: p.id },
+      A.form({ title: 'Avaliar ' + p.empresa, sub: 'Sua avaliação passa pela moderação do AppCalhas antes de ser publicada.', submit: 'c1.avSave', submitLabel: 'Enviar avaliação', icon: 'star', extra: { pro: p.id },
         fields: [
           { name: 'nota', label: 'Nota', type: 'radios', options: [{ v: 5, l: '★★★★★ Excelente' }, { v: 4, l: '★★★★ Bom' }, { v: 3, l: '★★★ Regular' }, { v: 2, l: '★★ Ruim' }, { v: 1, l: '★ Péssimo' }], value: 5, full: true, required: true },
           { name: 'srv', label: 'Serviço realizado', type: 'select', options: activeSrv(p).map((s) => ({ v: s, l: srvName(s) })) },
@@ -507,11 +507,11 @@
     'c1.avSave': (v, x) => {
       const d = db(), id = A.nextId('AV-', d.avaliacoes);
       d.avaliacoes.push({ id: id, pro: x.pro, cliente: A.me().nome, nota: +v.nota, texto: v.texto, status: 'Em moderação', ts: A.now(), resposta: '', motivo: '' });
-      A.done('Avaliação enviada. Ela será publicada após a moderação da AiCalhas.', 'Avaliação enviada para moderação', id + ' · ' + pro(x.pro).empresa);
+      A.done('Avaliação enviada. Ela será publicada após a moderação do AppCalhas.', 'Avaliação enviada para moderação', id + ' · ' + pro(x.pro).empresa);
     },
     'c1.relatar': (ds) => {
       const p = pro(ds.id);
-      A.form({ title: 'Relatar problema sobre ' + p.empresa, sub: 'O relato é enviado à equipe AiCalhas, que apura e responde.', submit: 'c1.relSave', submitLabel: 'Enviar relato', icon: 'flag', extra: { pro: p.id },
+      A.form({ title: 'Relatar problema sobre ' + p.empresa, sub: 'O relato é enviado à equipe AppCalhas, que apura e responde.', submit: 'c1.relSave', submitLabel: 'Enviar relato', icon: 'flag', extra: { pro: p.id },
         fields: [
           { name: 'tipo', label: 'Tipo de problema', type: 'select', required: true, full: true, options: ['Profissional não atende mais a minha cidade', 'Sem retorno após o contato', 'Informações desatualizadas no perfil', 'Conduta inadequada', 'Outro'] },
           { name: 'desc', label: 'Descreva o que aconteceu', type: 'textarea', required: true, full: true, value: 'Entrei em contato pelo WhatsApp há três dias e ainda não tive resposta.' },
@@ -520,7 +520,7 @@
     'c1.relSave': (v, x) => {
       const d = db(), id = A.nextId('REL-', d.relatos), c = d.clientes.find((k) => k.id === MYCLI);
       d.relatos.push({ id: id, ts: A.now(), cliente: A.me().nome, cidade: c.cidade, pro: x.pro, tipo: v.tipo, desc: v.desc, status: 'Aberto', parecer: '', medida: '' });
-      A.done('Relato enviado à AiCalhas. Acompanhe em “Avaliações e relatos”.', 'Relato registrado sobre profissional', id + ' · ' + pro(x.pro).empresa);
+      A.done('Relato enviado ao AppCalhas. Acompanhe em “Avaliações e relatos”.', 'Relato registrado sobre profissional', id + ' · ' + pro(x.pro).empresa);
     },
     'c1.cliEdit': () => {
       const c = db().clientes.find((x) => x.id === MYCLI);
@@ -594,7 +594,7 @@
     },
     'c1.fotoAdd': () => {
       const p = pro(MYPRO);
-      A.form({ title: 'Adicionar fotos ao portfólio', sub: 'As fotos ficam “Em moderação” até a aprovação da AiCalhas.', submit: 'c1.fotoSave', submitLabel: 'Enviar para moderação', icon: 'camera', size: 'lg', fields: [
+      A.form({ title: 'Adicionar fotos ao portfólio', sub: 'As fotos ficam “Em moderação” até a aprovação do AppCalhas.', submit: 'c1.fotoSave', submitLabel: 'Enviar para moderação', icon: 'camera', size: 'lg', fields: [
         { name: 'legenda', label: 'Legenda', required: true, value: 'Troca de calha frontal com condutor novo', full: true },
         { name: 'srv', label: 'Serviço relacionado', type: 'select', options: activeSrv(p).map((s) => ({ v: s, l: srvName(s) })) },
         { name: 'cidade', label: 'Cidade da obra', type: 'select', options: p.regioes },
@@ -731,7 +731,7 @@
       A.modal({ title: 'Relato ' + r.id + ' — ' + r.tipo, sub: A.fdt(r.ts) + ' — ' + r.status, size: 'lg', body:
         A.dl([['Cliente', e(r.cliente) + ' (' + e(r.cidade) + ')'], ['Profissional', e(p.empresa) + ' — ' + e(p.tel)], ['Regiões atuais do perfil', e(p.regioes.join(', '))], ['Situação', A.badge(r.status)]]) +
         '<h4 style="margin:16px 0 6px">Relato do cliente</h4><div class="note neutral"><div>' + e(r.desc) + '</div></div>' +
-        (r.parecer ? '<h4 style="margin:16px 0 6px">Parecer da AiCalhas</h4>' + A.dl([['Medida', e(r.medida)], ['Parecer', e(r.parecer)]], 'one') : '') +
+        (r.parecer ? '<h4 style="margin:16px 0 6px">Parecer do AppCalhas</h4>' + A.dl([['Medida', e(r.medida)], ['Parecer', e(r.parecer)]], 'one') : '') +
         (r.status !== 'Concluído' && /cidade/i.test(r.tipo) ? '<div class="mt"></div>' + A.note('Sugestão: confirme com o profissional e atualize as regiões do perfil para evitar novos contatos sem resultado.', 'warn') : ''),
         foot: '<button class="btn" data-act="core.close">Fechar</button>' + (r.status !== 'Concluído' ? A.b('Atualizar perfil do profissional', 'c1.proGer', { id: p.id }, '', 'edit') + (r.status === 'Aberto' ? A.b('Iniciar apuração', 'c1.relApurar', { id: r.id }, '', 'search') : '') + A.b('Concluir relato', 'c1.relConcluir', { id: r.id }, 'ok', 'check') : '') });
     },
@@ -771,7 +771,7 @@
     'c1.catToggle': (ds) => { const s = db().servicos.find((x) => x.id === ds.id); s.ativo = !s.ativo; A.done('Serviço ' + (s.ativo ? 'ativado' : 'desativado') + '.', 'Serviço do catálogo ' + (s.ativo ? 'ativado' : 'desativado'), s.id + ' · ' + s.nome); },
     'c1.ctDet': (ds) => {
       const c = db().contatos.find((x) => x.id === ds.id), p = pro(c.pro);
-      A.modal({ title: 'Contato ' + c.id, sub: A.fdt(c.ts) + ' — gerado pela vitrine', body: A.dl([['Cliente', e(c.cliente)], ['Cidade', e(c.cidade)], ['Profissional', e(p.empresa)], ['Serviço', e(srvName(c.srv))], ['Canal', e(c.canal)], ['Retorno informado', A.badge(c.retorno)]]) + '<h4 style="margin:16px 0 6px">Mensagem enviada</h4><div class="note neutral"><div>' + e(c.msg) + '</div></div><div class="mt"></div>' + A.note('Neste modelo, a AiCalhas registra o contato gerado. O andamento da negociação não é acompanhado.') });
+      A.modal({ title: 'Contato ' + c.id, sub: A.fdt(c.ts) + ' — gerado pela vitrine', body: A.dl([['Cliente', e(c.cliente)], ['Cidade', e(c.cidade)], ['Profissional', e(p.empresa)], ['Serviço', e(srvName(c.srv))], ['Canal', e(c.canal)], ['Retorno informado', A.badge(c.retorno)]]) + '<h4 style="margin:16px 0 6px">Mensagem enviada</h4><div class="note neutral"><div>' + e(c.msg) + '</div></div><div class="mt"></div>' + A.note('Neste modelo, o AppCalhas registra o contato gerado. O andamento da negociação não é acompanhado.') });
     },
     'c1.regDet': (ds) => {
       const ps = db().pros.filter((p) => p.status === 'Publicado' && p.regioes.indexOf(ds.c) >= 0);
@@ -788,16 +788,16 @@
     seed: seed, seedLogs: seedLogs, actions: actions,
     about: {
       level: 1,
-      resumo: 'O cliente pesquisa profissionais por cidade e serviço, compara perfis, portfólios e avaliações e combina a execução da mão de obra com o instalador. A compra e a entrega dos materiais são sempre realizadas pela AiCalhas, que também cuida da qualidade da vitrine.',
-      como: ['O profissional se cadastra com dados, serviços, regiões, documentos e fotos.', 'A AiCalhas analisa o cadastro e publica o perfil na vitrine.', 'O cliente busca por cidade e serviço e compara os profissionais.', 'O cliente entra em contato diretamente (WhatsApp, telefone ou mensagem).', 'Preço e prazo da mão de obra são combinados entre cliente e profissional. Materiais são vendidos e entregues pela AiCalhas.', 'O cliente pode avaliar o profissional ou relatar problemas, que passam pela moderação.'],
+      resumo: 'O cliente pesquisa profissionais por cidade e serviço, compara perfis, portfólios e avaliações e combina a execução da mão de obra com o instalador. A compra e a entrega dos materiais são sempre realizadas pelo AppCalhas, que também cuida da qualidade da vitrine.',
+      como: ['O profissional se cadastra com dados, serviços, regiões, documentos e fotos.', 'O AppCalhas analisa o cadastro e publica o perfil na vitrine.', 'O cliente busca por cidade e serviço e compara os profissionais.', 'O cliente entra em contato diretamente (WhatsApp, telefone ou mensagem).', 'Preço e prazo da mão de obra são combinados entre cliente e profissional. Materiais são vendidos e entregues pelo AppCalhas.', 'O cliente pode avaliar o profissional ou relatar problemas, que passam pela moderação.'],
       mediador: ['Analisa o cadastro antes de publicar', 'Confere se o portfólio atende às regras', 'Atualiza regiões atendidas e contatos', 'Modera avaliações e apura reclamações recebidas'],
-      limite: 'a AiCalhas não participa da negociação da mão de obra nem da execução, mas é sempre responsável pela venda e pela entrega dos materiais. O cliente não compra materiais diretamente do profissional.',
+      limite: 'o AppCalhas não participa da negociação da mão de obra nem da execução, mas é sempre responsável pela venda e pela entrega dos materiais. O cliente não compra materiais diretamente do profissional.',
       exemplo: 'Um instalador deixou de atender Hortolândia. Uma padaria relata que o contato não teve resultado; o mediador confirma com o profissional e atualiza as regiões do perfil para evitar novos contatos sem retorno.',
-      painel: 'Profissionais, perfis, cadastros em análise, moderação de fotos e avaliações, relatos de clientes, contatos gerados e solicitações de compra e entrega de materiais centralizadas na AiCalhas.',
+      painel: 'Profissionais, perfis, cadastros em análise, moderação de fotos e avaliações, relatos de clientes, contatos gerados e solicitações de compra e entrega de materiais centralizadas no AppCalhas.',
       perfil: {
-        cliente: { t: 'Você escolhe o profissional; a AiCalhas fornece os materiais.', d: 'Pesquise, compare portfólios e avaliações e fale com o instalador para combinar a execução. A compra e a entrega dos materiais são feitas sempre pela AiCalhas.' },
-        profissional: { t: 'Seu perfil é a sua vitrine.', d: 'Mantenha serviços, regiões e fotos atualizados. Cadastro e fotos passam pela análise da AiCalhas antes de aparecer para os clientes.' },
-        mediador: { t: 'Você cuida da vitrine e direciona a compra de materiais à AiCalhas.', d: 'Aprove cadastros, modere fotos e avaliações, apure relatos e acompanhe os contatos. Toda venda e entrega de materiais é centralizada na AiCalhas.' },
+        cliente: { t: 'Você escolhe o profissional; o AppCalhas fornece os materiais.', d: 'Pesquise, compare portfólios e avaliações e fale com o instalador para combinar a execução. A compra e a entrega dos materiais são feitas sempre pelo AppCalhas.' },
+        profissional: { t: 'Seu perfil é a sua vitrine.', d: 'Mantenha serviços, regiões e fotos atualizados. Cadastro e fotos passam pela análise do AppCalhas antes de aparecer para os clientes.' },
+        mediador: { t: 'Você cuida da vitrine e direciona a compra de materiais ao AppCalhas.', d: 'Aprove cadastros, modere fotos e avaliações, apure relatos e acompanhe os contatos. Toda venda e entrega de materiais é centralizada no AppCalhas.' },
       },
     },
     profiles: {
