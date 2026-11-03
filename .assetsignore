@@ -7,3 +7,4 @@ wrangler.jsonc
 README.md
 LEIA-ME.txt
 .gitignore
+.wrangler
